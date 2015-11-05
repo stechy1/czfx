@@ -1,0 +1,10 @@
+<h1 class="page-header"></h1>
+<p><a href="categories">Zpět</a> na výpis kategorií</p>
+<ul class="list-group">
+    <? foreach($articles as $article) : ?>
+        <li class="list-group-item">
+            <a href="/article/<?= $article['article_url'] ?>"><?= $article['article_title'] ?></a>
+            <p style="text-indent: 10px;"><?= $article['article_description'] ?></p>
+        </li>
+    <? endforeach ?>
+</ul>

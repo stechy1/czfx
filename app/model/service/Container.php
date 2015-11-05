@@ -1,0 +1,156 @@
+<?php
+
+namespace app\model\service;
+
+
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
+use SplFileInfo;
+
+class Container {
+
+    private static $created = false;
+
+    private $map;
+    private $clasess = array();
+
+    /**
+     * Container constructor.
+     */
+    private function __construct () {
+        $this->folderIterator(__BASEDIR__);
+        $this->map = new \stdClass();
+    }
+
+    /**
+     * Vytvoří nový container
+     * @return Container
+     * @throws Exception Pokud container již existuje
+     */
+    public static function getContainer() {
+        if (self::$created)
+            throw new Exception("Container už existuje");
+
+        self::$created = false;
+        $container = new Container();
+        $container->mapValue('container', $container);
+
+        return $container;
+    }
+
+    private function folderIterator($folder) {
+        /**
+         * @var $fileInfo SplFileInfo
+         */
+        foreach(new FileFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder))) as $fileInfo) {
+            $pathName = $fileInfo->getPathname();
+            $root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']) . '\\';
+            $filePath = str_replace($root, '', $pathName);
+
+            $file = strtolower($fileInfo->getBasename('.php'));
+            $filePath = str_replace('.php', '', $filePath);
+            $this->clasess[$file] = $filePath;
+        }
+    }
+
+    /**
+     * @param $obj
+     * @param $reflection ReflectionClass
+     * @return
+     */
+    private function injectClass($obj, $reflection) {
+        if ($doc = $reflection->getDocComment()) {
+            $lines = explode("\n", $doc);
+            foreach ($lines as $line) {
+                if (count($parts = explode("@Inject", $line)) > 1) {
+                    $parts = explode(" ", $parts[1]);
+                    if (count($parts) > 1) {
+                        $key = $parts[1];
+                        $key = str_replace("\n", "", $key);
+                        $key = str_replace("\r", "", $key);
+                        $key = strtolower($key);
+
+                        if (array_key_exists($key, $this->clasess) && !isset($this->map->$key))
+                            $this->mapClass($key, $key);
+
+                        if (isset($this->map->$key)) {
+                            $property = $reflection->getProperty($key);
+                            $property->setAccessible(true);
+                            switch ($this->map->$key->type) {
+                                case "value":
+                                    $property->setValue($obj, $this->map->$key->value);
+                                    break;
+                                case "class":
+                                    $property->setValue($obj, $this->getInstanceOf($this->map->$key->value, $this->map->$key->arguments));
+                                    break;
+                                case "classSingleton":
+                                    if ($this->map->$key->instance === null) {
+                                        $property->setValue($obj, $this->map->$key->instance = $this->getInstanceOf($this->map->$key->value, $this->map->$key->arguments));
+                                    } else {
+                                        $property->setValue($obj, $this->map->$key->instance);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $obj;
+    }
+
+    private function addToMap ($key, $obj) {
+        if ($this->map === null) {
+            $this->map = (object)array();
+        }
+        $this->map->$key = $obj;
+    }
+
+    public function mapValue ($key, $value) {
+        $this->addToMap($key, (object)array("value" => $value, "type" => "value"));
+    }
+
+    public function mapClass ($key, $value, $arguments = null) {
+        $this->addToMap($key, (object)array("value" => $value, "type" => "class", "arguments" => $arguments));
+    }
+
+    public function mapClassAsSingleton ($key, $value, $arguments = null) {
+        $this->addToMap($key, (object)array("value" => $value, "type" => "classSingleton", "instance" => null, "arguments" => $arguments));
+    }
+
+    public function getInstanceOf ($className, $arguments = null) {
+        $className = strtolower($className);
+
+        if (!array_key_exists($className, $this->clasess))
+            return null;
+
+        // initialized the ReflectionClass
+        $reflection = new ReflectionClass($this->clasess[$className]);
+
+        // creating an instance of the class
+        if ($arguments === null || count($arguments) == 0) {
+            $obj = new $this->clasess[$className];
+        } else {
+            if (!is_array($arguments)) {
+                $arguments = array($arguments);
+            }
+            $obj = $reflection->newInstanceArgs($arguments);
+        }
+
+        $parentReflection = $reflection->getParentClass();
+        if ($parentReflection != null)
+            $obj = $this->injectClass($obj, $parentReflection);
+
+        // injecting
+        $obj = $this->injectClass($obj, $reflection);
+
+        if (!isset($this->map->$className))
+            $this->mapValue($className, $obj);
+
+        // return the created instance
+        return $obj;
+    }
+}

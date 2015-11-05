@@ -1,0 +1,50 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Nové vlákno</h1>
+    </div>
+    <div class="panel-body">
+        <form id="submitForm" method="post" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="topic_subject">Téma:</label>
+
+                <div class="col-md-4">
+                    <input id="topic_subject" name="topic_subject" type="text" placeholder="téma"
+                           class="form-control input-md" required="">
+
+                </div>
+            </div>
+
+            <div id="mainEditorContainer"></div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <button id="submiter" name="" class="btn btn-primary">Založit</button>
+    </div>
+</div>
+<script src="js/editorJQ.js"></script>
+<script>
+    jQuery(document).ready(function () {
+
+        var buttons = [
+            {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
+            {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
+            {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
+            {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
+            {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
+            {class: 'quotes', before: '> ', tooltip: 'Citace'},
+            {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
+            {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
+            {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
+        ];
+        var editor = new EditorJQ(
+            '#mainEditorContainer',
+            {
+                controller: 'file-manager',
+                action: 'store',
+                buttons: buttons,
+                areaName: 'post_content'
+            });
+        editor.init();
+    });
+</script>
+

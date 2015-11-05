@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="cs-cz">
+<head>
+    <base href="<?= __HOME__ ?>"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CZFX - <?= $title ?></title>
+    <meta name="description" content="<?= $description ?>"/>
+    <meta name="keywords" content="<?= $key_words ?>"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/highlight.min.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <style>
+        .xdebug-error {
+            position: absolute;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+<header class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/"><img class="logo" src="img/logo1.png" alt="logo serveru"></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-left ">
+                <li class="hovered<?= ($_page == 'categories')?' active':'' ?>"><a href="categories">Kategorie</a></li>
+                <li <?= ($_page == 'forum')?'class="active"':'' ?>><a href="forum">Forum</a></li>
+                <li <?= ($_page == 'support')?'class="active"':'' ?>><a href="support">Podpora</a></li>
+                <li <?= ($_page == 'about')?'class="active"':'' ?>><a href="about">O projektu</a> </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <? if(!isset($_SESSION['user'])) : ?>
+                    <li <?= ($_page == 'login')?'class="active"':'' ?>><a href="login">Přihlásit</a></li>
+                    <li <?= ($_page == 'registration')?'class="active"':'' ?>><a href="registration">Zaregistrovat</a></li>
+                <? else : ?>
+                    <li><a href="profile/logout">Odhlásit</a></li>
+                    <li <?= ($_page == 'profil')?'class="active"':'' ?>><a href="profile">Profil</a></li>
+                <? endif ?>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="main">
+    <div class="container">
+        <? $this->controller->renderView(); ?>
+    </div>
+</div>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <p>Patička..</p>
+        </div>
+    </div>
+</footer>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-notify.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-switch.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-contextmenu.js"></script>
+<script type="text/javascript" src="js/jquery.selection.min.js"></script>
+<script type="text/javascript" src="js/jquery.caret.min.js"></script>
+<script type="text/javascript" src="js/highlight.min.js"></script>
+<script type="text/javascript" src="js/czfx.js"></script>
+<script type="text/javascript" src="js/czfx.uploader.js"></script>
+<? if (defined("UGLY_URL")) echo '<script type="text/javascript" src="js/badurl.js"></script>'; ?>
+</body>
+</html>

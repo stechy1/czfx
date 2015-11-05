@@ -1,0 +1,60 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Podpora</h1>
+    </div>
+    <div class="panel-body">
+        <form id="submitForm" method="post" class="form-horizontal">
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="name">Uživatelské jméno:</label>
+
+                <div class="col-md-4">
+                    <input id="name" name="name" type="text" placeholder="uživatelské jméno"
+                           class="form-control input-md" required="">
+
+                </div>
+            </div>
+
+            <div id="mainEditorContainer"></div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="antispam">Zadejte aktuální rok:</label>
+
+                <div class="col-md-4">
+                    <input class="form-control" id="antispam" name="antispam" placeholder="aktuální rok" required="">
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="panel-footer">
+        <button id="submiter" type="submit" class="btn btn-primary">Odeslat</button>
+    </div>
+</div>
+<script src="js/editorJQ.js"></script>
+<script>
+    jQuery(document).ready(function () {
+
+        var buttons = [
+            {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
+            {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
+            {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
+            {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
+            {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
+            {class: 'quotes', before: '> ', tooltip: 'Citace'},
+            {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
+            {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
+            {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
+        ];
+        var editor = new EditorJQ(
+            '#mainEditorContainer',
+            {
+                controller: 'file-manager',
+                action: 'store',
+                buttons: buttons,
+                areaName: 'post_content'
+            });
+        editor.init();
+    });
+</script>
+

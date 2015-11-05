@@ -1,0 +1,157 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Editor článku</h1>
+    </div>
+    <div class="panel-body">
+        <form id="submitForm" method="post">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" for="article-title">Titulek článku:</label>
+                        <input id="article-title" class="form-control input-md" name="article_title" type="text"
+                               placeholder="titulek článku" value="<?= $article['article_title'] ?>">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="article-category">Kategorie článku:</label>
+                        <select id="article-category" name="article_category" class="form-control">
+                            <? if (isset($articleCategory)): ?>
+                                <option value="<?= $articleCategory->getID() ?>"><?= $articleCategory->getName() ?></option>
+                            <? else : ?>
+                                <option value="-1">Vyberte...</option>
+                            <? endif ?>
+                            <? //@var array $categories
+                            foreach ($categories as $category) : ?>
+                                <option value="<?= $category['category_id']; ?>"><?= $category['category_name']; ?></option>
+                            <? endforeach ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" for="article-description">Popis článku:</label>
+                        <input id="article-description" name="article_description" type="text" placeholder="popis článku"
+                               class="form-control input-md"
+                               required="" value="<?= $article['article_description'] ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="article-tags">Vyhledávací tagy:</label>
+                        <input id="article-tags" name="article_tags" type="text" placeholder="vyhledávací tagy"
+                               class="form-control input-md"
+                               required="" value="<?= $article['article_tags'] ?>">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" for="article-previous">Předchozí článek:</label>
+                        <select id="article-previous" name="article_previous" class="form-control">
+                            <? if (isset($articlePrev)) : ?>
+                                <option value="<?= $articlePrev->getID() ?>"><?= $articlePrev->getTitle() ?></option>
+                            <? else : ?>
+                                <option value="-1">Vyberte...</option>
+                            <? endif ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" for="article-next">Další článek:</label>
+                        <select id="article-next" name="article_next" class="form-control">
+                            <? if (isset($articleNext)) : ?>
+                                <option value="<?= $articleNext->getID() ?>"><?= $articleNext->getTitle() ?></option>
+                            <? else : ?>
+                                <option value="-1">Vyberte...</option>
+                            <? endif ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="mainEditorContainer"></div>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <button id="submiter" class="btn btn-primary btn-sm"><?= ($artAction == 'new')?'Vytvořit':'Upravit' ?></button>
+        <a href="/article-management" class="btn btn-warning btn-sm right">Zrušit</a>
+    </div>
+</div>
+<script src="js/editorJQ.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        var getArticles = function (catID) {
+            var showOptions = function(select, articles) {
+                select = $(select);
+                select.empty();
+
+                for (var i = 0; i < articles.length; i++) {
+                    var article = articles[i];
+                    var option = $('<option/>', {value: article['article_id'], html: article['article_title']});
+                    select.append(option);
+                }
+            };
+
+            $.ajax({
+                type: 'post',
+                url: 'article-management/get/articles/' + catID,
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if (result.success) {
+                        var articles = JSON.parse(result.data.articles);
+                        showOptions("#article-previous", articles);
+                        showOptions("#article-next", articles);
+                    }
+                }
+            });
+        };
+
+        jQuery('#article-category').change(function (e) {
+            var opt = jQuery('#article-category').find('option:selected').val();
+            if (opt > 0)
+                getArticles(opt);
+        });
+
+        var buttons = [
+            {class: 'h1', before: '\# ', tooltip: 'Nadpis 1'},
+            {class: 'h2', before: '\## ', tooltip: 'Nadpis 2'},
+            {class: 'h3', before: '\### ', tooltip: 'Nadpis 3'},
+            {class: 'h4', before: '\#### ', tooltip: 'Nadpis 4'},
+            {class: 'h5', before: '\##### ', tooltip: 'Nadpis 5'},
+            {class: 'h6', before: '\###### ', tooltip: 'Nadpis 6'},
+            {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
+            {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
+            {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
+            {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
+            {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
+            {class: 'quotes', before: '> ', tooltip: 'Citace'},
+            {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
+            {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
+            {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
+        ];
+        var editor = new EditorJQ(
+            '#mainEditorContainer',
+            {
+                controller: 'upload',
+                action: 'store',
+                buttons: buttons,
+                attachment: true
+            });
+        editor.init();
+
+        jQuery.ajax({
+            type: 'post',
+            url: 'article-management/get/article-content',
+            /*data: {
+                controller: 'article-manager',
+                action: 'getContent'
+            },*/
+            success: function (result) {
+                result = JSON.parse(result);
+                if (result.success)
+                    editor.setContent(JSON.parse(result.data.article));
+
+                showUserMessages(result.messages);
+            }
+        });
+    });
+</script>

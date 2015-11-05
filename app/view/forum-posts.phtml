@@ -1,0 +1,70 @@
+<? use app\model\util\DateUtils; ?>
+
+<ol class="breadcrumb">
+    <li><a href="forum">Forum</a></li>
+    <li><a href="forum/show-topics/<?= $categoryURL ?>"><?= $categoryName ?></a></li>
+    <li class="active"><?= $topicSubject; ?></li>
+</ol>
+
+<div class="col-md-12">
+    <? if ($_posts) : ?>
+        <? $parseDown = new app\model\util\ParsedownExtra(); ?>
+        <? foreach ($_posts as $post) : ?>
+            <div class="row forum-post" id="<?= $post['post_date'] ?>">
+                <div class="col-xs-3 col-sm-2 col-md-1 author">
+                    <img class="img-responsive img-circle center-block user-image" src="../uploads/image/avatar/<?= $post['user_avatar'] ?>.png" alt="<?= $post['user_nick']; ?>"/>
+                    <p><?= $post['user_nick']; ?></p>
+                </div>
+                <div class="col-md-11" style="min-height: 70px;">
+                    <p class="text-justify"><?= $parseDown->text($post['post_content']); ?></p>
+                </div>
+                <span class="small right"><?= DateUtils::prettyDateTime($post['post_date']); ?></span>
+            </div>
+        <? endforeach ?>
+    <? else : ?>
+        <div class="forum-item">
+            <p>Vlákno neobsahuje žádné příspěvky. Buď první, kdo něco napíše</p>
+        </div>
+    <? endif ?>
+</div>
+<hr style="width: 100%;">
+
+<div class="panel">
+    <div class="panel-heading">
+        <h2>Odpověď</h2>
+    </div>
+    <div class="panel-body">
+        <form id="submitForm" method="post" class="form-horizontal">
+            <div id="mainEditorContainer"></div>
+            <div class="g-recaptcha" data-theme="dark" data-sitekey="6LcN3g0TAAAAAO-4iq4hSU-m24HFNUJBy-n07Xck"></div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <button id="submiter" name="" class="btn btn-primary">Odeslat</button>
+    </div>
+</div>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="../js/editorJQ.js"></script>
+<script>
+    jQuery(document).ready(function () {
+
+        var buttons = [
+            {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
+            {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
+            {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
+            {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
+            {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
+            {class: 'quotes', before: '> ', tooltip: 'Citace'},
+            {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
+            {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
+            {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
+        ];
+        var editor = new EditorJQ(
+            '#mainEditorContainer',
+            {
+                buttons: buttons,
+                areaName: 'post_content'
+            });
+        editor.init();
+    });
+</script>

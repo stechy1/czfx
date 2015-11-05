@@ -1,0 +1,42 @@
+<? use app\model\User; ?>
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Profil</h1>
+
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="center-block" style="width: 140px;">
+                <div class="profile-image dropzone">
+                    <img src="uploads/image/avatar/<?= /** @var User $user */
+                    $user['user_avatar'] ?>.png"
+                         name="aboutme" width="140" height="140" border="0" class="img-circle user-image">
+
+                    <div class="image-overlay"></div>
+                </div>
+                <h3 class="text-center"><?= $user['user_nick'] ?></h3>
+            </div>
+            <p class="text-left"><strong>Motto: </strong><br>
+                <?= $user['user_motto'] ?></p>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <? if ($isLoged) : ?>
+            <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-upload"></i>
+            <span>Nahrát obrázek...</span>
+            <input id="avatar-upload" type="file" name="avatar-image">
+        </span>
+        <? if ($user['user_role']->valid(app\model\UserRole::REDACTOR, false)) : ?>
+            <a href="/article-management"><span class="btn btn-info">Správce článků</span></a>
+        <? endif ?>
+            <a href="/settings"><span class="btn btn-warning">Nastavení</span></a>
+            <!--<script src="js/czfx.uploader.js"></script>-->
+            <script type="text/javascript">
+                jQuery('#avatar-upload').click(function (e) {
+                    console.log(e);
+                });
+            </script>
+        <? endif ?>
+    </div>
+</div>

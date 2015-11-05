@@ -1,0 +1,56 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Správce článků</h1>
+    </div>
+    <div class="panel-body">
+        <? if ($hasArticles) : ?>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Titulek</th>
+                        <th>Schváleno</th>
+                        <th>Akce</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <? foreach ($articles as $article) : ?>
+                        <tr>
+                            <td><?= $article['article_id'] ?></td>
+                            <td><?= $article['article_title'] ?></td>
+                            <td><input type="checkbox" <?= ($article['article_validated'])?'checked':'' ?>/></td>
+                            <td><a class="btn btn-default btn-xs" href="article-management/edit/<?= $article['article_url'] ?>">Upravit</a></td>
+                        </tr>
+                    <? endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-8 col-sm-6 col-xs-offset-3 col-sm-offset-4">
+            <nav class="center-block">
+                <ul class="pagination">
+                    <?= $paginator->process() ?>
+                </ul>
+            </nav>
+            </div>
+        <? else : ?>
+            <?= $errorMessage ?>
+        <? endif ?>
+    </div>
+    <div class="panel-footer">
+        <a class="btn btn-primary" href="article-management/new">Nový článek</a>
+    </div>
+</div>
+<script>
+    jQuery(document).ready(function() {
+        jQuery("[type='checkbox']").bootstrapSwitch({
+            size: 'mini',
+            onText: 'ANO',
+            offText: 'NE',
+            onColor: 'success',
+            offColor: 'danger',
+            disabled: true
+        });
+    });
+
+</script>

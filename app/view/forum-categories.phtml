@@ -1,0 +1,44 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Forum</h1>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Název</th>
+                    <th>Témata</th>
+                    <th>Příspěvky</th>
+                    <th>Poslední příspěvek</th>
+                </tr>
+                </thead>
+                <tbody>
+                <? if ($forumCategories) : ?>
+                    <? foreach ($forumCategories as $category) : ?>
+                        <tr>
+                            <td class="text-center"><span class="glyphicon glyphicon-home" aria-hidden="true"</td>
+                            <td class="forum-item">
+                                <h4><a class=""
+                                       href="forum/show-topics/<?= $category['category_url']; ?>"><?= $category['category_name']; ?></a>
+                                </h4>
+                            </td>
+                            <td class="text-center"><?= $category['category_topics_count']; ?></td>
+                            <td class="text-center"><?= ($category['topic_posts_count']) ? $category['topic_posts_count'] : 0; ?></td>
+                            <td class="text-center"><?= ($category['nick']) ?: "Nikdo"; ?><br><?= app\model\util\DateUtils::formatDateTime($category['post_date']); ?></td>
+                        </tr>
+                    <? endforeach ?>
+                <? else : ?>
+                    <tr>
+                        <td>
+                            Forum neobsahuje žádná vlákna.
+                        </td>
+                    </tr>
+                <? endif ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer"></div>
+</div>

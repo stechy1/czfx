@@ -1,0 +1,50 @@
+<? use app\model\util\ParsedownExtra;
+use app\model\util\DateUtils;
+
+?>
+<div class="col-md-12 col-sm-12">
+    <div class="panel article">
+        <div class="panel-heading"><h1><?= $article['article_title'] ?></h1></div>
+        <div class="panel-body">
+            <?= ParsedownExtra::instance()->text($_text) ?>
+        </div>
+        <div class="panel-footer">
+            <span class="small right">Publikováno: <?= DateUtils::prettyDate($article['article_date']); ?></span>
+            <div class="visity-card">
+                <h4>Autor: <small><?= $user['user_nick']; ?></small></h4>
+                <div class="row">
+                    <img class="img-responsive img-circle col-sm-2 pull-left user-image"
+                         src="uploads/image/avatar/<?= $user['user_avatar']; ?>.png"
+                         alt="<?= $user['user_nick']; ?>">
+                    <p class="col-sm-10">
+                        <? if ($user['user_motto']) : ?>
+                            <?= $user['user_motto'] ?>
+                        <? else : ?>
+                            <?= "Žádný popis není k dispozici." ?>
+                        <? endif ?>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <hr style="width: 100%;">
+    <center>
+        <div class="col-md-4 col-sm-4">
+            <? if ($previousArticle) : ?>
+                <p>
+                    <a href="article/<?= $previousArticle['article_url'] ?>"><?= $previousArticle['article_title'] ?></a>
+                </p>
+            <? endif ?>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <p><a href="categories/<?= $category['category_url'] ?>"><?= $category['category_name'] ?></a></p>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <? if ($nextArticle) : ?>
+                <p><a href="article/<?= $nextArticle['article_url'] ?>"><?= $nextArticle['article_title'] ?></a></p>
+            <? endif ?>
+        </div>
+    </center>
+</div>
