@@ -33,7 +33,7 @@ class App {
         $this->container->mapValue('container', $this->container);
         $this->database = $this->container->getInstanceOf('database');
 
-        $this->database->connect("127.0.0.1", "root", "", "czfx");
+        $this->database->connect(DATABASE_HOST, DATABASE_LOGIN, DATABASE_PASS, DATABASE_SCHEME);
     }
 
     public function run() {

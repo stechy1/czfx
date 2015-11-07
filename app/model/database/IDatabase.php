@@ -69,6 +69,15 @@ interface IDatabase {
     function update($tabulka, $hodnoty = array(), $podminka, $parametry = array());
 
     /**
+     * Smaže záznam(y) z tabulky
+     * @param $tabulka
+     * @param $podminka
+     * @param array $parametry
+     * @return mixed
+     */
+    function delete($tabulka, $podminka, $parametry = array());
+
+    /**
      * Započne novou transakci
      * @return boolean True, pokud se podařilo založit novou transakci, jinak false
      */

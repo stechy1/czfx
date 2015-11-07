@@ -40,5 +40,26 @@
             </table>
         </div>
     </div>
-    <div class="panel-footer"></div>
+    <div class="panel-footer">
+        <? if ($isAdmin) : ?>
+
+        <? endif ?>
+    </div>
 </div>
+<? if ($isAdmin) : ?>
+    <script src="js/forumManager.js"></script>
+    <script>
+        var forumManager = new ForumManager();
+
+        jQuery(".delete-category").click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var categoryID = $(this).data("categoryid");
+
+            forumManager.deleteCategory(categoryID, function () {
+                $("#category-" + categoryID).remove();
+            });
+        });
+    </script>
+<? endif ?>

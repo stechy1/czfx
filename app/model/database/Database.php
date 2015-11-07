@@ -114,18 +114,32 @@ class Database implements IDatabase {
 
     /**
      * Změní řádek v tabulce tak, aby obsahoval data z asociativního pole
-     * @param $tabulka
+     * @param $table
      * @param array $hodnoty
-     * @param $podminka
+     * @param $condition
      * @param array $parameters
      * @return mixed
      */
-    public function update($tabulka, $hodnoty = array(), $podminka, $parameters = array())
+    public function update($table, $hodnoty = array(), $condition, $parameters = array())
     {
-        return $this->query("UPDATE `$tabulka` SET `" .
+        return $this->query("UPDATE `$table` SET `" .
             implode('` = ?, `', array_keys($hodnoty)) .
-            "` = ? " . $podminka,
+            "` = ? " . $condition,
             array_merge(array_values($hodnoty), $parameters));
+    }
+
+    /**
+     * @param $table
+     * @param $condition
+     * @param array $parameters
+     * @return mixed
+     */
+    function delete ($table, $condition, $parameters = array()) {
+        $query = "DELETE FROM $table";
+        if ($condition)
+            $query .= " WHERE " . $condition;
+
+        return $this->query($query, array_values($parameters));
     }
 
     /**

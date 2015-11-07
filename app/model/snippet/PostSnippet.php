@@ -16,7 +16,7 @@ class PostSnippet extends ASnippet {
 
     private $userID;
     private $userNick;
-    //private $userAvatarImage;
+    private $postID;
     private $postContent;
     private $postDate;
     private $postCategoryURL;
@@ -31,6 +31,7 @@ class PostSnippet extends ASnippet {
     public function __construct($data) {
         $this->userID = $data['user_id'];
         $this->userNick = $data['user_nick'];
+        $this->postID = $data['post_id'];
         $this->postContent = $data['post_content'];
         $this->postDate = $data['post_date'];
         $this->postCategoryURL = $data['category_url'];
@@ -46,9 +47,10 @@ class PostSnippet extends ASnippet {
         $panel = (new DivElement([
             (new DivElement(
                 (new SmallElement([
-                    (new AnchorElement($this->postTopicSubject))->setLocation('forum/'
+                    (new AnchorElement($this->postTopicSubject))->setLocation('forum/show-posts/'
                         . $this->postCategoryURL . '/'
-                        . $this->postTopicURL),
+                        . $this->postTopicURL
+                        . "#post-$this->postID"),
                     ' - ',
                     (new AnchorElement($this->userNick))->setLocation('profile/' . $this->userID)
                 ]))

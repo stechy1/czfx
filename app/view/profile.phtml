@@ -28,9 +28,9 @@
             <input id="avatar-upload" type="file" name="avatar-image">
         </span>
         <? if ($user['user_role']->valid(app\model\UserRole::REDACTOR, false)) : ?>
-            <a href="/article-management"><span class="btn btn-info">Správce článků</span></a>
+            <a href="article-management"><span class="btn btn-info">Správce článků</span></a>
         <? endif ?>
-            <a href="/settings"><span class="btn btn-warning">Nastavení</span></a>
+            <a href="settings"><span class="btn btn-warning">Nastavení</span></a>
             <!--<script src="js/czfx.uploader.js"></script>-->
             <script type="text/javascript">
                 jQuery('#avatar-upload').click(function (e) {

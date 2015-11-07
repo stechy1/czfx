@@ -51,8 +51,6 @@ class UserManager {
      * @throws Exception
      */
     public function register ($data) {
-        if ($data['year'] != date('Y'))
-            throw new Exception('Chybně vyplněný antispam.');
         if ($data['password'] != $data['passwordAgain'])
             throw new Exception('Hesla nesouhlasí.');
         $pass = $this->hash($data['password']);

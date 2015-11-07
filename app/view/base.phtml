@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="css/jquery-ui.min.css">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/highlight.min.css">
+     <link rel="stylesheet" href="css/highlight.min.css">
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <style>
@@ -67,6 +67,7 @@
         </div>
     </div>
 </footer>
+<? if (defined("UGLY_URL")) echo '<script type="text/javascript" src="js/ugly.js"></script>'; ?>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-notify.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-switch.min.js"></script>
@@ -74,8 +75,9 @@
 <script type="text/javascript" src="js/jquery.selection.min.js"></script>
 <script type="text/javascript" src="js/jquery.caret.min.js"></script>
 <script type="text/javascript" src="js/highlight.min.js"></script>
+<script src="js/prism.js"></script>
 <script type="text/javascript" src="js/czfx.js"></script>
 <script type="text/javascript" src="js/czfx.uploader.js"></script>
-<? if (defined("UGLY_URL")) echo '<script type="text/javascript" src="js/badurl.js"></script>'; ?>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 </html>

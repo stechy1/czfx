@@ -10,12 +10,16 @@
     <? if ($_posts) : ?>
         <? $parseDown = new app\model\util\ParsedownExtra(); ?>
         <? foreach ($_posts as $post) : ?>
-            <div class="row forum-post" id="<?= $post['post_date'] ?>">
+            <div class="row forum-post" id="post-<?= $post['post_id'] ?>">
+                <? if ($isAdmin) : ?>
+                <span class="btn btn-xs btn-danger remove-post" data-postid="<?= $post['post_id'] ?>" style=" position: absolute; right: 10px; z-index: 2;">Smazat
+                </span>
+                <? endif ?>
                 <div class="col-xs-3 col-sm-2 col-md-1 author">
-                    <img class="img-responsive img-circle center-block user-image" src="../uploads/image/avatar/<?= $post['user_avatar'] ?>.png" alt="<?= $post['user_nick']; ?>"/>
+                    <img class="img-responsive img-circle center-block user-image" src="uploads/image/avatar/<?= $post['user_avatar'] ?>.png" alt="<?= $post['user_nick']; ?>"/>
                     <p><?= $post['user_nick']; ?></p>
                 </div>
-                <div class="col-md-11" style="min-height: 70px;">
+                <div class="col-xs-9 col-md-10" style="min-height: 70px;">
                     <p class="text-justify"><?= $parseDown->text($post['post_content']); ?></p>
                 </div>
                 <span class="small right"><?= DateUtils::prettyDateTime($post['post_date']); ?></span>
@@ -43,10 +47,23 @@
         <button id="submiter" name="" class="btn btn-primary">Odeslat</button>
     </div>
 </div>
-<script src='https://www.google.com/recaptcha/api.js'></script>
-<script src="../js/editorJQ.js"></script>
+<script src="js/editorJQ.js"></script>
+<script src="js/forumManager.js"></script>
 <script>
+    var forumManager = new ForumManager();
+
     jQuery(document).ready(function () {
+
+        jQuery(".remove-post").click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var postID = $(this).data("postid");
+
+            forumManager.deletePost(postID, function () {
+                $("#post-" + postID).remove();
+            });
+        });
 
         var buttons = [
             {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},

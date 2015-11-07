@@ -56,7 +56,7 @@ class ArticleManagementController extends BaseController {
      * Provede se před hlavním zpracováním požadavku v kontroleru
      */
     public function onStartup () {
-        $this->validateUser(true, UserRole::REDACTOR);
+        $this->validateUser(UserRole::REDACTOR);
     }
 
     /**

@@ -211,8 +211,9 @@ EditorJQ.prototype.createAttachment = function (options) {
 };
 
 EditorJQ.prototype.showAttachment = function () {
-    if (this.attachmentContainer.css('display') == 'none')
-        this.attachmentContainer.fadeToggle();
+    if (this.settings.attachment)
+        if (this.attachmentContainer.css('display') == 'none')
+            this.attachmentContainer.fadeToggle();
 
     if (this.textarea.css('display') != 'none')
         this.textarea.fadeToggle();
@@ -221,8 +222,9 @@ EditorJQ.prototype.showAttachment = function () {
         this.previewContainer.fadeToggle();
 };
 EditorJQ.prototype.showArea = function () {
-    if (this.attachmentContainer.css('display') != 'none')
-        this.attachmentContainer.fadeToggle();
+    if (this.settings.attachment)
+        if (this.attachmentContainer.css('display') != 'none')
+            this.attachmentContainer.fadeToggle();
 
     if (this.textarea.css('display') == 'none')
         this.textarea.fadeToggle();
@@ -233,8 +235,9 @@ EditorJQ.prototype.showArea = function () {
     this.textarea.focus();
 };
 EditorJQ.prototype.showPreview = function () {
-    if (this.attachmentContainer.css('display') != 'none')
-        this.attachmentContainer.fadeToggle();
+    if (this.settings.attachment)
+        if (this.attachmentContainer.css('display') != 'none')
+            this.attachmentContainer.fadeToggle();
 
     if (this.textarea.css('display') != 'none')
         this.textarea.fadeToggle();

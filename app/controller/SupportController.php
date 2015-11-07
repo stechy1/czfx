@@ -6,6 +6,7 @@ namespace app\controller;
 use app\model\callback\CallBackMessage;
 use app\model\manager\SupportManager;
 use app\model\service\request\IRequest;
+use app\model\UserRole;
 use Exception;
 
 /**
@@ -34,7 +35,7 @@ class SupportController extends BaseController {
      * @param IRequest $request
      */
     public function defaultPostAction (IRequest $request) {
-        $this->validateUser();
+        $this->validateUser(UserRole::MEMBER);
         try {
             $this->supportmanager->addReport($_POST);
         } catch (Exception $ex) {

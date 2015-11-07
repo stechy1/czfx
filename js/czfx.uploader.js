@@ -6,8 +6,6 @@ function canUpload(file) {
 
 function uploadFile(fd) {
     jQuery(".dropzone").addClass("uploading");
-    //fd.append("controller", "upload");
-    //fd.append("uploadType", "avatar");
     jQuery.ajax({
         url: "profile/upload/avatar",
         type: "POST",

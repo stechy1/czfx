@@ -4,7 +4,10 @@ namespace app\controller;
 
 
 use app\model\callback\CallBackMessage;
+use app\model\factory\UserFactory;
 use app\model\manager\ForumManager;
+use app\model\manager\UserManager;
+use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
 use app\model\UserRole;
 use Exception;
@@ -12,6 +15,7 @@ use Exception;
 /**
  * Class ForumController
  * @Inject ForumManager
+ * @Inject UserFactory
  * @package app\controller
  */
 class ForumController extends BaseController {
@@ -20,60 +24,33 @@ class ForumController extends BaseController {
      * @var ForumManager
      */
     private $forummanager;
+    /**
+     * @var UserFactory
+     */
+    private $userfactory;
 
     /**
      * Výchozí akce kontroleru
      * @param IRequest $request
      */
     public function defaultAction (IRequest $request) {
-        /*if ($request->hasParams()) {
-            $params = $request->getParams();
-            $category = array_shift($params);
-            if ($params) {
-                $topic = array_shift($params);
-                try {
-                    $this->data['posts'] = $this->forummanager->getPosts($topic);
+        $this->header['title'] = 'Forum';
+        $this->view = 'forum-categories';
 
-                    $topic = $this->forummanager->getTopic($topic);
-                    $category = $this->forummanager->getCategory($category);
+        try {
+            $user = $this->userfactory->getUserFromSession();
+            $user->getRole()->valid(UserRole::ADMIN);
+            $this->data['isAdmin'] = true;
+        } catch (Exception $ex) {
+            $this->data['isAdmin'] = false;
+        }
 
-                    $this->data['categoryName'] = $category['category_name'];
-                    $this->data['categoryURL'] = $category['category_url'];
-                    $this->data['topicSubject'] = $topic['topic_subject'];
-
-                    $this->header['title'] = "Forum / " . $category['category_name'] . " / " . $topic['topic_subject'];
-                    $this->view = 'forum-posts';
-                } catch (Exception $ex) {
-                    $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
-                    $this->redirect('forum');
-                }
-            } else {
-                try {
-                    $this->view = 'forum-topics';
-
-                    $category = $this->forummanager->getCategory($category);
-                    $this->header['title'] = "Forum / " . $category['category_name'];
-                    $this->data['categoryName'] = $category['category_name'];
-                    $this->data['categoryUrl'] = $category['category_url'];
-
-                    $topics = $this->forummanager->getTopics($category['category_url']);
-                    $this->data['topics'] = $topics;
-
-                } catch (Exception $ex) {
-                    $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-                }
-            }
-        } else {*/
-            $this->header['title'] = 'Forum';
-            $this->view = 'forum-categories';
-
-            try {
-                $this->data['forumCategories'] = $this->forummanager->getCategories();
-            } catch (Exception $ex) {
-                $this->data['forumCategories'] = null;
-                $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-            }
-        //}
+        try {
+            $this->data['forumCategories'] = $this->forummanager->getCategories();
+        } catch (Exception $ex) {
+            $this->data['forumCategories'] = null;
+            $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
+        }
     }
 
     public function showTopicsAction (IRequest $request) {
@@ -85,6 +62,14 @@ class ForumController extends BaseController {
         $category = (isset($request->getParams()[1]))? $request->getParams()[1] : "-1";
         try {
             $this->view = 'forum-topics';
+
+            try {
+                $user = $this->userfactory->getUserFromSession();
+                $user->getRole()->valid(UserRole::ADMIN);
+                $this->data['isAdmin'] = true;
+            } catch (Exception $ex) {
+                $this->data['isAdmin'] = false;
+            }
 
             $category = $this->forummanager->getCategory($category);
             $this->header['title'] = "Forum / " . $category['category_name'];
@@ -100,6 +85,25 @@ class ForumController extends BaseController {
         }
     }
 
+    public function deleteTopicAjaxAction (IRequest $request) {
+        if (!$request->hasParams() && empty($request->getParams()[1])) {
+            $this->callBack->setFail();
+            $this->callBack->addMessage(new CallBackMessage("Není co smazat", CallBackMessage::WARNING));
+            return;
+        }
+
+        $topicID = $request->getParams()[1];
+
+        try {
+            $this->validateUser(UserRole::ADMIN);
+            $this->forummanager->deleteTopic($topicID);
+            $this->callBack->addMessage(new CallBackMessage("Téma bylo úspěšně smazáno"));
+        } catch (Exception $ex) {
+            $this->callBack->setFail();
+            $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
+        }
+    }
+
     public function showPostsAction (IRequest $request) {
         if (!$request->hasParams()) {
             $this->addMessage(new CallBackMessage("Nebyla zadána žádná kategorie", CallBackMessage::INFO));
@@ -111,6 +115,13 @@ class ForumController extends BaseController {
 
         try {
             $this->data['posts'] = $this->forummanager->getPosts($topic);
+            try {
+                $user = $this->userfactory->getUserFromSession();
+                $user->getRole()->valid(UserRole::ADMIN);
+                $this->data['isAdmin'] = true;
+            } catch (Exception $ex) {
+                $this->data['isAdmin'] = false;
+            }
 
             $topic = $this->forummanager->getTopic($topic);
             $category = $this->forummanager->getCategory($category);
@@ -130,13 +141,33 @@ class ForumController extends BaseController {
     public function showPostsPostAction (IRequest $request) {
         try {
             $this->validateUser(UserRole::MEMBER);
+            CaptchaService::verify($request->getPost("g-recaptcha-response", null));
             $this->forummanager->addPost($request->getPost('post_content'));
             $this->addMessage(new CallBackMessage("Zpráva byla úspěšně odeslána"));
         } catch (Exception $ex) {
-            $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
+            $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
 
         $this->showPostsAction($request);
+    }
+
+    public function deletePostAjaxAction (IRequest $request) {
+        if (!$request->hasParams() && empty($request->getParams()[1])) {
+            $this->callBack->setFail();
+            $this->callBack->addMessage(new CallBackMessage("Není co smazat", CallBackMessage::WARNING));
+            return;
+        }
+
+        $postID = $request->getParams()[1];
+
+        try {
+            $this->validateUser(UserRole::ADMIN);
+            $this->forummanager->deletePost($postID);
+            $this->callBack->addMessage(new CallBackMessage("Příspěvek byl úspěšně smazán"));
+        } catch (Exception $ex) {
+            $this->callBack->setFail();
+            $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
+        }
     }
 
     public function newTopicAction (IRequest $request) {

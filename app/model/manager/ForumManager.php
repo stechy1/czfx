@@ -79,6 +79,14 @@ class ForumManager {
     }
 
     /**
+     * Vrátí aktuálně vybranou kategorii, pokud existuje, jinak null
+     * @return string|null
+     */
+    public function getActualCategory () {
+        return $_SESSION['forum']['categoryURL'] ?: null;
+    }
+
+    /**
      * Vrátí seznam všech vláken v dané kategorii.
      * @param null $catURL URL kategoie.
      * @param int $from .
@@ -110,6 +118,12 @@ class ForumManager {
         return $fromDb;
     }
 
+    /**
+     * Vrátí informace o topicu
+     * @param $topicUrl
+     * @return array
+     * @throws Exception Pokud topic neexistuje
+     */
     public function getTopic ($topicUrl) {
         $fromDb = $this->database->queryOne("SELECT topic_id, topic_subject, topic_url, topic_date, topic_by
                                     FROM forum_topics
@@ -121,6 +135,24 @@ class ForumManager {
         return $fromDb;
     }
 
+    /**
+     * Smaže z fora topic i s jeho příspěvky
+     * @param $topicID int ID topicu
+     * @throws Exception
+     */
+    public function deleteTopic ($topicID) {
+        $fromDb = $this->database->delete("forum_topics", "topic_id = ?", [$topicID]);
+
+        if (!$fromDb)
+            throw new Exception("Nepodařilo se odstranit topic číslo: " . $topicID);
+    }
+
+    /**
+     * Vrátí všechny příspevky v daném topicu
+     * @param $topicURL string
+     * @return array
+     * @throws Exception Pokud se v topicu nenacházejí žádné příspěvky
+     */
     public function getPosts ($topicURL) {
         if ($topicURL == null)
             $topicURL = $_SESSION['forum']['topicURL']; else
@@ -141,8 +173,6 @@ class ForumManager {
 
         return $fromDb;
     }
-
-
 
     /**
      * Přidá nové vklákno do databáze
@@ -169,23 +199,13 @@ class ForumManager {
         return $topicUrl;
     }
 
-    public function addPost ($content) {
-        if (!$content)
-            throw new Exception("Musíte vyplnit zprávu");
-        $post = ["post_content" => $content, "post_date" => time(), "post_topic" => $_SESSION['forum']['topic_id'], "post_by" => $_SESSION['user']['id']];
-
-        $this->database->insert("forum_posts", $post);
-
-    }
-
     /**
-     * Vrátí aktuálně vybranou kategorii, pokud existuje, jinak null
-     * @return string|null
+     * Vrátí x posledních příspěvků
+     * @param $count int Počet příspěvků
+     * @param bool|true $resetCounter True, pokud se má restartovat čítač příspěvků
+     * @return array Pole příspěvků
+     * @throws Exception Pokud žádné příspěvky nebyly nalezeny
      */
-    public function getActualCategory () {
-        return $_SESSION['forum']['categoryURL'] ?: null;
-    }
-
     public function getLastPosts ($count, $resetCounter = true) {
         $params = array();
         $query = "SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date,
@@ -216,5 +236,31 @@ class ForumManager {
 
         return $fromDb;
 
+    }
+
+    /**
+     * Přidá post do topicu
+     * @param $content string Obsah komentáře
+     * @throws Exception Pokud se nepodaří komentář přidat
+     */
+    public function addPost ($content) {
+        if (!$content)
+            throw new Exception("Musíte vyplnit zprávu");
+        $post = ["post_content" => $content, "post_date" => time(), "post_topic" => $_SESSION['forum']['topic_id'], "post_by" => $_SESSION['user']['id']];
+
+        $this->database->insert("forum_posts", $post);
+
+    }
+
+    /**
+     * Smaže příspěvek podle ID
+     * @param $postID int ID příspěvku, který má být smazán
+     * @throws Exception Pokud se nepodaří příspěvek odstranit
+     */
+    public function deletePost ($postID) {
+        $fromDb = $this->database->delete("forum_posts", "post_id = ?", [$postID]);
+
+        if (!$fromDb)
+            throw new Exception("Nepodařilo se odstranit příspěvek číslo: " . $postID);
     }
 }

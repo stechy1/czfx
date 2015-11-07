@@ -8,6 +8,7 @@ use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
 use app\model\manager\UserManager;
 use app\model\service\request\IRequest;
+use app\model\UserRole;
 use Exception;
 
 /**
@@ -34,10 +35,10 @@ class ProfileController extends BaseController {
     public function defaultAction (IRequest $request) {
         if ($request->hasParams()) {
             try {
-                $this->data['user'] = $this->userfactory->getUserByID(intval($param))->toArray();
+                $this->data['user'] = $this->userfactory->getUserByID(intval($request->getParams()[0]))->toArray();
             } catch (Exception $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
-                $this->redirect('login');
+                $this->redirect('index');
             }
 
         } else {
@@ -66,6 +67,7 @@ class ProfileController extends BaseController {
 
     public function uploadAjaxAction (IRequest $request) {
         try {
+            $this->validateUser(UserRole::MEMBER);
             $result = $this->usermanager->changeAvatar($request->getFile('avatar'));
             $this->callBack->addData(new CallBackData("imgSrc", $result), false);
         } catch (Exception $ex) {

@@ -16,6 +16,7 @@ use Exception;
  */
 class UserFactory {
 
+
     /**
      * @var Database
      */

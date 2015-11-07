@@ -5,7 +5,9 @@ use app\App;
 session_start();
 
 define("__HOME__", $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
-//define("UGLY_URL", true);
+
+require("app/config/config.php");
+require("lib/recaptchalib.php");
 
 spl_autoload_extensions('.php');
 spl_autoload_register();

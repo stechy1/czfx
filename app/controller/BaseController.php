@@ -130,7 +130,7 @@ abstract class BaseController {
      * @return bool True, pokud má uživatel dostatečné oprávnění, jinak false.
      * @throws Exception Pokud uživatel nemá dostatečná oprávnění.
      */
-    public function validateUser($mustBeActivated = false, $role = null) {
+    public function validateUser($role = null, $mustBeActivated = true) {
         $user = null;
         try {
             $user = $this->userfactory->getUserFromSession();

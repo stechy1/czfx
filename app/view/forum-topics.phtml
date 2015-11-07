@@ -13,11 +13,14 @@
                 <th>Název</th>
                 <th>Příspěvky</th>
                 <th>Poslední příspěvek</th>
+                <? if ($isAdmin) : ?>
+                <th>Akce</th>
+                <? endif ?>
             </tr>
             </thead>
             <tbody>
             <? foreach ($topics as $topic) : ?>
-                <tr>
+                <tr id="topic-<?= $topic['topic_id'] ?>">
                     <td><span class="glyphicon glyphicon-book"></span></td>
                     <td>
                         <h4>
@@ -26,6 +29,11 @@
                     </td>
                     <td class="text-center"><?= $topic['topic_posts_count']; ?></td>
                     <td>Undefined</td>
+                    <? if ($isAdmin) : ?>
+                    <td>
+                        <span class="btn btn-xs btn-danger delete-topic" data-topicid="<?= $topic['topic_id'] ?>">Smazat</span>
+                    </td>
+                    <? endif ?>
                 </tr>
             <? endforeach ?>
             </tbody>
@@ -33,4 +41,22 @@
     </div>
 <? else : ?>
     <p>Můžeš založit nové vlákno.</p>
+<? endif ?>
+
+<? if ($isAdmin) : ?>
+    <script src="js/forumManager.js"></script>
+    <script>
+        var forumManager = new ForumManager();
+
+        jQuery(".delete-topic").click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var topicID = $(this).data("topicid");
+
+            forumManager.deleteTopic(topicID, function () {
+                $("#topic-" + topicID).remove();
+            });
+        });
+    </script>
 <? endif ?>
