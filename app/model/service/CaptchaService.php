@@ -17,7 +17,8 @@ class CaptchaService {
         $response = $reCaptcha->verifyResponse($_SERVER["REMOTE_ADDR"], $text);
 
         if (!$response->success) {
-            throw new Exception(self::$errorArray[$response->errorCodes]);
+            $err = (isset(self::$errorArray[$response->errorCodes]))? self::$errorArray[$response->errorCodes] : "Neznámá chyba" ;
+            throw new Exception($err);
         }
 
         return true;

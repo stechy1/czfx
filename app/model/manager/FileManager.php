@@ -80,7 +80,8 @@ class FileManager {
      * @throws Exception Pokud zdroj nebo cíl není složka.
      */
     public static function moveFiles($sourceDir, $destDir) {
-        if (!is_dir($sourceDir))
+
+        /*if (!is_dir($sourceDir))
             throw new Exception("Zdroj není složka");
         if (!is_dir($destDir))
             throw new Exception("Cíl není složka");
@@ -90,7 +91,7 @@ class FileManager {
                 self::moveFiles($tmpFile, $destDir . "/" . $tmpFile);
             else
                 rename($sourceDir . "/" . $tmpFile, $destDir . $tmpFile);
-        }
+        }*/
     }
 
     /**

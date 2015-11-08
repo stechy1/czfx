@@ -5,6 +5,7 @@ namespace app\controller;
 
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
+use app\model\manager\FileManager;
 use app\model\manager\ForumManager;
 use app\model\manager\UserManager;
 use app\model\service\CaptchaService;

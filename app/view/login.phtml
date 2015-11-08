@@ -1,9 +1,9 @@
-<div class="panel">
-    <div class="panel-heading">
-        <h1 class="page-header">Přihlášení</h1>
-    </div>
-    <div class="panel-body">
-        <form id="submitForm" method="post" class="col-md-offset-2 col-md-8">
+<form method="post" class="col-md-offset-2 col-md-8">
+    <div class="panel">
+        <div class="panel-heading">
+            <h1 class="page-header">Přihlášení</h1>
+        </div>
+        <div class="panel-body">
             <fieldset>
                 <div class="form-group">
                     <div class="input-group">
@@ -13,7 +13,8 @@
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input id="password" class="form-control" placeholder="Heslo" name="password" type="password" value="">
+                        <input id="password" class="form-control" placeholder="Heslo" name="password" type="password"
+                               value="">
                         <label for="password" class="input-group-addon glyphicon glyphicon-lock"></label>
                     </div>
                 </div>
@@ -24,9 +25,9 @@
                 </div>
 
             </fieldset>
-        </form>
+        </div>
+        <div class="panel-footer">
+            <input type="submit" class="btn btn-sm btn-success btn-block" value="Přihlásit">
+        </div>
     </div>
-    <div class="panel-footer">
-        <button id="submiter" class="btn btn-lg btn-success btn-block">Přihlásit</button>
-    </div>
-</div>
+</form>

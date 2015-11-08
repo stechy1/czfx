@@ -1,9 +1,9 @@
-<div class="panel">
-    <div class="panel-heading">
-        <h1 class="page-header">Editor článku</h1>
-    </div>
-    <div class="panel-body">
-        <form id="submitForm" method="post">
+<form method="post">
+    <div class="panel">
+        <div class="panel-heading">
+            <h1 class="page-header">Editor článku</h1>
+        </div>
+        <div class="panel-body">
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-4">
                     <div class="form-group">
@@ -15,13 +15,15 @@
                         <label class="control-label" for="article-category">Kategorie článku:</label>
                         <select id="article-category" name="article_category" class="form-control">
                             <? if (isset($articleCategory)): ?>
-                                <option value="<?= $articleCategory->getID() ?>"><?= $articleCategory->getName() ?></option>
+                                <option
+                                    value="<?= $articleCategory->getID() ?>"><?= $articleCategory->getName() ?></option>
                             <? else : ?>
                                 <option value="-1">Vyberte...</option>
                             <? endif ?>
                             <? //@var array $categories
                             foreach ($categories as $category) : ?>
-                                <option value="<?= $category['category_id']; ?>"><?= $category['category_name']; ?></option>
+                                <option
+                                    value="<?= $category['category_id']; ?>"><?= $category['category_name']; ?></option>
                             <? endforeach ?>
                         </select>
                     </div>
@@ -29,7 +31,8 @@
                 <div class="col-xs-12 col-sm-6 col-md-4">
                     <div class="form-group">
                         <label class="control-label" for="article-description">Popis článku:</label>
-                        <input id="article-description" name="article_description" type="text" placeholder="popis článku"
+                        <input id="article-description" name="article_description" type="text"
+                               placeholder="popis článku"
                                class="form-control input-md"
                                required="" value="<?= $article['article_description'] ?>">
                     </div>
@@ -69,18 +72,19 @@
             <div class="row">
                 <div id="mainEditorContainer"></div>
             </div>
-        </form>
+        </div>
+        <div class="panel-footer">
+            <input type="submit" class="btn btn-sm btn-primary"
+                   value="<?= ($artAction == 'new') ? 'Vytvořit' : 'Upravit' ?>">
+            <a href="/article-management" class="btn btn-warning btn-sm right">Zrušit</a>
+        </div>
     </div>
-    <div class="panel-footer">
-        <button id="submiter" class="btn btn-primary btn-sm"><?= ($artAction == 'new')?'Vytvořit':'Upravit' ?></button>
-        <a href="/article-management" class="btn btn-warning btn-sm right">Zrušit</a>
-    </div>
-</div>
+</form>
 <script src="js/editorJQ.js"></script>
 <script>
     jQuery(document).ready(function () {
         var getArticles = function (catID) {
-            var showOptions = function(select, articles) {
+            var showOptions = function (select, articles) {
                 select = $(select);
                 select.empty();
 
@@ -142,9 +146,9 @@
             type: 'post',
             url: 'article-management/get/article-content',
             /*data: {
-                controller: 'article-manager',
-                action: 'getContent'
-            },*/
+             controller: 'article-manager',
+             action: 'getContent'
+             },*/
             success: function (result) {
                 result = JSON.parse(result);
                 if (result.success)

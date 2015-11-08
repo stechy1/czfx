@@ -17,6 +17,9 @@ use Exception;
  */
 abstract class BaseController {
 
+    const
+        DEF_PATH_TO_VIEW = "app/view/";
+
     /**
      * @var UserFactory
      */
@@ -37,9 +40,14 @@ abstract class BaseController {
      * @var AjaxCallBack
      */
     protected $callBack;
+    /**
+     * @var string
+     */
+    protected $pathToView = self::DEF_PATH_TO_VIEW;
 
     /**
      * Ošetří proměnnou pro výpis do HTML stránky
+     *
      * @param null $x Proměnná pro ošetření
      * @return array|null|string
      */
@@ -66,12 +74,13 @@ abstract class BaseController {
         if ($this->view) {
             extract($this->check($this->data));
             extract($this->data, EXTR_PREFIX_ALL, "");
-            require("app/view/" . $this->view . ".phtml");
+            require($this->pathToView . $this->view . ".phtml");
         }
     }
 
     /**
      * Přidá zprávu pro uživatele
+     *
      * @param CallBackMessage $callBackMessage Zpráva pro uživatele
      */
     public function addMessage(CallBackMessage $callBackMessage)
@@ -93,6 +102,7 @@ abstract class BaseController {
 
     /**
      * Vrátí zprávy pro uživatele
+     *
      * @return array Pole zpráv
      */
     public function getMessages()
@@ -111,6 +121,7 @@ abstract class BaseController {
 
     /**
      * Přesměruje na dané URL
+     *
      * @param $url string Dané url
      */
     public function redirect($url)
@@ -164,21 +175,25 @@ abstract class BaseController {
     public function onExit() {}
     /**
      * Výchozí akce kontroleru
+     *
      * @param IRequest $request
      */
     public function defaultAction(IRequest $request) {}
     /**
      * Výchozí akce kontroleru po odeslání formuláře
+     *
      * @param IRequest $request
      */
     public function defaultPostAction(IRequest $request) {$this->redirect('index');}
     /**
      * Výchozí reakce kontroleru na ajaxový požadavek
+     *
      * @param IRequest $request
      */
     public function defaultAjaxAction(IRequest $request) {$this->callBack->setFail();}
     /**
      * Výchozí reakce kontroleru na ajaxový požadavek s postem
+     *
      * @param IRequest $request
      */
     public function defaultPostAjaxAction(IRequest $request) {$this->callBack->setFail();}

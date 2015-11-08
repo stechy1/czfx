@@ -5,6 +5,7 @@ namespace app\controller;
 
 use app\model\callback\CallBackMessage;
 use app\model\manager\SupportManager;
+use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
 use app\model\UserRole;
 use Exception;
@@ -35,13 +36,16 @@ class SupportController extends BaseController {
      * @param IRequest $request
      */
     public function defaultPostAction (IRequest $request) {
-        $this->validateUser(UserRole::MEMBER);
         try {
+            CaptchaService::verify($request->getPost("g-recaptcha-response", null));
+            $this->validateUser(UserRole::MEMBER);
             $this->supportmanager->addReport($_POST);
+            $this->addMessage(new CallBackMessage("Zpráva byla úspěšně poslána"));
         } catch (Exception $ex) {
-            //$this->callBack->setFail();
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
+
+        $this->redirect('support');
     }
 
 }

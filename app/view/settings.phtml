@@ -1,0 +1,152 @@
+<div class="panel with-nav-tabs panel-default">
+    <div class="panel-heading">
+        <h1 class="page-header">Nastavení</h1>
+    </div>
+    <div class="panel-body">
+        <div style="min-height: 21px;">
+            <div class="right">
+                <? if ($user['user_activated']) : ?>
+                    <span class="label label-success">
+                        <span class="glyphicon glyphicon-ok-sign"></span>
+                        Váš účet je aktivován
+                    </span>
+                <? else : ?>
+                    <span class="label label-warning">
+                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        Účet není ověřený. Klikněte <span class="label label-info"><a
+                                href="check-code">ZDE</a></span> pro zadání
+                        aktivačního kódu.
+                    </span>
+                <? endif ?>
+            </div>
+        </div>
+        <div class="col-xs-4 col-md-1">
+            <div class="tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#general" data-toggle="tab">Obecné</a></li>
+                    <li><a href="#personal" data-toggle="tab">Osobní</a></li>
+                    <li><a href="#location" data-toggle="tab">Poloha</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xs-8 col-md-10">
+            <div class="tab-content">
+                <div id="general" class="tab-pane fade in active">
+                    <form method="post" action="settings/general" class="form-horizontal" name="general">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="newNick">Přihlašovací jméno:</label>
+
+                            <div class="col-md-5">
+                                <input id="newNick" name="newNick" type="text" placeholder="přihlašovací jméno"
+                                       class="form-control input-md" value="<?= $user['user_nick'] ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="newPassword">Heslo:</label>
+
+                            <div class="col-md-5">
+                                <input id="newPassword" name="newPassword" type="password" placeholder="heslo"
+                                       class="form-control input-md">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="newEmail">E-mail:</label>
+
+                            <div class="col-md-5">
+                                <input id="newEmail" name="newEmail" type="text" placeholder="e-mail"
+                                       class="form-control input-md" value="<?= $user['user_mail'] ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="actPassword">Aktuální heslo:</label>
+
+                            <div class="col-md-5">
+                                <input id="actPassword" name="actPassword" type="password" placeholder="aktuální heslo"
+                                       class="form-control input-md" required="">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label"></label>
+
+                            <div class="col-md-8">
+                                <button class="btn btn-sm btn-primary" name="general" type="submit">
+                                    <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+                                    Uložit změny
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="personal" class="tab-pane fade">
+                    <form method="post" action="settings/personal" class="form-horizontal" name="personal">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="name">Jméno:</label>
+
+                            <div class="col-md-5">
+                                <input id="name" name="name" placeholder="jméno"
+                                       class="form-control input-md" value="<?= $user['user_name'] ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="age">Věk:</label>
+
+                            <div class="col-md-5">
+                                <input id="age" name="age" placeholder="věk"
+                                       class="form-control input-md" value="<?= $user['user_age'] ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="age">Motto:</label>
+
+                            <div class="col-md-5">
+                                <input id="motto" name="motto" placeholder="motto"
+                                       class="form-control input-md" value="<?= $user['user_motto'] ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="actPassword">Aktuální heslo:</label>
+
+                            <div class="col-md-5">
+                                <input id="actPassword" name="actPassword" type="password" placeholder="aktuální heslo"
+                                       class="form-control input-md" required="">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label"></label>
+
+                            <div class="col-md-8">
+                                <button class="btn btn-primary" id="submiter" name="general" type="submit">
+                                    <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+                                    Uložit změny
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="location" class="tab-pane fade">
+                    <form method="post" action="settings/location" class="form-horizontal" name="location">
+                        Obsah poloha
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <button id="delete-account" name="delete-account" class="btn btn-danger btn-sm delete-account">Smazat účet
+        </button>
+    </div>
+</div>

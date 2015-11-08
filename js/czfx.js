@@ -9,8 +9,9 @@ jQuery(function () {
         jQuery(target).fadeToggle();
     });
 
-    jQuery("#submiter").click(function() {
-        jQuery('#submitForm').submit();
+    jQuery(".fileinput-button").click(function(e) {
+        $(this).next().trigger('click');
+
     });
 
     jQuery('[data-toggle="tooltip"]').tooltip();

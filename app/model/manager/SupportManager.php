@@ -25,10 +25,6 @@ class SupportManager {
      * @throws Exception
      */
     public function addReport($data) {
-        if($data['antispam'] != date('Y'))
-            throw new Exception("Chybně vyplněný antispam");
-
-
-        $this->database->insert(SupportManager::TBL_NAME, ['report_by' => $_SESSION['user']['user_id'], 'report_message' => $data['message']]);
+        $this->database->insert(SupportManager::TBL_NAME, ['report_by' => $_SESSION['user']['id'], 'report_message' => $data['message']]);
     }
 }

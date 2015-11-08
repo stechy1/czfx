@@ -1,36 +1,27 @@
-<div class="panel">
-    <div class="panel-heading">
-        <h1 class="page-header">Podpora</h1>
-    </div>
-    <div class="panel-body">
-        <form id="submitForm" method="post" class="form-horizontal">
-
+<form id="submitForm" method="post" class="form-horizontal">
+    <div class="panel">
+        <div class="panel-heading">
+            <h1 class="page-header">Podpora</h1>
+        </div>
+        <div class="panel-body">
             <div class="form-group">
                 <label class="col-md-4 control-label" for="name">Uživatelské jméno:</label>
 
                 <div class="col-md-4">
                     <input id="name" name="name" type="text" placeholder="uživatelské jméno"
                            class="form-control input-md" required="">
-
                 </div>
             </div>
 
             <div id="mainEditorContainer"></div>
 
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="antispam">Zadejte aktuální rok:</label>
-
-                <div class="col-md-4">
-                    <input class="form-control" id="antispam" name="antispam" placeholder="aktuální rok" required="">
-                </div>
-            </div>
-
-        </form>
+            <div class="g-recaptcha" data-theme="dark" data-sitekey="6LcN3g0TAAAAAO-4iq4hSU-m24HFNUJBy-n07Xck"></div>
+        </div>
+        <div class="panel-footer">
+            <input type="submit" class="btn btn-sm btn-primary">
+        </div>
     </div>
-    <div class="panel-footer">
-        <button id="submiter" type="submit" class="btn btn-primary">Odeslat</button>
-    </div>
-</div>
+</form>
 <script src="js/editorJQ.js"></script>
 <script>
     jQuery(document).ready(function () {
@@ -49,10 +40,8 @@
         var editor = new EditorJQ(
             '#mainEditorContainer',
             {
-                controller: 'file-manager',
-                action: 'store',
                 buttons: buttons,
-                areaName: 'post_content'
+                areaName: 'message'
             });
         editor.init();
     });

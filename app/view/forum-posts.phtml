@@ -12,14 +12,13 @@
         <? foreach ($_posts as $post) : ?>
             <div class="row forum-post" id="post-<?= $post['post_id'] ?>">
                 <? if ($isAdmin) : ?>
-                <span class="btn btn-xs btn-danger remove-post" data-postid="<?= $post['post_id'] ?>" style=" position: absolute; right: 10px; z-index: 2;">Smazat
-                </span>
+                <span class="btn btn-xs btn-danger remove-post" data-postid="<?= $post['post_id'] ?>" style=" position: absolute; right: 10px; z-index: 2;">Smazat</span>
                 <? endif ?>
                 <div class="col-xs-3 col-sm-2 col-md-1 author">
                     <img class="img-responsive img-circle center-block user-image" src="uploads/image/avatar/<?= $post['user_avatar'] ?>.png" alt="<?= $post['user_nick']; ?>"/>
                     <p><?= $post['user_nick']; ?></p>
                 </div>
-                <div class="col-xs-9 col-md-10" style="min-height: 70px;">
+                <div class="col-xs-9 col-md-10 col-lg-11" style="min-height: 70px;">
                     <p class="text-justify"><?= $parseDown->text($post['post_content']); ?></p>
                 </div>
                 <span class="small right"><?= DateUtils::prettyDateTime($post['post_date']); ?></span>
@@ -33,20 +32,22 @@
 </div>
 <hr style="width: 100%;">
 
+<form id="submitForm" method="post" class="form-horizontal">
 <div class="panel">
     <div class="panel-heading">
         <h2>Odpověď</h2>
     </div>
     <div class="panel-body">
-        <form id="submitForm" method="post" class="form-horizontal">
+
+
             <div id="mainEditorContainer"></div>
             <div class="g-recaptcha" data-theme="dark" data-sitekey="6LcN3g0TAAAAAO-4iq4hSU-m24HFNUJBy-n07Xck"></div>
-        </form>
     </div>
     <div class="panel-footer">
-        <button id="submiter" name="" class="btn btn-primary">Odeslat</button>
+        <input type="submit" class="btn btn-sm btn-primary">
     </div>
 </div>
+</form>
 <script src="js/editorJQ.js"></script>
 <script src="js/forumManager.js"></script>
 <script>

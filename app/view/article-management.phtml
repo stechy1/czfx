@@ -20,7 +20,7 @@
                             <td><?= $article['article_id'] ?></td>
                             <td><?= $article['article_title'] ?></td>
                             <td><input type="checkbox" <?= ($article['article_validated'])?'checked':'' ?>/></td>
-                            <td><a class="btn btn-default btn-xs" href="article-management/edit/<?= $article['article_url'] ?>">Upravit</a></td>
+                            <td><a class="btn btn-xs btn-default" href="article-management/edit/<?= $article['article_url'] ?>">Upravit</a></td>
                         </tr>
                     <? endforeach ?>
                     </tbody>
@@ -38,7 +38,7 @@
         <? endif ?>
     </div>
     <div class="panel-footer">
-        <a class="btn btn-primary" href="article-management/new">Nový článek</a>
+        <a class="btn btn-sm btn-primary" href="article-management/new">Nový článek</a>
     </div>
 </div>
 <script>

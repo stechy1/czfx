@@ -1,30 +1,29 @@
+<form method="post" class="form-horizontal">
 <div class="panel">
     <div class="panel-heading">
         <h1 class="page-header">Nové vlákno</h1>
     </div>
     <div class="panel-body">
-        <form id="submitForm" method="post" class="form-horizontal">
             <div class="form-group">
-                <label class="col-md-4 control-label" for="topic_subject">Téma:</label>
+                <label class="col-md-4 control-label" for="topic_subject">Název vlákna:</label>
 
                 <div class="col-md-4">
-                    <input id="topic_subject" name="topic_subject" type="text" placeholder="téma"
+                    <input id="topic_subject" name="topic_subject" type="text" placeholder="název vlákna"
                            class="form-control input-md" required="">
 
                 </div>
             </div>
 
             <div id="mainEditorContainer"></div>
-        </form>
     </div>
     <div class="panel-footer">
-        <button id="submiter" name="" class="btn btn-primary">Založit</button>
+        <input type="submit" class="btn btn-sm btn-primary" value="Založit">
     </div>
 </div>
+</form>
 <script src="js/editorJQ.js"></script>
 <script>
     jQuery(document).ready(function () {
-
         var buttons = [
             {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
             {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
@@ -39,8 +38,6 @@
         var editor = new EditorJQ(
             '#mainEditorContainer',
             {
-                controller: 'file-manager',
-                action: 'store',
                 buttons: buttons,
                 areaName: 'post_content'
             });

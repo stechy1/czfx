@@ -8,8 +8,9 @@ use Exception;
 class UserRole {
 
     const
-        MEMBER = 1,
-        REDACTOR = 2,
+        OLD_MEMBER = 1,
+        MEMBER = 2,
+        REDACTOR = 3,
         ADMIN = 10;
 
     private $roleID;

@@ -60,13 +60,10 @@ class UserManager {
             'user_password' => $pass,
             'user_mail' => $data['email'],
             'user_first_login' => time(),
-            'user_activation_code' => $checkCode,
-            'user_avatar' => "empty_image"
+            'user_activation_code' => $checkCode
         );
         try {
             $this->database->insert('users', $user);
-            //$userID = Db::getLastId();
-            //$this->databaze->insert("user_info", ['user_info_user_id' => $userID]);
 
             mb_send_mail("pstechmu@students.zcu.cz", "Testovaci mail", "Toto je testovaci zprava");
 
@@ -96,8 +93,6 @@ class UserManager {
             throw new Exception('Špatné jméno nebo heslo.');
 
         $this->database->update('users', ['user_online' => 1, 'user_last_login' => time()], 'WHERE user_id = ?', [$fromDb['user_id']]);
-        /*$_SESSION['user'] = $user;
-        $_SESSION['user']['user_online'] = 1;*/
         $_SESSION['user']['id'] = $fromDb['user_id'];
     }
 
@@ -108,6 +103,7 @@ class UserManager {
      * @throws Exception
      */
     public function updateUser ($data) {
+        $actPass = $this->hash($data['actPassword']);
         /*if (!$_SESSION['user']['user_activated'])
             throw new Exception("Musíte nejdříve aktivovat účet");
         $actPass = $this->hash($data['actPassword']);
@@ -198,7 +194,6 @@ class UserManager {
         $fromDb = null;
         if ($changeDb)
             $fromDb = $this->database->update('users', ['user_online' => 0], 'WHERE user_id = ?', [$_SESSION['user']['id']]);
-        //session_destroy();
         unset($_SESSION['user']);
         if ($fromDb)
             return true;
@@ -214,7 +209,26 @@ class UserManager {
     public function delete ($heslo) {
         $id = $_SESSION['user']['user_id'];
         $pass = $this->hash($heslo);
-        $fromDb = $this->database->query("DELETE FROM users WHERE user_id = ? AND user_password = ?", [$id, $pass]);
+        $emptyUser = array(
+            "user_nick" => "Bývalý člen",
+            "user_password" => "",
+            "user_mail" => "",
+            "user_role" => "0",
+            "user_online" => "0",
+            "user_banned" => "0",
+            "user_activated" => "0",
+            "user_activation_code" => "",
+            "user_name" => "",
+            "user_age" => "",
+            "user_avatar" => "",
+            "user_region" => "",
+            "user_city" => "",
+            "user_motto" => "",
+            "user_skill" => "",
+
+        );
+        $fromDb = $this->database->update("users", $emptyUser, "WHERE user_id = ? AND user_password = ?", [$id, $pass]);
+        //$fromDb = $this->database->query("DELETE FROM users WHERE user_id = ? AND user_password = ?", [$id, $pass]);
         if ($fromDb) {
             $this->logout(false);
             return true;

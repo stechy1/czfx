@@ -71,6 +71,6 @@ class CheckCodeController extends BaseController {
      * @param IRequest $request
      */
     public function defaultPostAction (IRequest $request) {
-        $this->activate($request->getPost());
+        $this->activate($request->getPost("code"));
     }
 }

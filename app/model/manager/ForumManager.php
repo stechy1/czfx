@@ -109,7 +109,7 @@ class ForumManager {
                                     INNER JOIN forum_topics
                                       ON forum_topics.topic_cat = forum_categories.category_id
                                     WHERE category_url = ? AND forum_topics.topic_id < ?
-                                    ORDER BY forum_topics.topic_id desc
+                                    ORDER BY forum_topics.topic_id DESC
                                     LIMIT 12", [$catURL, $from]);
 
         if (!$fromDb)
@@ -153,9 +153,10 @@ class ForumManager {
      * @return array
      * @throws Exception Pokud se v topicu nenacházejí žádné příspěvky
      */
-    public function getPosts ($topicURL) {
+    public function getPosts ($topicURL = null) {
         if ($topicURL == null)
-            $topicURL = $_SESSION['forum']['topicURL']; else
+            $topicURL = $_SESSION['forum']['topicURL'];
+        else
             $_SESSION['forum']['topicURL'] = $topicURL;
 
         $fromDb = $this->database->queryAll("SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date, forum_posts.post_by,

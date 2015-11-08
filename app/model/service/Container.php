@@ -29,22 +29,22 @@ class Container {
      * @return Container
      * @throws Exception Pokud container již existuje
      */
-    public static function getContainer() {
+    public static function getContainer () {
         if (self::$created)
             throw new Exception("Container už existuje");
 
-        self::$created = false;
+        self::$created = true;
         $container = new Container();
         $container->mapValue('container', $container);
 
         return $container;
     }
 
-    private function folderIterator($folder) {
+    private function folderIterator ($folder) {
         /**
          * @var $fileInfo SplFileInfo
          */
-        foreach(new FileFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder))) as $fileInfo) {
+        foreach (new FileFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder))) as $fileInfo) {
             $pathName = $fileInfo->getPathname();
             $root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']) . '\\';
             $filePath = str_replace($root, '', $pathName);
@@ -60,7 +60,7 @@ class Container {
      * @param $reflection ReflectionClass
      * @return
      */
-    private function injectClass($obj, $reflection) {
+    private function injectClass ($obj, $reflection) {
         if ($doc = $reflection->getDocComment()) {
             $lines = explode("\n", $doc);
             foreach ($lines as $line) {
@@ -127,10 +127,10 @@ class Container {
         if (!array_key_exists($className, $this->clasess))
             return null;
 
-        // initialized the ReflectionClass
+        // inicializace reflexní třídy
         $reflection = new ReflectionClass($this->clasess[$className]);
 
-        // creating an instance of the class
+        // vytvoření instance nové třídy
         if ($arguments === null || count($arguments) == 0) {
             $obj = new $this->clasess[$className];
         } else {
@@ -141,16 +141,21 @@ class Container {
         }
 
         $parentReflection = $reflection->getParentClass();
-        if ($parentReflection != null)
-            $obj = $this->injectClass($obj, $parentReflection);
 
-        // injecting
+        while ($parentReflection != null) {
+            $obj = $this->injectClass($obj, $parentReflection);
+            $parentReflection = $parentReflection->getParentClass();
+        }
+
+        /*if ($parentReflection != null)
+            $obj = $this->injectClass($obj, $parentReflection);*/
+
+        // injekce
         $obj = $this->injectClass($obj, $reflection);
 
         if (!isset($this->map->$className))
             $this->mapValue($className, $obj);
 
-        // return the created instance
         return $obj;
     }
 }

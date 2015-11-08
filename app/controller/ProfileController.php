@@ -43,8 +43,9 @@ class ProfileController extends BaseController {
 
         } else {
             try {
-                $this->data['user'] = $this->userfactory->getUserFromSession()->toArray();
-            } catch(Exception $ex) {
+                $user = $this->userfactory->getUserFromSession();
+                $this->data['user'] = $user->toArray();
+            } catch (Exception $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
                 $this->redirect("login");
             }
