@@ -11,10 +11,17 @@ jQuery(function () {
 
     jQuery(".fileinput-button").click(function(e) {
         $(this).next().trigger('click');
-
     });
 
     jQuery('[data-toggle="tooltip"]').tooltip();
+
+    jQuery(".boot-switch").bootstrapSwitch({
+        size: 'mini',
+        onText: 'ANO',
+        offText: 'NE',
+        onColor: 'success',
+        offColor: 'danger'
+    });
 
 });
 
@@ -68,6 +75,21 @@ function showUserMessages(messages) {
         var message = JSON.parse(messages[i]);
         showUserMessage(message);
     }
+}
+
+/**
+ * Odstraní z řetězce nepovolené znaky
+ * @param r Špinavý řetězec
+ * @returns {string|*} Ošetřený řetězec
+ */
+function prettyURL(r) {
+    r = S(r).latinise().toLowerCase();
+    r = r.replace(/[^a-zA-Z0-9]/g, "-");
+    r = r.replace(/\-{2,}/g, "-");
+
+    if(r.charAt(0) == '-')
+        r = r.replace('-', '');
+    return r;
 }
 
 $.fn.selectRange = function(start, end) {

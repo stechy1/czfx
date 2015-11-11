@@ -27,9 +27,9 @@ class SimpleImage {
     public $image;
 
     /**
-     * Konstruktor třídy SimpleImage.
-     * @param string|null $filename Cesta k souboru s obrázkem.
-     * @throws Exception Pokud obrázek nelze načíst.
+     * Konstruktor třídy SimpleImage
+     * @param string|null $filename Cesta k souboru s obrázkem
+     * @throws Exception Pokud obrázek nelze načíst
      */
     public function __construct ($filename = null) {
         if (!empty($filename)) {
@@ -38,9 +38,10 @@ class SimpleImage {
     }
 
     /**
-     * Načte obrázek.
-     * @param $filename string Cesta k souboru s obrázkem.
-     * @throws Exception Pokud obrázek nelze načíst.
+     * Načte obrázek
+     *
+     * @param $filename string Cesta k souboru s obrázkem
+     * @throws Exception Pokud obrázek nelze načíst
      */
     public function load ($filename) {
         $image_info = getimagesize($filename);
@@ -59,10 +60,11 @@ class SimpleImage {
 
     /**
      * Uloží obrázek
-     * @param $filename string Cesta k obrázku, kam má být uložen.
-     * @param int $image_type Typ obrázku, výhozí je JPEG.
-     * @param int $compression Komprese obrázku, výchozí je 75.
-     * @param null $permissions Oprávnění, výchozí je null.
+     *
+     * @param $filename string Cesta k obrázku, kam má být uložen
+     * @param int $image_type Typ obrázku, výhozí je JPEG
+     * @param int $compression Komprese obrázku, výchozí je 75
+     * @param null $permissions Oprávnění, výchozí je null
      */
     public function save ($filename, $image_type = IMAGETYPE_JPEG, $compression = 75, $permissions = null) {
         if ($image_type == IMAGETYPE_JPEG) {
@@ -93,11 +95,12 @@ class SimpleImage {
 
     /**
      * Zjistí, zda-li je obrázek správného typu
+     *
      * @param $extension integer Požadovaný typ obrázku
      * @return bool True, pokud je obrázek správného typu, jinak false
      */
     public function isValid($extension) {
-        return $this->image_type == $extension;
+        return $this->image_info[2] == $extension;
 
     }
 
@@ -117,6 +120,7 @@ class SimpleImage {
 
     /**
      * Změní velikost podle výšky
+     *
      * @param $height int Nová výška
      */
     public function resizeToHeight ($height) {
@@ -127,6 +131,7 @@ class SimpleImage {
 
     /**
      * Změní velikost podle šířky
+     *
      * @param $width int Nová šířka
      */
     public function resizeToWidth ($width) {
@@ -137,6 +142,7 @@ class SimpleImage {
 
     /**
      * Změní obrázek na čtvercový
+     *
      * @param $size int Velikost čtverce
      */
     public function square ($size) {
@@ -165,6 +171,7 @@ class SimpleImage {
 
     /**
      * Naškáluje obrázek
+     *
      * @param $scale int Velikost změny
      */
     public function scale ($scale) {
@@ -174,9 +181,10 @@ class SimpleImage {
     }
 
     /**
-     * Změní velikost obrázku na zadanou.
-     * @param $width int Nová šířka.
-     * @param $height int Nový výška.
+     * Změní velikost obrázku na zadanou
+     *
+     * @param $width int Nová šířka
+     * @param $height int Nový výška
      */
     public function resize ($width, $height) {
         $new_image = imagecreatetruecolor($width, $height);
@@ -191,11 +199,12 @@ class SimpleImage {
 
     /**
      * Ořízne obrázek
-     * @param $x int X-ová souřadnice levého horního rohu.
-     * @param $y int Y-ová souřadnice levého horního rohu.
-     * @param $width int Šířka oříznutého obrázku.
-     * @param $height int Výška oříznutého obrázku.
-     * @return resource Reference na nový obrázek.
+     *
+     * @param $x int X-ová souřadnice levého horního rohu
+     * @param $y int Y-ová souřadnice levého horního rohu
+     * @param $width int Šířka oříznutého obrázku
+     * @param $height int Výška oříznutého obrázku
+     * @return resource Reference na nový obrázek
      */
     public function cut ($x, $y, $width, $height) {
         $new_image = imagecreatetruecolor($width, $height);
@@ -234,8 +243,9 @@ class SimpleImage {
     }
 
     /**
-     * Ořízne obrázek z prostředka.
-     * @param $width int Šířka nového obrázku.
+     * Ořízne obrázek z prostředka
+     *
+     * @param $width int Šířka nového obrázku
      * @param $height int Výška nového obrázku
      * @return resource Reference na nový obrázek
      */

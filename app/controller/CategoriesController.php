@@ -5,7 +5,7 @@ namespace app\controller;
 
 use app\model\factory\CategoryFactory;
 use app\model\service\request\IRequest;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class CategoriesController
@@ -30,7 +30,7 @@ class CategoriesController extends BaseController {
                 $this->data['categories'] = $this->categoryfactory->getSubcats($subCat);
                 $this->header['title'] = 'Podkategorie';
                 $this->view = 'categories';
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->redirect("articles/" . $subCat);
             }
         } else {

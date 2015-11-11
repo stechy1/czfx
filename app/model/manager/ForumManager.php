@@ -4,8 +4,8 @@ namespace app\model\manager;
 
 
 use app\model\database\Database;
+use app\model\service\exception\MyException;
 use app\model\util\StringUtils;
-use Exception;
 
 /**
  * Class ForumManager
@@ -20,9 +20,10 @@ class ForumManager {
     private $database;
 
     /**
-     * Vrátí seznam všech kategorií na forku.
-     * @return array Pole kategorií.
-     * @throws Exception Pokud není nalezena žádná kategorie.
+     * Vrátí seznam všech kategorií na fóru
+     *
+     * @return array Pole kategorií
+     * @throws MyException Pokud není nalezena žádná kategorie
      */
     public function getCategories () {
         $fromDb = $this->database->queryAll("SELECT
@@ -51,16 +52,17 @@ class ForumManager {
                                     GROUP BY category_id");
 
         if (!$fromDb)
-            throw new Exception("Nenalezeny zádné kategorie");
+            throw new MyException("Nenalezeny zádné kategorie");
 
         return $fromDb;
     }
 
     /**
-     * Vrátí informace o zadané kategorii.
-     * @param null $catURL .
-     * @return array Informace o kategorii v poli.
-     * @throws Exception Pokud kategorie neni nalezena.
+     * Vrátí informace o zadané kategorii
+     *
+     * @param null $catURL
+     * @return array Informace o kategorii v poli
+     * @throws MyException Pokud kategorie neni nalezena
      */
     public function getCategory ($catURL = null) {
         if ($catURL == null)
@@ -72,7 +74,7 @@ class ForumManager {
                                     WHERE category_url = ?", [$catURL]);
 
         if (!$fromDb)
-            throw new  Exception("Kategorie nenalezena");
+            throw new  MyException("Kategorie nenalezena");
 
         $_SESSION['forum']['category_id'] = $fromDb['category_id'];
         return $fromDb;
@@ -80,6 +82,7 @@ class ForumManager {
 
     /**
      * Vrátí aktuálně vybranou kategorii, pokud existuje, jinak null
+     *
      * @return string|null
      */
     public function getActualCategory () {
@@ -87,11 +90,12 @@ class ForumManager {
     }
 
     /**
-     * Vrátí seznam všech vláken v dané kategorii.
-     * @param null $catURL URL kategoie.
-     * @param int $from .
-     * @return array Pole všech vláken v dané kategorii.
-     * @throws Exception Pokud kategorie neobsahuje žádná vlákna.
+     * Vrátí seznam všech vláken v dané kategorii
+     *
+     * @param null $catURL URL kategoie
+     * @param int $from
+     * @return array Pole všech vláken v dané kategorii
+     * @throws MyException Pokud kategorie neobsahuje žádná vlákna
      */
     public function getTopics ($catURL = null, $from = PHP_INT_MAX) {
         if ($catURL == null)
@@ -113,23 +117,24 @@ class ForumManager {
                                     LIMIT 12", [$catURL, $from]);
 
         if (!$fromDb)
-            throw new Exception("Kategorie neobsahuje žádná vlákna");
+            throw new MyException("Kategorie neobsahuje žádná vlákna");
 
         return $fromDb;
     }
 
     /**
      * Vrátí informace o topicu
+     *
      * @param $topicUrl
      * @return array
-     * @throws Exception Pokud topic neexistuje
+     * @throws MyException Pokud topic neexistuje
      */
     public function getTopic ($topicUrl) {
         $fromDb = $this->database->queryOne("SELECT topic_id, topic_subject, topic_url, topic_date, topic_by
                                     FROM forum_topics
                                     WHERE topic_url = ?", [$topicUrl]);
         if (!$fromDb)
-            throw new Exception("Vlákno neexistuje");
+            throw new MyException("Vlákno neexistuje");
 
         $_SESSION['forum']['topic_id'] = $fromDb['topic_id'];
         return $fromDb;
@@ -137,21 +142,23 @@ class ForumManager {
 
     /**
      * Smaže z fora topic i s jeho příspěvky
+     *
      * @param $topicID int ID topicu
-     * @throws Exception
+     * @throws MyException
      */
     public function deleteTopic ($topicID) {
-        $fromDb = $this->database->delete("forum_topics", "topic_id = ?", [$topicID]);
+        $fromDb = $this->database->delete("forum_topics", "WHERE topic_id = ?", [$topicID]);
 
         if (!$fromDb)
-            throw new Exception("Nepodařilo se odstranit topic číslo: " . $topicID);
+            throw new MyException("Nepodařilo se odstranit topic číslo: " . $topicID);
     }
 
     /**
      * Vrátí všechny příspevky v daném topicu
+     *
      * @param $topicURL string
      * @return array
-     * @throws Exception Pokud se v topicu nenacházejí žádné příspěvky
+     * @throws MyException Pokud se v topicu nenacházejí žádné příspěvky
      */
     public function getPosts ($topicURL = null) {
         if ($topicURL == null)
@@ -161,40 +168,50 @@ class ForumManager {
 
         $fromDb = $this->database->queryAll("SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date, forum_posts.post_by,
                                            users.user_nick, users.user_avatar
-                                    FROM forum_topics
-                                    LEFT JOIN (forum_posts, users)
-                                    ON (
-                                      forum_posts.post_topic = topic_id AND
-                                      users.user_id = forum_posts.post_by
-                                    )
-                                    WHERE topic_url = ?", [$topicURL]);
+                                           FROM forum_topics
+                                           LEFT JOIN (forum_posts, users)
+                                           ON (
+                                             forum_posts.post_topic = topic_id AND
+                                             users.user_id = forum_posts.post_by
+                                           )
+                                           WHERE topic_url = ?", [$topicURL]);
 
         if (!$fromDb || !isset($fromDb[0]['post_content']))
-            throw new Exception("Žádné posty nenalezeny");
+            throw new MyException("Žádné posty nenalezeny");
 
         return $fromDb;
     }
 
     /**
      * Přidá nové vklákno do databáze
-     * @param $subject string Název vlákna.
-     * @param $message string Obsah zprávy.
-     * @return string Vrátí url adresu odkazující na nově vytvořené vlákno.
-     * @throws Exception Pokud se vlákno nepodaří vytvořit.
+     *
+     * @param $subject string Název vlákna
+     * @param $message string Obsah zprávy
+     * @return string Vrátí url adresu odkazující na nově vytvořené vlákno
+     * @throws MyException Pokud se vlákno nepodaří vytvořit
      */
     public function addTopic ($subject, $message) {
         if (!$subject)
-            throw new Exception("Není vyplněn nadpis");
+            throw new MyException("Není vyplněn nadpis");
         if (!$message)
-            throw new Exception("Není vyplněna zpráva");
+            throw new MyException("Není vyplněna zpráva");
         $date = time();
         $topicUrl = StringUtils::hyphenize($subject);
-        $topic = ["topic_subject" => $subject, "topic_url" => $topicUrl, "topic_date" => $date, "topic_cat" => $_SESSION['forum']['category_id'], "topic_by" => $_SESSION['user']['id']];
+        $topic = [
+            "topic_subject" => $subject,
+            "topic_url" => $topicUrl,
+            "topic_date" => $date,
+            "topic_cat" => $_SESSION['forum']['category_id'],
+            "topic_by" => $_SESSION['user']['id']];
 
         $this->database->insert("forum_topics", $topic);
 
         $topicId = $this->database->getLastId();
-        $post = ["post_content" => $message, "post_date" => $date, "post_topic" => $topicId, "post_by" => $_SESSION['user']['id']];
+        $post = [
+            "post_content" => $message,
+            "post_date" => $date,
+            "post_topic" => $topicId,
+            "post_by" => $_SESSION['user']['id']];
         $this->database->insert("forum_posts", $post);
 
         return $topicUrl;
@@ -202,10 +219,11 @@ class ForumManager {
 
     /**
      * Vrátí x posledních příspěvků
+     *
      * @param $count int Počet příspěvků
      * @param bool|true $resetCounter True, pokud se má restartovat čítač příspěvků
      * @return array Pole příspěvků
-     * @throws Exception Pokud žádné příspěvky nebyly nalezeny
+     * @throws MyException Pokud žádné příspěvky nebyly nalezeny
      */
     public function getLastPosts ($count, $resetCounter = true) {
         $params = array();
@@ -231,7 +249,7 @@ class ForumManager {
 
         $fromDb = $this->database->queryAll($query, $params);
         if (empty($fromDb))
-            throw new Exception("Forum neobsahuje více příspěvků");
+            throw new MyException("Forum neobsahuje více příspěvků");
 
         $_SESSION['index']['lastArtID'] = $fromDb[sizeof($fromDb) - 1]['post_id'];
 
@@ -241,13 +259,18 @@ class ForumManager {
 
     /**
      * Přidá post do topicu
+     *
      * @param $content string Obsah komentáře
-     * @throws Exception Pokud se nepodaří komentář přidat
+     * @throws MyException Pokud se nepodaří komentář přidat
      */
     public function addPost ($content) {
         if (!$content)
-            throw new Exception("Musíte vyplnit zprávu");
-        $post = ["post_content" => $content, "post_date" => time(), "post_topic" => $_SESSION['forum']['topic_id'], "post_by" => $_SESSION['user']['id']];
+            throw new MyException("Musíte vyplnit zprávu");
+        $post = [
+            "post_content" => $content,
+            "post_date" => time(),
+            "post_topic" => $_SESSION['forum']['topic_id'],
+            "post_by" => $_SESSION['user']['id']];
 
         $this->database->insert("forum_posts", $post);
 
@@ -255,13 +278,14 @@ class ForumManager {
 
     /**
      * Smaže příspěvek podle ID
+     *
      * @param $postID int ID příspěvku, který má být smazán
-     * @throws Exception Pokud se nepodaří příspěvek odstranit
+     * @throws MyException Pokud se nepodaří příspěvek odstranit
      */
     public function deletePost ($postID) {
-        $fromDb = $this->database->delete("forum_posts", "post_id = ?", [$postID]);
+        $fromDb = $this->database->delete("forum_posts", "WHERE post_id = ?", [$postID]);
 
         if (!$fromDb)
-            throw new Exception("Nepodařilo se odstranit příspěvek číslo: " . $postID);
+            throw new MyException("Nepodařilo se odstranit příspěvek číslo: " . $postID);
     }
 }

@@ -49,7 +49,6 @@ class Article {
      * Vymaže z paměti rozpracovaný článek
      */
     public static function clearSession() {
-        //$_SESSION['storage']['article'] = null;
         unset($_SESSION['storage']['article']);
     }
 
@@ -61,7 +60,9 @@ class Article {
     }
 
     /**
-     * @return int Vrátí ID článku.
+     * Vrátí ID článku
+     *
+     * @return int
      */
     public function getId()
     {
@@ -69,7 +70,9 @@ class Article {
     }
 
     /**
-     * @return int Vrátí ID kategorie.
+     * Vrátí ID kategorie
+     *
+     * @return int
      */
     public function getCategoryID()
     {
@@ -77,7 +80,9 @@ class Article {
     }
 
     /**
-     * @return string Vrátí titulek článku.
+     * Vrátí titulek článku
+     *
+     * @return string
      */
     public function getTitle()
     {
@@ -85,7 +90,9 @@ class Article {
     }
 
     /**
-     * @return string Vrátí vyhledávací tagy pro článek.
+     * Vrátí vyhledávací tagy pro článek
+     *
+     * @return string
      */
     public function getTags()
     {
@@ -93,7 +100,9 @@ class Article {
     }
 
     /**
-     * @return string Vrátí popis článku.
+     * Vrátí popis článku
+     *
+     * @return string
      */
     public function getDescription()
     {
@@ -101,7 +110,9 @@ class Article {
     }
 
     /**
-     * @return string Vrátí URL adresu článku.
+     * Vrátí URL adresu článku
+     *
+     * @return string
      */
     public function getUrl()
     {
@@ -109,7 +120,9 @@ class Article {
     }
 
     /**
-     * @return string Vrátí název souboru s obsahem článku.
+     * Vrátí název souboru s obsahem článku
+     *
+     * @return string
      */
     public function getFileName()
     {
@@ -117,7 +130,9 @@ class Article {
     }
 
     /**
-     * @return int|null Vrátí ID předchozího článku nebo null.
+     * Vrátí ID předchozího článku nebo null
+     *
+     * @return int|null
      */
     public function getPreviousID()
     {
@@ -125,7 +140,9 @@ class Article {
     }
 
     /**
-     * @return int|null Vrátí ID následujícího článku nebo null.
+     * Vrátí ID následujícího článku nebo null
+     *
+     * @return int|null
      */
     public function getNextID()
     {
@@ -133,14 +150,18 @@ class Article {
     }
 
     /**
-     * @return int|null Vrátí ID autora článku
+     *  Vrátí ID autora článku
+     *
+     * @return int|null
      */
     public function getAuthor() {
         return $this->author;
     }
 
     /**
-     * @return null|string Vrátí obsah článku
+     * Vrátí obsah článku
+     *
+     * @return null|string
      */
     public function getText() {
         return $this->text;

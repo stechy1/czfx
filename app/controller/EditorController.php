@@ -10,7 +10,7 @@ use app\model\factory\CategoryFactory;
 use app\model\manager\FileManager;
 use app\model\service\request\IRequest;
 use app\model\util\ParsedownExtra;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class EditorController
@@ -53,8 +53,9 @@ class EditorController extends BaseController {
         else
             $tmpDir = $this->filemanager->getTmpDirectory();
         try {
-            move_uploaded_file($tmpName, $tmpDir . $name);
-        } catch(Exception $ex) {
+            //move_uploaded_file($tmpName, $tmpDir . $name);
+            $this->filemanager->moveUploadedFiles($tmpName, $tmpDir . $name);
+        } catch(MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
         }

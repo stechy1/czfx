@@ -26,6 +26,7 @@ class Container {
 
     /**
      * Vytvoří nový container
+     *
      * @return Container
      * @throws Exception Pokud container již existuje
      */
@@ -40,6 +41,11 @@ class Container {
         return $container;
     }
 
+    /**
+     * Projede rekurzivně zadanou složku a uloží si její soubory do paměti
+     *
+     * @param $folder string Složka, která se má prohledat
+     */
     private function folderIterator ($folder) {
         /**
          * @var $fileInfo SplFileInfo
@@ -56,9 +62,11 @@ class Container {
     }
 
     /**
-     * @param $obj
-     * @param $reflection ReflectionClass
-     * @return
+     * Injektuje objekt požadovanými třídami
+     *
+     * @param $obj object Injektovaný objekt
+     * @param $reflection ReflectionClass Reflexní třída pro injektovaný objekt
+     * @return object
      */
     private function injectClass ($obj, $reflection) {
         if ($doc = $reflection->getDocComment()) {
@@ -102,6 +110,11 @@ class Container {
         return $obj;
     }
 
+    /**
+     * Přidá do mapy hodnoty
+     * @param $key string Klíč
+     * @param $obj object Hodnota
+     */
     private function addToMap ($key, $obj) {
         if ($this->map === null) {
             $this->map = (object)array();
@@ -109,28 +122,53 @@ class Container {
         $this->map->$key = $obj;
     }
 
+    /**
+     * Přidá referenci třídy do mapy načtených tříd
+     *
+     * @param $key string Klíč, pod kterým se třída bude nacházet
+     * @param $value object Reference na třídy
+     */
     public function mapValue ($key, $value) {
         $this->addToMap($key, (object)array("value" => $value, "type" => "value"));
     }
 
+    /**
+     * Přidá třídu do mapy načtených tříd
+     *
+     * @param $key string Klíč, pod kterým se třída bude nacházet
+     * @param $value string Plný název třídy
+     * @param null $arguments Případné argumenty
+     */
     public function mapClass ($key, $value, $arguments = null) {
         $this->addToMap($key, (object)array("value" => $value, "type" => "class", "arguments" => $arguments));
     }
 
+    /**
+     * Přidá třídu typu singleton do mapy načtených tříd
+     *
+     * @param $key string Klíč, pod kterým se třída bude nacházet
+     * @param $value string Plný název třídy
+     * @param null $arguments Případné argumenty
+     */
     public function mapClassAsSingleton ($key, $value, $arguments = null) {
         $this->addToMap($key, (object)array("value" => $value, "type" => "classSingleton", "instance" => null, "arguments" => $arguments));
     }
 
+    /**
+     * Vrátí instanci třídy
+     *
+     * @param $className string Název třídy, kterou chcete získat
+     * @param null $arguments Případné argumenty
+     * @return null|object Null, pokud instanci není možné vytvořit, jinak referenci na objekt
+     */
     public function getInstanceOf ($className, $arguments = null) {
         $className = strtolower($className);
 
         if (!array_key_exists($className, $this->clasess))
             return null;
 
-        // inicializace reflexní třídy
         $reflection = new ReflectionClass($this->clasess[$className]);
 
-        // vytvoření instance nové třídy
         if ($arguments === null || count($arguments) == 0) {
             $obj = new $this->clasess[$className];
         } else {
@@ -147,10 +185,6 @@ class Container {
             $parentReflection = $parentReflection->getParentClass();
         }
 
-        /*if ($parentReflection != null)
-            $obj = $this->injectClass($obj, $parentReflection);*/
-
-        // injekce
         $obj = $this->injectClass($obj, $reflection);
 
         if (!isset($this->map->$className))

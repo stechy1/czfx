@@ -31,10 +31,14 @@ class Category {
         $this->hasSubCat = $hasSubCat;
 
         settype($this->id, "integer");
+        settype($this->parent, "integer");
+        settype($this->hasSubCat, "integer");
     }
 
     /**
-     * @return int Vrátí ID kategorie
+     * Vrátí ID kategorie
+     *
+     * @return int
      */
     public function getId()
     {
@@ -42,7 +46,17 @@ class Category {
     }
 
     /**
-     * @return string Vrátí název kategorie
+     * Nastaví nové ID kategorie
+     * @param int $id
+     */
+    public function setId ($id) {
+        $this->id = $id;
+    }
+
+    /**
+     * Vrátí název kategorie
+     *
+     * @return string
      */
     public function getName()
     {
@@ -50,7 +64,18 @@ class Category {
     }
 
     /**
-     * @return string Vrátí URL adresu kategorie
+     * Nastaví nový název kategorie
+     *
+     * @param null|string $name
+     */
+    public function setName ($name) {
+        $this->name = $name;
+    }
+
+    /**
+     * Vrátí URL adresu kategorie
+     *
+     * @return string
      */
     public function getUrl()
     {
@@ -58,7 +83,18 @@ class Category {
     }
 
     /**
-     * @return string Vrátí popis kategorie
+     * Nastaví novou url adresu kategorie
+     *
+     * @param null|string $url
+     */
+    public function setUrl ($url) {
+        $this->url = $url;
+    }
+
+    /**
+     * Vrátí popis kategorie
+     *
+     * @return string
      */
     public function getDescription()
     {
@@ -66,7 +102,18 @@ class Category {
     }
 
     /**
-     * @return int Vrátí ID rodičovské kategorie.
+     * Nastaví nový popis kategorie
+     *
+     * @param null|string $description
+     */
+    public function setDescription ($description) {
+        $this->description = $description;
+    }
+
+    /**
+     * Vrátí ID rodičovské kategorie
+     *
+     * @return int
      */
     public function getParent()
     {
@@ -74,11 +121,31 @@ class Category {
     }
 
     /**
-     * @return int Vrátí 1, pokud má potomky, jinak 0.
+     * Nastaví novou rodičovskou kategorii
+     *
+     * @param int $parent
+     */
+    public function setParent ($parent) {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Vrátí 1, pokud má potomky, jinak 0
+     *
+     * @return int
      */
     public function getHasSubCat()
     {
         return $this->hasSubCat;
+    }
+
+    /**
+     * Nastaví, zda-li kategorie obsahuje podkategorie
+     *
+     * @param int $hasSubCat
+     */
+    public function setHasSubCat ($hasSubCat) {
+        $this->hasSubCat = $hasSubCat;
     }
 
     public function toArray() {

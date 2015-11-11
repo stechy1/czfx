@@ -5,15 +5,22 @@ namespace app\model\database;
 
 use PDO;
 
+/**
+ * Class Database
+ * Databázový wrapper pro pohodlnou práci s databází
+ * @package app\model\database
+ */
 class Database implements IDatabase {
+    
     /**
      * Databázové spojení
      * @var PDO
      */
-    private $connection;
+    protected $connection;
 
     /**
      * Výchozí nastavení ovladače
+     * 
      * @var array
      */
     private static $settings = array(
@@ -24,10 +31,11 @@ class Database implements IDatabase {
 
     /**
      * Připojí se k databázi pomocí daných údajů
-     * @param $host
-     * @param $uzivatel
-     * @param $heslo
-     * @param $databaze
+     * 
+     * @param $host string Hostitelský stroj, kde běží databáze
+     * @param $uzivatel string Jméno uživatele, pokd kterým se má aplikace připojit
+     * @param $heslo string Heslo k databázi
+     * @param $databaze string Název databáze, která se má použít
      */
     public function connect($host, $uzivatel, $heslo, $databaze)
     {
@@ -44,40 +52,43 @@ class Database implements IDatabase {
     }
 
     /**
-     * Spustí query a vrátí z něj první řádek
-     * @param $dotaz
-     * @param array $parameters
-     * @return mixed
+     * Spustí dotaz a vrátí z něj první řádek
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return array|null Asociativní pole obsahující data odpovídající záznamu, nebo null
      */
-    public function queryOne($dotaz, $parameters = array())
+    public function queryOne($query, $parameters = array())
     {
-        $navrat = $this->connection->prepare($dotaz);
+        $navrat = $this->connection->prepare($query);
         $navrat->execute($parameters);
         return $navrat->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Spustí query a vrátí všechny jeho řádky jako pole asociativních polí
-     * @param $dotaz
-     * @param array $parameters
-     * @return mixed
+     * Spustí dotaz a vrátí všechny jeho řádky jako pole asociativních polí
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return array|null Asociativní pole obsahující data odpovídající záznamu, nebo null
      */
-    public function queryAll($dotaz, $parameters = array())
+    public function queryAll($query, $parameters = array())
     {
-        $navrat = $this->connection->prepare($dotaz);
+        $navrat = $this->connection->prepare($query);
         $navrat->execute($parameters);
         return $navrat->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Spustí query a vrátí z něj první sloupec prvního řádku
-     * @param $dotaz
-     * @param array $parameters
-     * @return int
+     * Spustí dotaz a vrátí z něj první sloupec prvního řádku
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return int Počet ovlivněných řádek
      */
-    public function queryItself($dotaz, $parameters = array())
+    public function queryItself($query, $parameters = array())
     {
-        $vysledek = $this->queryOne($dotaz, $parameters);
+        $vysledek = $this->queryOne($query, $parameters);
         if ($vysledek) {
             $vysledek = array_values($vysledek);
             return $vysledek[0];
@@ -86,64 +97,70 @@ class Database implements IDatabase {
     }
 
     /**
-     * Spustí query a vrátí počet ovlivněných řádků
-     * @param $dotaz
-     * @param array $parameters
-     * @return mixed
+     * Spustí dotaz a vrátí počet ovlivněných řádků
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return int Počet ovlivněných řádek
      */
-    public function query($dotaz, $parameters = array())
+    public function query($query, $parameters = array())
     {
-        $navrat = $this->connection->prepare($dotaz);
+        $navrat = $this->connection->prepare($query);
         $navrat->execute($parameters);
         return $navrat->rowCount();
     }
 
     /**
-     * Vloží do tabulky nový řádek jako data z asociativního pole
-     * @param $table
-     * @param array $parameters
-     * @return mixed
+     * Vloží do tabulky nový řádek
+     * 
+     * @param $table string Tabulka, s kterou se bude manipulovat
+     * @param array $values Hodnoty, které se mají vložit
+     * @return int Počet ovlivněných řádek
      */
-    public function insert($table, $parameters = array())
+    public function insert($table, $values = array())
     {
-        return $this->query("INSERT INTO `$table` (`" .
-            implode('`, `', array_keys($parameters)) .
-            "`) VALUES (" . str_repeat('?,', sizeOf($parameters) - 1) . "?)",
-            array_values($parameters));
+        return $this->query("INSERT INTO $table (" .
+            implode(', ', array_keys($values)) .
+            ") VALUES (" . str_repeat('?,', sizeOf($values) - 1) . "?)",
+            array_values($values));
     }
 
     /**
-     * Změní řádek v tabulce tak, aby obsahoval data z asociativního pole
-     * @param $table
-     * @param array $hodnoty
-     * @param $condition
-     * @param array $parameters
-     * @return mixed
+     * Upraví záznam ve vybrané tabulce
+     * 
+     * @param $table string Tabulka, s kterou se bude manipulovat
+     * @param array $values Hodnoty, které se mají změnit
+     * @param $condition string Podmínka
+     * @param array $parameters Parametry podmínky
+     * @return int Počet ovlivněných řádek
      */
-    public function update($table, $hodnoty = array(), $condition, $parameters = array())
+    public function update($table, $values = array(), $condition, $parameters = array())
     {
-        return $this->query("UPDATE `$table` SET `" .
-            implode('` = ?, `', array_keys($hodnoty)) .
-            "` = ? " . $condition,
-            array_merge(array_values($hodnoty), $parameters));
+        return $this->query("UPDATE $table SET " .
+            implode(' = ?, ', array_keys($values)) .
+            " = ? " . $condition,
+            array_merge(array_values($values), $parameters));
     }
 
     /**
-     * @param $table
-     * @param $condition
-     * @param array $parameters
-     * @return mixed
+     * Smaže záznam(y) z vybrané tabulky podle podmínky
+     *
+     * @param $table string Tabulka, s kterou se bude manipulovat
+     * @param null $condition Podmínka
+     * @param array $parameters Parametry
+     * @return int Počet ovlivněných řádek
      */
-    function delete ($table, $condition, $parameters = array()) {
+    function delete ($table, $condition = null, $parameters = array()) {
         $query = "DELETE FROM $table";
         if ($condition)
-            $query .= " WHERE " . $condition;
+            $query .= $condition;
 
         return $this->query($query, array_values($parameters));
     }
 
     /**
      * Započne novou transakci
+     * 
      * @return boolean True, pokud se podařilo založit novou transakci, jinak false
      */
     function beginTransaction () {
@@ -152,6 +169,7 @@ class Database implements IDatabase {
 
     /**
      * Provede všechny změny
+     * 
      * @return boolean True, pokud se provedly všechny změny úspěšně, jinak false
      */
     function commit () {
@@ -160,6 +178,7 @@ class Database implements IDatabase {
 
     /**
      * Vrátí zpět všechny změny co byly provedeny od posledního zavolání beginTransaction
+     * 
      * @return boolean True, pokud byly vráceny všechny změny úspěšně, jinak false
      */
     function rollback () {
@@ -168,6 +187,7 @@ class Database implements IDatabase {
 
     /**
      * Vrací ID posledně vloženého záznamu
+     * 
      * @return mixed
      */
     public function getLastId()

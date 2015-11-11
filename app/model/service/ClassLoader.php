@@ -50,15 +50,6 @@ class ClassLoader {
         }*/
     }
 
-    /**
-     * Provede injekci potřebných tříd
-     *
-     * @param $class mixed Třída, která má být injektována
-     */
-    public function inject($class) {
-
-    }
-
     public function register () {
         spl_autoload_register(array($this, "load"));
     }

@@ -1,0 +1,89 @@
+<ol class="breadcrumb">
+    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li><a href="admin-article-manager">Správce kategorií</a></li>
+    <li class="active"><?= !empty($category['category_name'])? $category['category_name'] :"Nová kategorie" ?></li>
+</ol>
+
+<form id="form-category-create" method="post">
+    <div class="panel">
+        <div class="panel-heading">
+            <h1 class="page-header">Upravit kategorii</h1>
+        </div>
+        <div class="panel-body">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="form-group">
+                    <label class="control-label" for="category-id">ID kategorie</label>
+                    <input id="category-id" name="category-id" type="text" placeholder="id kategorie"
+                           class="form-control input-md"
+                           value="<?= $categoryID ?>">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="category-name">Název kategorie</label>
+                    <input id="category-name" name="category-name" type="text" placeholder="název kategorie"
+                           class="form-control input-md"
+                           required="" value="<?= $category['category_name'] ?>">
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="form-group">
+                    <label class=" control-label" for="category-url">URL kategorie:</label>
+                    <input id="category-url" name="category-url" type="text" placeholder="url kategorie"
+                           class="form-control input-md"
+                           required="" value="<?= $category['category_url'] ?>">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="categoryparent">Rodičovská kategorie:</label>
+                    <select id="category-parent" name="category-parent" class="form-control">
+                        <? if ($category['category_parent'] == -1) : ?>
+                            <option value="-1">Žádná...</option>
+                        <? else : ?>
+                            <option
+                                value="<?= $category['category_parent']; ?>"><?= $parent['category_name']; ?></option>
+                            <option value="-1">Žádná...</option>
+                        <? endif ?>
+                        <? foreach ($categories as $cat) : ?>
+                            <option value="<?= $cat['category_id']; ?>"><?= $cat['category_name']; ?></option>
+                        <? endforeach ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="form-group">
+                    <label class="control-label" for="category-has-subcats">Obsahuje subkategorie:</label>
+                    <input id="category-has-subcats" type="checkbox" name="category-has-subcats"
+                           class="form-control input-md boot-switch"
+                           <?= ($category['category_has_subcats']) ? 'checked' : '' ?>/>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="category-description">Popis categorie:</label>
+                    <textarea class="form-control" name="category-description" id="category-description"
+                              placeholder="Popis..."
+                              required=""><?= $category['category_description'] ?></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <input type="submit" class="btn btn-xs btn-primary" value="<?= ($action == "new")? "Vytvořit" : "Upravit" ?>">
+            <a href="admin-category-manager" class="btn btn-xs btn-warning right">Zrušit</a>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript" src="js/categoryManager.js"></script>
+<script type="text/javascript">
+
+    var category = new CategoryManager();
+
+    jQuery(document).ready(function () {
+
+        jQuery('#category-name').keyup(function () {
+            var nameBox = jQuery('#category-name');
+            var urlBox = jQuery('#category-url');
+            urlBox.val(prettyURL(nameBox.val()));
+        });
+    });
+
+</script>

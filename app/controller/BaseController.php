@@ -7,7 +7,7 @@ use app\model\callback\AjaxCallBack;
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
 use app\model\service\request\IRequest;
-use Exception;
+use app\model\service\exception\MyException;
 
 
 /**
@@ -139,13 +139,13 @@ abstract class BaseController {
      * @param bool $mustBeActivated True, pokud se vyžaduje aktivovanej učet.
      * @param int $role Volitelný parametr na upřesnění roli uživatele.
      * @return bool True, pokud má uživatel dostatečné oprávnění, jinak false.
-     * @throws Exception Pokud uživatel nemá dostatečná oprávnění.
+     * @throws MyException Pokud uživatel nemá dostatečná oprávnění.
      */
     public function validateUser($role = null, $mustBeActivated = true) {
         $user = null;
         try {
             $user = $this->userfactory->getUserFromSession();
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage("Nejste přihlášen!", CallBackMessage::DANGER));
             $this->redirect("login");
         }

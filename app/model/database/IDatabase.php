@@ -11,90 +11,104 @@ interface IDatabase {
 
     /**
      * Připojí se k databázi pomocí daných údajů
-     * @param $host
-     * @param $uzivatel
-     * @param $heslo
-     * @param $databaze
+     *
+     * @param $host string Hostitelský stroj, kde běží databáze
+     * @param $uzivatel string Jméno uživatele, pokd kterým se má aplikace připojit
+     * @param $heslo string Heslo k databázi
+     * @param $databaze string Název databáze, která se má použít
      */
     function connect($host, $uzivatel, $heslo, $databaze);
 
     /**
-     * Spustí query a vrátí z něj první řádek
-     * @param $dotaz
-     * @param array $parametry
-     * @return mixed
+     * Spustí dotaz a vrátí z něj první řádek
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return array|null Asociativní pole obsahující data odpovídající záznamu, nebo null
      */
-    function queryOne($dotaz, $parametry = array());
+    function queryOne($query, $parameters = array());
 
     /**
-     * Spustí query a vrátí všechny jeho řádky jako pole asociativních polí
-     * @param $dotaz
-     * @param array $parametry
-     * @return mixed
+     * Spustí dotaz a vrátí všechny jeho řádky jako pole asociativních polí
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return array|null Asociativní pole obsahující data odpovídající záznamu, nebo null
      */
-    function queryAll($dotaz, $parametry = array());
+    function queryAll($query, $parameters = array());
 
     /**
-     * Spustí query a vrátí z něj první sloupec prvního řádku
-     * @param $dotaz
-     * @param array $parametry
-     * @return int
+     * Spustí dotaz a vrátí z něj první sloupec prvního řádku
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return int Počet ovlivněných řádek
      */
-    function queryItself($dotaz, $parametry = array());
+    function queryItself($query, $parameters = array());
 
     /**
-     * Spustí query a vrátí počet ovlivněných řádků
-     * @param $dotaz
-     * @param array $parametry
-     * @return mixed
+     * Spustí dotaz a vrátí počet ovlivněných řádků
+     *
+     * @param $query string Dotaz
+     * @param array $parameters Parametry dotazu
+     * @return int Počet ovlivněných řádek
      */
-    function query($dotaz, $parametry = array());
+    function query($query, $parameters = array());
 
     /**
-     * Vloží do tabulky nový řádek jako data z asociativního pole
-     * @param $tabulka
-     * @param array $parametry
-     * @return mixed
+     * Vloží do tabulky nový řádek
+     *
+     * @param $table string Tabulka, s kterou se bude manipulovat
+     * @param array $values Hodnoty, které se mají vložit
+     * @return int Počet ovlivněných řádek
      */
-    function insert($tabulka, $parametry = array());
+    function insert($table, $values = array());
 
     /**
-     * Změní řádek v tabulce tak, aby obsahoval data z asociativního pole
-     * @param $tabulka
-     * @param array $hodnoty
-     * @param $podminka
-     * @param array $parametry
-     * @return mixed
+     * Upraví záznam ve vybrané tabulce
+     *
+     * @param $table string Tabulka, s kterou se bude manipulovat
+     * @param array $values Hodnoty, které se mají změnit
+     * @param $condition string Podmínka
+     * @param array $parameters Parametry podmínky
+     * @return int Počet ovlivněných řádek
      */
-    function update($tabulka, $hodnoty = array(), $podminka, $parametry = array());
+    function update($table, $values = array(), $condition, $parameters = array());
 
     /**
-     * Smaže záznam(y) z tabulky
-     * @param $tabulka
-     * @param $podminka
-     * @param array $parametry
-     * @return mixed
+     * Smaže záznam(y) z vybrané tabulky podle podmínky
+     *
+     * @param $table string Tabulka, s kterou se bude manipulovat
+     * @param null $condition Podmínka
+     * @param array $parameters Parametry
+     * @return int Počet ovlivněných řádek
      */
-    function delete($tabulka, $podminka, $parametry = array());
+    function delete($table, $condition, $parameters = array());
 
     /**
      * Započne novou transakci
+     *
      * @return boolean True, pokud se podařilo založit novou transakci, jinak false
      */
     function beginTransaction();
 
     /**
      * Provede všechny změny
+     *
+     * @return boolean True, pokud se provedly všechny změny úspěšně, jinak false
      */
     function commit();
 
     /**
      * Vrátí zpět všechny změny co byly provedeny od posledního zavolání beginTransaction
+     *
+     * @return boolean True, pokud byly vráceny všechny změny úspěšně, jinak false
      */
     function rollback();
 
     /**
      * Vrací ID posledně vloženého záznamu
+     *
      * @return mixed
      */
     function getLastId();

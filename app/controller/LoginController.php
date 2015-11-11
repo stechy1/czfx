@@ -6,7 +6,7 @@ namespace app\controller;
 use app\model\callback\CallBackMessage;
 use app\model\manager\UserManager;
 use app\model\service\request\IRequest;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class LoginController
@@ -42,7 +42,7 @@ class LoginController extends BaseController {
                 $this->usermanager->login($_POST);
                 $this->addMessage(new CallBackMessage("Byl jste úspěšně přihlášen"));
                 $this->redirect('profile');
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             }
 

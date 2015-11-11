@@ -16,9 +16,10 @@ class CallBackMessage {
     private $type;
 
     /**
-     * CallBackMessage constructor.
+     * CallBackMessage constructor
+     *
      * @param $content string Obsah zprávy pro uživatele
-     * @param $type int Typ zprávy. Výchozí je SUCCESS.
+     * @param $type int Typ zprávy. Výchozí je SUCCESS
      */
     public function __construct($content, $type = CallBackMessage::SUCCESS)
     {
@@ -27,7 +28,9 @@ class CallBackMessage {
     }
 
     /**
-     * @return string Vrátí obsah zprávy.
+     * Vrátí obsah zprávy
+     *
+     * @return string
      */
     public function getContent()
     {
@@ -35,7 +38,9 @@ class CallBackMessage {
     }
 
     /**
-     * @return string Vrátí typ zprávy.
+     * Vrátí typ zprávy
+     *
+     * @return string
      */
     public function getType()
     {
@@ -43,7 +48,9 @@ class CallBackMessage {
     }
 
     /**
-     * @return array Pøevede zprávu do pole.
+     * Převede zprávu na asociativní pole
+     *
+     * @return array
      */
     public function toArray() {
         return array('content' => $this->content, 'type' => $this->types[$this->type]);

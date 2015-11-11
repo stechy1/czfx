@@ -10,6 +10,7 @@ class RequestFactory {
 
     /**
      * Naparsuje URL adresu podle lomítek a vrátí pole parametrů
+     *
      * @param $url string URL pro naparsování
      * @return array Pole(1. proměnná je vždy kontroler, zbytek jsou proměnný)
      */
@@ -28,6 +29,7 @@ class RequestFactory {
 
     /**
      * Vytvoří nový request
+     *
      * @return Request
      */
     public function createHttpRequest() {

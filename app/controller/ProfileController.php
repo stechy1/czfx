@@ -9,7 +9,7 @@ use app\model\factory\UserFactory;
 use app\model\manager\UserManager;
 use app\model\service\request\IRequest;
 use app\model\UserRole;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class ProfileController
@@ -36,7 +36,7 @@ class ProfileController extends BaseController {
         if ($request->hasParams()) {
             try {
                 $this->data['user'] = $this->userfactory->getUserByID(intval($request->getParams()[0]))->toArray();
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
                 $this->redirect('index');
             }
@@ -45,7 +45,7 @@ class ProfileController extends BaseController {
             try {
                 $user = $this->userfactory->getUserFromSession();
                 $this->data['user'] = $user->toArray();
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
                 $this->redirect("login");
             }
@@ -60,7 +60,7 @@ class ProfileController extends BaseController {
         try {
             $this->usermanager->logout();
             $this->addMessage(new CallBackMessage("Odhlášení problěhlo v pořádku"));
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
         $this->redirect("login");
@@ -71,7 +71,7 @@ class ProfileController extends BaseController {
             $this->validateUser(UserRole::MEMBER);
             $result = $this->usermanager->changeAvatar($request->getFile('avatar'));
             $this->callBack->addData(new CallBackData("imgSrc", $result), false);
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }

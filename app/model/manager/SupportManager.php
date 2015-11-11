@@ -4,7 +4,7 @@ namespace app\model\manager;
 
 
 use app\model\database\Database;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class SupportManager
@@ -21,8 +21,10 @@ class SupportManager {
     private $database;
 
     /**
+     * Přidá report do systému
+     *
      * @param $data array
-     * @throws Exception
+     * @throws MyException Pokud se nahlášení chyby nepodaří
      */
     public function addReport($data) {
         $this->database->insert(SupportManager::TBL_NAME, ['report_by' => $_SESSION['user']['id'], 'report_message' => $data['message']]);

@@ -6,7 +6,7 @@ namespace app\model\manager;
 use app\model\Article;
 use app\model\database\Database;
 use app\model\factory\CategoryFactory;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class ArticleManager - Správce článků
@@ -35,7 +35,7 @@ class ArticleManager {
      *
      * @param Article $article Článek
      * @return bool True, pokud se článek povedlo vytvořit.
-     * @throws Exception Pokud se stala chyba při vytváření článku.
+     * @throws MyException Pokud se stala chyba při vytváření článku.
      */
     public function add(Article $article) {
         $this->database->beginTransaction();
@@ -43,14 +43,14 @@ class ArticleManager {
 
         if (!$success) {
             $this->database->rollback();
-            throw new Exception('Článek se nepodařilo uložit');
+            throw new MyException('Článek se nepodařilo uložit');
         }
 
         try {
             $category = $this->categoryfactory->getCategoryFromArticle($article);
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->database->rollback();
-            throw new Exception($ex->getMessage());
+            throw new MyException($ex->getMessage());
         }
 
         // Vytvoření nové složky pro článek
@@ -67,40 +67,10 @@ class ArticleManager {
     }
 
     /**
-     * @param $artURL string URL adresa článku
-     * @return mixed
-     * @throws Exception
+     * Aktualizuje článek
+     *
+     * @param Article $article
      */
-    public function get($artURL)
-    {
-        $fromDb = $this->database->queryOne("SELECT a1.article_id, a1.article_title , a1.article_tags, a1.article_description,
-                                         a1.article_url, a1.article_date,
-                                    a2.article_title AS previous_article_title, a2.article_url AS previous_article_url,
-                                    a3.article_title AS next_article_title, a3.article_url AS next_article_url,
-                                    categories.category_name, categories.category_url,
-                                    users.user_nick, users.user_avatar, users.user_motto
-                                  FROM articles a1
-                                  LEFT JOIN articles a2 ON a2.article_id = a1.article_previous
-                                  LEFT JOIN articles a3 ON a3.article_id = a1.article_next
-                                  LEFT JOIN categories ON categories.category_id = a1.article_category
-                                  LEFT JOIN users ON users.user_id = a1.article_author
-                                  LEFT JOIN user_info ON user_info.user_info_user_id = a1.article_author
-                                  WHERE a1.article_url = ? AND a1.article_validated = ?"
-            , [$artURL, 1]);
-
-        if (!$fromDb)
-            throw new Exception("Článek nenalezen");
-
-        /*$path = "./uploads/category/" . $fromDb['category_url'] . "/" . $fromDb['article_url'] . "/" . $fromDb['article_url'] . ".markdown";
-        $file = fopen($path, "r");
-        $text = fread($file, filesize($path));
-        fclose($file);
-        $fromDb['text'] = $text;*/
-        $fromDb['text'] = $this->filemanager->getArticleContent($fromDb['category_url'], $fromDb['article_url']);
-
-        return $fromDb;
-    }
-
     public function update(Article $article) {
         $this->database->update('articles', $article->toArray(), "WHERE article_id = ?", [$article->getId()]);
 
@@ -111,5 +81,68 @@ class ArticleManager {
         $filePath = $folder . "/" . $article->getUrl() . ".markdown";
         $text = str_replace($this->filemanager->getRelativePath($this->filemanager->getTmpDirectory()), $this->filemanager->getRelativePath($attachments), $article->getText());
         $this->filemanager->writeFile($filePath, $text);
+    }
+
+    /**
+     * Smaže článek ze systému
+     *
+     * @param Article $article
+     * @throws MyException Pokud se článek nepodaří smazat
+     */
+    public function delete(Article $article) {
+        $this->database->beginTransaction();
+
+        $fromDb = $this->database->delete("articles", "WHERE article_id = ?", [$article->getId()]);
+        if (!$fromDb) {
+            $this->database->rollback();
+            throw new MyException("Nepodařilo se smazat článek z databáze");
+        }
+
+        $category = $this->categoryfactory->getCategoryFromArticle($article);
+        $folder = $this->filemanager->createArticleDirectory($category->getUrl(), $article->getUrl());
+
+        $success = $this->filemanager->recursiveDelete($folder);
+        if (!$success) {
+            $this->database->rollback();
+            throw new MyException("Nepodařilo se smazat článek ze souborového systému");
+        }
+        else
+            $this->database->commit();
+    }
+
+    /**
+     * Změní validaci článku
+     *
+     * @param $id int ID validovaného článku
+     * @param $valid bool True, pokud má být článek schválen, jinak false
+     * @throws MyException Pokud se validace nepovede
+     */
+    public function validate($id, $valid) {
+        $arr = array(
+            "article_validated" => ($valid)?1:0,
+            "article_date" => time()
+        );
+        $fromDb = $this->database->update("articles", $arr, "WHERE article_id = ?", [$id]);
+
+        if (!$fromDb)
+            throw new MyException("Změna validace se neprovedla");
+    }
+
+    /**
+     * Vrátí počet článků od přihlášeného uživatele
+     *
+     * @return int
+     */
+    public function getArticleCountFromCurrentUser() {
+        return $this->database->queryItself("SELECT COUNT(article_id) FROM articles WHERE article_author = ?", [$_SESSION['user']['id']]);
+    }
+
+    /**
+     * Vrátí počet všech článků v systému
+     *
+     * @return int
+     */
+    public function getArticleCountFromAll() {
+        return $this->database->queryItself("SELECT COUNT(article_id) FROM articles");
     }
 }

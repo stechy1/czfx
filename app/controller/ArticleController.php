@@ -7,9 +7,8 @@ use app\model\callback\CallBackMessage;
 use app\model\factory\ArticleFactory;
 use app\model\factory\CategoryFactory;
 use app\model\factory\UserFactory;
-use app\model\manager\ArticleManager;
+use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
-use Exception;
 
 /**
  * Class ArticleController
@@ -45,12 +44,12 @@ class ArticleController extends BaseController {
                 $article = $this->articlefactory->getArticleFromURL($artURL);
                 try {
                     $previousArticle = $this->articlefactory->getArticleFromID($article->getPreviousID())->toArray();
-                } catch (Exception $ex) {
+                } catch (MyException $ex) {
                     $previousArticle = null;
                 }
                 try {
                     $nextArticle = $this->articlefactory->getArticleFromID($article->getNextID())->toArray();
-                } catch (Exception $ex) {
+                } catch (MyException $ex) {
                     $nextArticle = null;
                 }
                 $this->header['title'] = $article->getTitle();
@@ -63,7 +62,7 @@ class ArticleController extends BaseController {
                 $this->data['nextArticle'] = $nextArticle;
                 $this->data['category'] = $this->categoryfactory->getCategoryFromArticle($article)->toArray();
                 $this->data['user'] = $this->userfactory->getUserByID($article->getAuthor())->toArray();
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
                 $this->redirect("error");
             }

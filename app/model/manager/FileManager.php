@@ -3,7 +3,7 @@
 namespace app\model\manager;
 
 
-use Exception;
+use app\model\service\exception\MyException;
 
 class FileManager {
 
@@ -24,7 +24,7 @@ class FileManager {
     }
 
     /**
-     * Inicializace instance.
+     * Inicializace instance
      */
     private function init() {
         $this->folderRoot = $_SERVER['DOCUMENT_ROOT'] . '/';
@@ -41,9 +41,10 @@ class FileManager {
     }
 
     /**
-     * Vytvoří složku attachments v adresáři s článkem.
-     * @param $artFolder string složka s článkem.
-     * @return string Cestu ke složce attachment pro zadaný článek.
+     * Vytvoří složku attachments v adresáři s článkem
+     *
+     * @param $artFolder string složka s článkem
+     * @return string Cestu ke složce attachment pro zadaný článek
      */
     public static function getAttachmentsFolder($artFolder) {
         $path = $artFolder . "/" . self::FOLDER_ATTACHMENT;
@@ -54,9 +55,10 @@ class FileManager {
     }
 
     /**
-     * Metoda rekurzivně projede zadanou cestu a smaže všechno, co jí příjde do cesty.
-     * @param $str string Cesta k souboru/složce.
-     * @return bool False, pokud není co smazat, jinak true.
+     * Metoda rekurzivně projede zadanou cestu a smaže všechno, co jí příjde do cesty
+     *
+     * @param $str string Cesta k souboru/složce
+     * @return bool False, pokud není co smazat, jinak true
      */
     public static function recursiveDelete($str) {
         if (is_file($str)) {
@@ -74,30 +76,46 @@ class FileManager {
     }
 
     /**
-     * Metoda pro přesun souborů z jedné složky do druhé. Funguje rekurzivně.
+     * Metoda pro přesun souborů z jedné složky do druhé. Funguje rekurzivně
+     *
      * @param $sourceDir string Zdrojová složky - odkud se mají soubory přesunout
      * @param $destDir string cílová složka - kam se mají soubory přesunout
-     * @throws Exception Pokud zdroj nebo cíl není složka.
+     * @throws MyException Pokud zdroj nebo cíl není složka
      */
     public static function moveFiles($sourceDir, $destDir) {
 
-        /*if (!is_dir($sourceDir))
-            throw new Exception("Zdroj není složka");
+        if (!is_dir($sourceDir))
+            throw new MyException("Zdroj není složka");
         if (!is_dir($destDir))
-            throw new Exception("Cíl není složka");
+            throw new MyException("Cíl není složka");
         $fileArray = array_diff(scandir($sourceDir), array('..', '.'));
         foreach ($fileArray as $tmpFile) {
             if (is_dir($tmpFile))
                 self::moveFiles($tmpFile, $destDir . "/" . $tmpFile);
             else
                 rename($sourceDir . "/" . $tmpFile, $destDir . $tmpFile);
-        }*/
+        }
     }
 
     /**
-     * Metoda pro získání obsahu z adresáře.
-     * @param $dir string Cesta k adresáři.
-     * @return array Pole souborů.
+     * Metoda pro přesun souborů z dočasné složky serveru do cílové
+     *
+     * @param $fileName string Název souboru, který se má přesunout
+     * @param $destDir string cílová složka - kam se mají soubory přesunout
+     * @throws MyException Pokud se přesun nepodaří
+     */
+    public static function moveUploadedFiles($fileName, $destDir) {
+        $success = move_uploaded_file($fileName, $destDir);
+
+        if (!$success)
+            throw new MyException("Nepodařilo se přesunout soubor");
+    }
+
+    /**
+     * Metoda pro získání obsahu z adresáře
+     *
+     * @param $dir string Cesta k adresáři
+     * @return array Pole souborů
      */
     public static function getFilesFromDirectory($dir) {
         return array_diff(scandir($dir), array('..', '.'));
@@ -105,7 +123,8 @@ class FileManager {
 
     /**
      * Pomocná metoda pro vytvoření složky, pokud neexistuje
-     * @param $path string Cesta ke složce.
+     *
+     * @param $path string Cesta ke složce
      */
     private function createDirectory($path) {
         if (!file_exists($path))
@@ -113,23 +132,25 @@ class FileManager {
     }
 
     /**
-     * Metoda pro získání cesty k zadané složce.
-     * @param $name string Název složky.
-     * @return string Cestu k zadané složce.
-     * @throws Exception Pokud požadovaná složka neexistuje.
+     * Metoda pro získání cesty k zadané složce
+     *
+     * @param $name string Název složky
+     * @return string Cestu k zadané složce
+     * @throws MyException Pokud požadovaná složka neexistuje
      */
     public function getDirectory($name) {
         if (!array_key_exists($name, $this->folders))
-            throw new Exception('Požadovaná složka neexistuje');
+            throw new MyException('Požadovaná složka neexistuje');
 
         return $this->folders[$name];
     }
 
     /**
-     * Vytvoří novou složku pro článek.
-     * @param $categoryURL string URL adresa kategorie článku.
-     * @param $articleURL string URL adresa článku.
-     * @return string Cestu k složce s článkem.
+     * Vytvoří novou složku pro článek
+     *
+     * @param $categoryURL string URL adresa kategorie článku
+     * @param $articleURL string URL adresa článku
+     * @return string Cestu k složce s článkem
      */
     public function createArticleDirectory($categoryURL, $articleURL) {
         $path = $this->folders[self::FOLDER_CATEGORY] . $categoryURL . "/" . $articleURL;
@@ -140,23 +161,25 @@ class FileManager {
 
     /**
      * Přešte soubor a vrátí jeho obsah v textové podobě
+     *
      * @param $categoryURL string URL adresa kategorie článku (složka kategorie, ve které se článek nachází)
      * @param $articleURL string URL adresa článku (složka článku, ve které se článek nachází)
      * @return string Obsah souboru
-     * @throws Exception Pokud článek není nalezen
+     * @throws MyException Pokud článek není nalezen
      */
     public function getArticleContent($categoryURL, $articleURL) {
         $path = $this->folders[self::FOLDER_CATEGORY] . $categoryURL . "/" . $articleURL . "/" . $articleURL . '.markdown';
         if (!file_exists($path))
-            throw new Exception("Požadovaný soubor nebyl nalezen");
+            throw new MyException("Požadovaný soubor nebyl nalezen");
 
         return $this->readFile($path);
     }
 
     /**
-     * Vytvoří nový soubor a zapíše do něj obsah. Pokud soubor existuje, obsah se přepíše.
-     * @param $path string Cesta k souboru.
-     * @param $text string Obsah souboru.
+     * Vytvoří nový soubor a zapíše do něj obsah. Pokud soubor existuje, obsah se přepíše
+     *
+     * @param $path string Cesta k souboru
+     * @param $text string Obsah souboru
      */
     public function writeFile($path, $text) {
         $file = fopen($path, "a+");
@@ -166,7 +189,8 @@ class FileManager {
 
     /**
      * Přečte soubor a vrátí obsah
-     * @param $path string Cesta k souboru.
+     *
+     * @param $path string Cesta k souboru
      * @return string Obsah souboru
      */
     public function readFile($path) {
@@ -178,8 +202,9 @@ class FileManager {
     }
 
     /**
-     * Vytvoří dočasnou složku pro uživatele.
-     * Pokud složka již existuje, tak smaže její obsah.
+     * Vytvoří dočasnou složku pro uživatele
+     *
+     * Pokud složka již existuje, tak smaže její obsah
      */
     public function createTmpDirectory() {
         $tmpDirectory = $this->getTmpDirectory();
@@ -201,7 +226,8 @@ class FileManager {
     }
 
     /**
-     * Metoda vyčistí junk-files z dočasné složky uživatele.
+     * Metoda vyčistí junk-files z dočasné složky uživatele
+     *
      * @param $tmpDirectory string Cesta k dočasné složce uživatele
      */
     public function clearTmpDirectory($tmpDirectory = null) {
@@ -210,9 +236,10 @@ class FileManager {
     }
 
     /**
-     * Upraví cestu ze statické na relativní.
-     * @param $staticPath string Statická cesta.
-     * @return string Relativná cestu.
+     * Upraví cestu ze statické na relativní
+     *
+     * @param $staticPath string Statická cesta
+     * @return string Relativná cestu
      */
     public function getRelativePath($staticPath) {
         return str_replace($this->folderRoot, "/", $staticPath);

@@ -7,7 +7,7 @@ use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
 use app\model\manager\UserManager;
 use app\model\service\request\IRequest;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class CheckCodeController
@@ -36,7 +36,7 @@ class CheckCodeController extends BaseController {
                 $this->redirect("profile");
             }
             $this->redirect("login");
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
     }
@@ -48,7 +48,7 @@ class CheckCodeController extends BaseController {
         try {
             $user = $this->userfactory->getUserFromSession();
             if ($user->isOnline() && $user->isActivated()) $this->redirect('profile');
-        } catch (Exception $ex) {}
+        } catch (MyException $ex) {}
 
 
         $this->header['title'] = "Ověření kódu";

@@ -13,7 +13,7 @@ class AjaxCallBack
     private $data;
 
     /**
-     * Vytvoří novou instanci callBack zprávy.
+     * Vytvoří novou instanci callBack zprávy
      */
     public function __construct()
     {
@@ -23,14 +23,15 @@ class AjaxCallBack
     }
 
     /**
-     * Nastaví příznak, že požadavek nebyl úspěšný.
+     * Nastaví příznak, že požadavek nebyl úspěšný
      */
     public function setFail() {
         $this->success = AjaxCallBack::UNSUCCESS;
     }
 
     /**
-     * Přidá hlášku o requestu.
+     * Přidá hlášku o requestu
+     *
      * @param CallBackMessage $callBackMessage
      */
     public function addMessage(CallBackMessage $callBackMessage)
@@ -39,8 +40,9 @@ class AjaxCallBack
     }
 
     /**
-     * Přidá více zpráv najednou.
-     * @param array $messages Pole zpráv.
+     * Přidá více zpráv najednou
+     *
+     * @param array $messages Pole zpráv
      */
     public function addMessages($messages) {
         foreach($messages as $message) {
@@ -49,9 +51,10 @@ class AjaxCallBack
     }
 
     /**
-     * Přidá data, která putujou ke klientovi.
-     * @param CallBackData $data array Pole dat.
-     * @param bool $jsonEncode False, pokud se nemají data enkodovat do jsonu, výchozi je true.
+     * Přidá data, která putujou ke klientovi
+     *
+     * @param CallBackData $data array Pole dat
+     * @param bool $jsonEncode False, pokud se nemají data enkodovat do jsonu, výchozi je true
      */
     public function addData(CallBackData $data, $jsonEncode = true)
     {
@@ -62,7 +65,8 @@ class AjaxCallBack
     }
 
     /**
-     * Sestaví výslednou zprávu a zakóduje do JSON.
+     * Sestaví výslednou zprávu a zakóduje do JSON
+     *
      * @return string Zakódovaný response.
      */
     public function buildMessage()

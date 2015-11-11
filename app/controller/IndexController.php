@@ -6,11 +6,10 @@ namespace app\controller;
 use app\model\callback\CallBackData;
 use app\model\callback\CallBackMessage;
 use app\model\factory\ArticleFactory;
-use app\model\manager\ArticleManager;
 use app\model\manager\ForumManager;
 use app\model\service\request\IRequest;
 use app\model\snippet\PostSnippet;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class IndexController
@@ -42,7 +41,7 @@ class IndexController extends BaseController {
         try {
             $articles = $this->articlefactory->getLastXArticles(self::ARTICLE_COUNT);
             $posts = $this->forummanager->getLastPosts(self::POST_COUNT);
-        } catch (Exception $ex) {}
+        } catch (MyException $ex) {}
 
         $this->data['articles'] = $articles;
         $this->data['posts'] = $posts;
@@ -64,7 +63,7 @@ class IndexController extends BaseController {
                 $snippet = new PostSnippet($post);
                 $this->callBack->addData(new CallBackData($i++, $snippet->render()), false);
             }
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
         }

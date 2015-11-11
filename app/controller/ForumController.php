@@ -5,13 +5,11 @@ namespace app\controller;
 
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
-use app\model\manager\FileManager;
 use app\model\manager\ForumManager;
-use app\model\manager\UserManager;
 use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
 use app\model\UserRole;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class ForumController
@@ -42,13 +40,13 @@ class ForumController extends BaseController {
             $user = $this->userfactory->getUserFromSession();
             $user->getRole()->valid(UserRole::ADMIN);
             $this->data['isAdmin'] = true;
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->data['isAdmin'] = false;
         }
 
         try {
             $this->data['forumCategories'] = $this->forummanager->getCategories();
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->data['forumCategories'] = null;
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
@@ -68,7 +66,7 @@ class ForumController extends BaseController {
                 $user = $this->userfactory->getUserFromSession();
                 $user->getRole()->valid(UserRole::ADMIN);
                 $this->data['isAdmin'] = true;
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->data['isAdmin'] = false;
             }
 
@@ -80,7 +78,7 @@ class ForumController extends BaseController {
             $topics = $this->forummanager->getTopics($category['category_url']);
             $this->data['topics'] = $topics;
 
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('forum');
         }
@@ -99,7 +97,7 @@ class ForumController extends BaseController {
             $this->validateUser(UserRole::ADMIN);
             $this->forummanager->deleteTopic($topicID);
             $this->callBack->addMessage(new CallBackMessage("Téma bylo úspěšně smazáno"));
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
@@ -120,7 +118,7 @@ class ForumController extends BaseController {
                 $user = $this->userfactory->getUserFromSession();
                 $user->getRole()->valid(UserRole::ADMIN);
                 $this->data['isAdmin'] = true;
-            } catch (Exception $ex) {
+            } catch (MyException $ex) {
                 $this->data['isAdmin'] = false;
             }
 
@@ -133,7 +131,7 @@ class ForumController extends BaseController {
 
             $this->header['title'] = "Forum / " . $category['category_name'] . " / " . $topic['topic_subject'];
             $this->view = 'forum-posts';
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
             $this->redirect('forum');
         }
@@ -145,7 +143,7 @@ class ForumController extends BaseController {
             CaptchaService::verify($request->getPost("g-recaptcha-response", null));
             $this->forummanager->addPost($request->getPost('post_content'));
             $this->addMessage(new CallBackMessage("Zpráva byla úspěšně odeslána"));
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
 
@@ -165,7 +163,7 @@ class ForumController extends BaseController {
             $this->validateUser(UserRole::ADMIN);
             $this->forummanager->deletePost($postID);
             $this->callBack->addMessage(new CallBackMessage("Příspěvek byl úspěšně smazán"));
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
@@ -181,7 +179,7 @@ class ForumController extends BaseController {
             $this->validateUser(UserRole::MEMBER);
             $url = $this->forummanager->addTopic($_POST['topic_subject'], $_POST['post_content']);
             $this->redirect("forum/" . $this->forummanager->getActualCategory() . "/" . $url);
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('forum/new-topic');
         }

@@ -1,0 +1,22 @@
+<? use app\model\util\DateUtils;
+use app\model\util\ParsedownExtra;
+?>
+
+<ol class="breadcrumb">
+    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li><a href="admin-article-manager">Správce článků</a></li>
+    <li class="active"><?= $article['article_title'] ?></li>
+</ol>
+
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header"><?= $article['article_title'] ?></h1>
+    </div>
+    <div class="panel-body">
+        <?= ParsedownExtra::instance()->text($_text) ?>
+    </div>
+    <div class="panel-footer">
+        <span class="small right"><?= DateUtils::prettyDateTime($article['article_date']); ?></span>
+        <a href="admin-article-manager" class="btn btn-xs btn-primary">Zpět</a>
+    </div>
+</div>

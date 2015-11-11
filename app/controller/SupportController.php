@@ -8,7 +8,7 @@ use app\model\manager\SupportManager;
 use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
 use app\model\UserRole;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class SupportController
@@ -41,7 +41,7 @@ class SupportController extends BaseController {
             $this->validateUser(UserRole::MEMBER);
             $this->supportmanager->addReport($_POST);
             $this->addMessage(new CallBackMessage("Zpráva byla úspěšně poslána"));
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
 

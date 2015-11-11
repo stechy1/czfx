@@ -9,8 +9,9 @@ class CallBackData {
     private $value;
 
     /**
-     * CallBackData constructor.
-     * @param $key string Klíč, pod kterým se budou data prezentovat.
+     * CallBackData constructor
+     *
+     * @param $key string Klíč, pod kterým se budou data prezentovat
      * @param $value mixed Jakákoliv hodnota
      */
     public function __construct($key, $value)
@@ -20,7 +21,9 @@ class CallBackData {
     }
 
     /*
-     * @return mixed Vrátí klíč dat.
+     * Vrátí klíč dat.
+     *
+     * @return mixed
      */
     public function getKey()
     {
@@ -28,7 +31,9 @@ class CallBackData {
     }
 
     /**
-     * @return mixed Vrátí obsah dat.
+     * Vrátí obsah dat
+     *
+     * @return mixed
      */
     public function getValue()
     {

@@ -12,6 +12,7 @@ class StringUtils
 
 	/**
 	 * Zjistí, zda text začíná určitým podřetězcem
+	 *
 	 * @param $haystack string Text
 	 * @param $needle string Podřetězec
 	 * @return bool Zda text začíná podřetězcem
@@ -23,6 +24,7 @@ class StringUtils
 
     /**
      * Zjistí, zda text končí určitým podřetězcem
+	 *
      * @param $haystack string Text
      * @param $needle string Podřetězec
      * @return bool Zda text začíná podřetězcem
@@ -34,6 +36,7 @@ class StringUtils
 
 	/**
 	 * Převede první písmeno textu na velké
+	 *
 	 * @param string $text Text k převedení
 	 * @return string Převedený text
 	 */
@@ -44,6 +47,7 @@ class StringUtils
 
 	/**
 	 * Převede první písmeno malé
+	 *
 	 * @param string $text Text k převedení
 	 * @return string Převedený text
 	 */
@@ -53,9 +57,10 @@ class StringUtils
 	}
 
 	/**
-	 * Odebere z textu nebezpečné znaky a zanechá pouze alfanumerické znaky.
-	 * @param $text string Text k úpravě.
-	 * @return mixed Upravený text.
+	 * Odebere z textu nebezpečné znaky a zanechá pouze alfanumerické znaky
+	 *
+	 * @param $text string Text k úpravě
+	 * @return mixed Upravený text
 	 */
 	public static function removeDangerousLetters($text) {
 		return preg_replace("/[^\w]+/", "-", $text);
@@ -63,6 +68,7 @@ class StringUtils
 
 	/**
 	 * Zkrátí text na požadovanou délku. U zkráceného textu zobrazuje tří tečky, které se vejdou do požadované délky
+	 *
 	 * @param string $text Text ke zkrácení
 	 * @param int $length požadovaná délka textu
 	 * @return string Zkrácený text
@@ -75,7 +81,8 @@ class StringUtils
 	}
 
 	/**
-	 * Převede libovolný text na pomlčky, např. titulek článku. Speciální znaky jsou nahrazeny pomlčkami.
+	 * Převede libovolný text na pomlčky, např. titulek článku. Speciální znaky jsou nahrazeny pomlčkami
+	 *
 	 * @param string $text Text k převedení
 	 * @return string Převedený text
 	 */
@@ -86,6 +93,7 @@ class StringUtils
 
     /**
      * Převede text na CamelCase podle separátoru
+	 *
      * @param string $text Text k převedení
      * @param string $separator Separátor slov
      * @param bool $uncapitalize
@@ -101,6 +109,7 @@ class StringUtils
 
 	/**
 	 * Převede text z CamelCase pomocí daného separátoru
+	 *
 	 * @param string $text Text k převedení
 	 * @param string $separator Separátor
 	 * @return string Převedený text
@@ -112,6 +121,7 @@ class StringUtils
 
     /**
      * Převede pomlčky na CamelCase
+	 *
      * @param string $text Text k převedení
      * @param bool $uncapitalize
      * @return string Převedený etxt
@@ -123,6 +133,7 @@ class StringUtils
 
     /**
      * Převede snake_case na CamelCase
+	 *
      * @param string $text Text k převedení
      * @param bool $uncapitalize
      * @return string Převedený text
@@ -134,6 +145,7 @@ class StringUtils
 
 	/**
 	 * Převede CamelCase na pomlčky
+	 *
 	 * @param string $text Text k převedení
 	 * @return string Převedený text
 	 */
@@ -144,6 +156,7 @@ class StringUtils
 
 	/**
 	 * Převede CamelCase na snake_case
+	 *
 	 * @param string $text Text k převedení
 	 * @return string Převedený text
 	 */
@@ -154,6 +167,7 @@ class StringUtils
 
     /**
      * Vygeneruje náhodné heslo
+	 *
      * @param bool $addSpecialChar
      * @return string Náhodné heslo
      */
@@ -171,6 +185,7 @@ class StringUtils
 
 	/**
 	 * Vygeneruje náhodný textový řetězec v rozsahu určeném znaky
+	 *
 	 * @param string $from ASCII znak od kterého se má generovat
 	 * @param string $to ASCII znak do kterého se má generovat
 	 * @param string $length Délka řetězce
@@ -186,6 +201,7 @@ class StringUtils
 
 	/**
 	 * Odstraní z textu diakritiku
+	 *
 	 * Tato část kódu pochází z WordPressu - https://core.trac.wordpress.org/browser/trunk/src/wp-includes/formatting.php
 	 * @param string $text Text s diakritikou
 	 * @return string Text bez diakritiky

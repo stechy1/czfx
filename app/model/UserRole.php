@@ -16,7 +16,8 @@ class UserRole {
     private $roleID;
 
     /**
-     * Role constructor.
+     * Role constructor
+     *
      * @param $roleID
      */
     public function __construct ($roleID) {
@@ -26,9 +27,9 @@ class UserRole {
     /**
      * Zvaliduje oprávnění
      *
-     * @param $requiredRole int Požadované oprávnění.
-     * @param bool $throwException True, pokud se v případě neúspěchu má vyvolat vyjímka, jinak se vrátí false.
-     * @return bool True, pokud je oprávnění v pořádku.
+     * @param $requiredRole int Požadované oprávnění
+     * @param bool $throwException True, pokud se v případě neúspěchu má vyvolat vyjímka, jinak se vrátí false
+     * @return bool True, pokud je oprávnění v pořádku
      * @throws Exception
      */
     public function valid ($requiredRole, $throwException = true) {

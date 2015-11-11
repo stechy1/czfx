@@ -7,7 +7,7 @@ use app\model\callback\CallBackMessage;
 use app\model\manager\UserManager;
 use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class RegistrationController
@@ -38,10 +38,9 @@ class RegistrationController extends BaseController {
         try {
             CaptchaService::verify($request->getPost("g-recaptcha-response", null));
             $this->usermanager->register($_POST);
-            //$userManager->login($_POST);
             $this->addMessage(new CallBackMessage("Registrace proběhla úspěšně. \nMůžete se přihlásit."));
             $this->redirect('login');
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('registration');
         }

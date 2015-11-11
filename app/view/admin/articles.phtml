@@ -1,0 +1,82 @@
+<ol class="breadcrumb">
+    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li class="active">Správce článků</li>
+</ol>
+
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Správce článků</h1>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Titulek</th>
+                    <th>Kategorie článku</th>
+                    <th>Autor</th>
+                    <th>Schváleno</th>
+                    <th>Akce</th>
+                </tr>
+                </thead>
+                <tbody>
+                <? foreach ($articles as $article) : ?>
+                    <tr id="article_<?= $article['article_id'] ?>" ">
+                        <td><?= $article['article_id'] ?></td>
+                        <td><?= $article['article_title'] ?></td>
+                        <td><?= $article['category_name'] ?></td>
+                        <td><?= $article['user_nick'] ?></td>
+                        <td><input data-articleid="<?= $article['article_id'] ?>" type="checkbox"
+                                   class="form-control input-md boot-switch"
+                                   required="" <?= ($article['article_validated']) ? 'checked' : '' ?>/></td>
+                        <td>
+                            <a href="/admin-article-manager/preview/<?= $article['article_id'] ?>"><span
+                                    class="btn btn-xs btn-primary">Náhled</span></a>
+                            <button data-articleid="<?= $article['article_id'] ?>"
+                                    class="btn btn-xs btn-danger  cat-remove">Odebrat
+                            </button>
+                        </td>
+                    </tr>
+                <? endforeach ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-xs-8 col-sm-6 col-xs-offset-3 col-sm-offset-4">
+        <nav class="center-block">
+            <ul class="pagination">
+                <?= $paginator->process() ?>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/articleManager.js"></script>
+<script type="text/javascript">
+
+    var m = new ArticleManager();
+
+    jQuery(document).ready(function () {
+        jQuery('.cat-remove').click(function () {
+            if (confirm("Opravdu si přejete smazat článek?")) {
+                var id = $(this).data("articleid");
+
+                m.delete(id, function() {
+                    jQuery('#article_' + id).remove();
+                });
+            }
+        });
+
+        jQuery('.boot-switch').on('switchChange.bootstrapSwitch', function(event, state) {
+
+            var data = {
+                id: $(this).data("articleid"),
+                validated: state
+            };
+
+            m.validate(data);
+        });
+
+    });
+</script>

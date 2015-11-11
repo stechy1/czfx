@@ -6,7 +6,7 @@ namespace app\controller\admin;
 use app\controller\BaseController;
 use app\model\callback\CallBackMessage;
 use app\model\UserRole;
-use Exception;
+use app\model\service\exception\MyException;
 
 class AdminBaseController extends BaseController {
 
@@ -20,7 +20,7 @@ class AdminBaseController extends BaseController {
     public function onStartup () {
         try {
             $this->validateUser();
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('profile');
         }
@@ -33,7 +33,7 @@ class AdminBaseController extends BaseController {
      * @param bool $mustBeActivated True, pokud se vyžaduje aktivovanej učet.
      * @param int $role Volitelný parametr na upřesnění roli uživatele.
      * @return bool True, pokud má uživatel dostatečné oprávnění, jinak false.
-     * @throws Exception Pokud uživatel nemá dostatečná oprávnění.
+     * @throws MyException Pokud uživatel nemá dostatečná oprávnění.
      */
     public function validateUser ($role = null, $mustBeActivated = true) {
         parent::validateUser(UserRole::ADMIN);

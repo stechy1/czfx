@@ -9,12 +9,11 @@ use app\model\callback\CallBackMessage;
 use app\model\factory\ArticleFactory;
 use app\model\factory\CategoryFactory;
 use app\model\manager\ArticleManager;
-use app\model\manager\CategoryManager;
 use app\model\manager\FileManager;
+use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 use app\model\UserRole;
 use app\model\util\BootPagination;
-use Exception;
 
 /**
  * Class ArticleManagementController
@@ -70,7 +69,7 @@ class ArticleManagementController extends BaseController {
         try {
             $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 
-            $artCount = $this->articlefactory->getArticleCountFromCurrentUser();
+            $artCount = $this->articlemanager->getArticleCountFromCurrentUser();
 
             $pg = new BootPagination();
             $pg->pagenumber = $page;
@@ -86,7 +85,7 @@ class ArticleManagementController extends BaseController {
             $this->data['paginator'] = $pg;
 
             $this->data['hasArticles'] = true;
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->data['hasArticles'] = false;
             $this->data['errorMessage'] = $ex->getMessage();
         }
@@ -107,7 +106,7 @@ class ArticleManagementController extends BaseController {
         try {
             $this->articlemanager->add($this->articlefactory->getArticleFromPost($_POST));
             $this->redirect('article-management');
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->header['title'] = "Nový článek";
             $this->view = 'article-editor';
             $this->data['artAction'] = 'new';
@@ -123,7 +122,7 @@ class ArticleManagementController extends BaseController {
         $article = null;
         try {
             $article = $this->articlefactory->getArticleFromURL($request->getParams()[1]);
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('article-management');
         }
@@ -133,7 +132,7 @@ class ArticleManagementController extends BaseController {
         try {
             $articlePrev = $this->articlefactory->getArticleFromID($article->getPreviousID());
             $articleNext = $this->articlefactory->getArticleFromID($article->getNextID());
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $articlePrev = $articleNext = null;
         }
 
@@ -151,7 +150,7 @@ class ArticleManagementController extends BaseController {
             $article = $this->articlefactory->getArticleFromPost($request->getPost());
             $this->articlemanager->update($article);
             $this->redirect('article-management');
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('article-management/edit/' . $request->getParams()[1]);
         }
@@ -169,7 +168,7 @@ class ArticleManagementController extends BaseController {
                 try {
                     $article = $this->articlefactory->getArticleFromSession();
                     $this->callBack->addData(new CallBackData('article', $article->getText()));
-                } catch (Exception $ex) {
+                } catch (MyException $ex) {
                     $this->callBack->setFail();
                     $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
                 }
@@ -179,7 +178,7 @@ class ArticleManagementController extends BaseController {
                 try {
                     $articles = $this->articlefactory->getArticlesFromCategoryID($catID);
                     $this->callBack->addData(new CallBackData('articles', $articles));
-                } catch (Exception $ex) {
+                } catch (MyException $ex) {
                     $this->callBack->setFail();
                     $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
                 }

@@ -5,10 +5,8 @@ namespace app\controller;
 
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
-use app\model\manager\UserManager;
 use app\model\service\request\IRequest;
-use app\model\UserRole;
-use Exception;
+use app\model\service\exception\MyException;
 
 /**
  * Class SettingsController
@@ -18,10 +16,6 @@ use Exception;
  */
 class SettingsController extends BaseController {
 
-    /**
-     * @var UserManager
-     */
-    private $usermanager;
     /**
      * @var UserFactory
      */
@@ -34,7 +28,7 @@ class SettingsController extends BaseController {
     public function defaultAction (IRequest $request) {
         try {
             $this->data['user'] = $this->userfactory->getUserFromSession()->toArray();
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('login');
         }
@@ -51,7 +45,7 @@ class SettingsController extends BaseController {
         /*try {
             $this->validateUser(UserRole::MEMBER);
             $this->usermanager->updateUser($request->getPost());
-        } catch (Exception $ex) {
+        } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
 

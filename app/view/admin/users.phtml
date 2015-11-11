@@ -1,0 +1,52 @@
+<ol class="breadcrumb">
+    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li class="active">Správce uživatelů</li>
+</ol>
+
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Správce uživatelů</h1>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nick</th>
+                    <th>E-mail</th>
+                    <th>První přihlášení</th>
+                    <th>Naposledy přihlášen</th>
+                    <th>Zabanován</th>
+                    <th>Online</th>
+                    <th>Aktivovaný účet</th>
+                </tr>
+                </thead>
+                <tbody>
+                <? foreach ($users as $user) : ?>
+                    <tr>
+                        <td><?= $user['user_id'] ?></td>
+                        <td><?= $user['user_nick'] ?></td>
+                        <td><?= $user['user_mail'] ?></td>
+                        <td><?= \app\model\util\DateUtils::prettyDate($user['user_first_login']) ?></td>
+                        <td><?= \app\model\util\DateUtils::prettyDate($user['user_last_login']) ?></td>
+                        <td><?= ($user['user_banned']) ? 'ANO' : 'NE' ?></td>
+                        <td><?= ($user['user_online']) ? 'ANO' : 'NE' ?></td>
+                        <td><?= ($user['user_activated']) ? 'ANO' : 'NE' ?></td>
+                    </tr>
+                <? endforeach ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-8 col-sm-6 col-xs-offset-3 col-sm-offset-4">
+            <nav class="center-block">
+                <ul class="pagination">
+                    <?= $paginator->process() ?>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <a href="admin-dashboard" class="btn btn-xs btn-primary">Rozcestník</a>
+    </div>
+</div>
