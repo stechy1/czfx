@@ -3,8 +3,8 @@
 namespace app\model\service;
 
 
-use Exception;
-use ReCaptcha;
+use app\model\service\exception\MyException;
+use Captcha\Captcha;
 
 /**
  * Class CaptchaService
@@ -14,7 +14,7 @@ use ReCaptcha;
 class CaptchaService {
 
     private static $errorArray = array(
-        'missing-input' => "Nebyla vyplnená captcha"
+        'Incorrect-captcha-sol' => "Nebyla vyplněná captcha"
     );
 
     /**
@@ -22,18 +22,35 @@ class CaptchaService {
      *
      * @param $text string Text získaný od klienta z recaptchy
      * @return bool True, pokud je kontrola v pořádku
-     * @throws Exception Pokud se kontrola nepodaří
+     * @throws MyException Pokud se kontrola nepodaří
      */
     public static function verify($text) {
-        $reCaptcha = new ReCaptcha(RECAPTCHA_KEY);
-        $response = $reCaptcha->verifyResponse($_SERVER["REMOTE_ADDR"], $text);
+        $captcha = new Captcha();
+        $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
 
-        if (!$response->success) {
-            $err = (isset(self::$errorArray[$response->errorCodes]))? self::$errorArray[$response->errorCodes] : "Neznámá chyba" ;
-            throw new Exception($err);
+        if (!isset($_SERVER['REMOTE_ADDR']))
+            $captcha->setRemoteIp('192.168.1.1');
+
+        $response = $captcha->check($text);
+
+        if (!$response->isValid()) {
+            throw new MyException(self::$errorArray[$response->getError()]);
         }
 
         return true;
+    }
+
+    /**
+     *
+     * @throws \Captcha\Exception
+     */
+    public static function printCaptcha() {
+        $captcha = new Captcha();
+        $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
+        $captcha->setPublicKey(RECAPTCHA_PUBLIC_KEY);
+        $captcha->setTheme("dark");
+
+        echo $captcha->html();
     }
 
 }

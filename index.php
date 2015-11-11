@@ -1,19 +1,21 @@
 <?php
 
 use app\App;
+use app\model\service\Container;
 
 session_start();
 
 define("__HOME__", $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 
-require("lib/recaptchalib.php");
-require("lib/log4php/Logger.php");
+require "vendor/autoload.php";
+//require "lib/recaptchalib.php";
 
-/*spl_autoload_extensions('.php');
-spl_autoload_register();*/
-
+Logger::configure("app/config/log4php.xml");
 $logger = Logger::getLogger("main");
-$logger->info("Zpráva z loggeru");
+$logger->info("Hello log4php");
 
-$app = new App();
+/** @var Container $container */
+$container = require("app/bootstrap.php");
+/** @var App $app */
+$app = $container->getInstanceOf('app');
 $app->run();

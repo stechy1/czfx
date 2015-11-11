@@ -20,7 +20,6 @@ class Container {
      * Container constructor.
      */
     private function __construct () {
-        $this->folderIterator(__BASEDIR__);
         $this->map = new \stdClass();
     }
 
@@ -39,6 +38,15 @@ class Container {
         $container->mapValue('container', $container);
 
         return $container;
+    }
+
+    /**
+     * Zaregistruje složku
+     *
+     * @param $folder
+     */
+    public function registerFolder ($folder) {
+        $this->folderIterator($folder);
     }
 
     /**
@@ -177,6 +185,7 @@ class Container {
             }
             $obj = $reflection->newInstanceArgs($arguments);
         }
+
 
         $parentReflection = $reflection->getParentClass();
 

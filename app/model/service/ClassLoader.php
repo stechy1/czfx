@@ -2,19 +2,24 @@
 
 namespace app\model\service;
 
+
+require("FileFilterIterator.php");
+
 /**
  * Class Třída představující načítač tříd
  * @package app\model
  */
 class ClassLoader {
 
-    private $loadedClasses = array();
+    private $rootFolder;
 
     /**
-     * ClassLoader constructor.
+     * ClassLoader constructor
+     *
+     * @param $rootFolder string Kořenová složka aplikace
      */
-    public function __construct () {
-        echo 'Vytvarim class loader <br>';
+    public function __construct ($rootFolder) {
+        $this->rootFolder = $rootFolder;
     }
 
     /**
@@ -23,37 +28,21 @@ class ClassLoader {
      * @param $class string Název třídy
      */
     public function load($class) {
-        echo 'Pokousim se nacist tridu: ' . $class . '<br>';
-        if (file_exists($class . '.php')) {
+        if (file_exists($this->rootFolder . $class . '.php')) {
             require $class . '.php';
         }
-
-        /*$theClass = new $class;
-        $reflector = new ReflectionClass($theClass);
-        $rp = $reflector->getProperty("userManager");
-        $rp->setAccessible(true);
-        $rp->setValue($theClass, "UserManager");
-
-        echo 'Injectoval jsem tridu app tridou userManger';
-        $arrDocClass = explode(PHP_EOL, $reflector->getDocComment());
-        $prop =  $reflector->getProperties();
-
-        foreach($prop as $p) {
-            $docComment = $p->getDocComment();
-            if (strpos($docComment, '@inject') !== false) {
-
-                $tmp = substr($docComment, strpos($docComment, '@var') + 5);
-                $injectClassString = substr($tmp, 0, strpos($tmp, ' '));
-                $injectClass = new $injectClassString();
-                echo 'Nacetl jsem tridu: ' . $injectClassString;
-            }
-        }*/
     }
 
+    /**
+     * Zaregistruje class loader
+     */
     public function register () {
         spl_autoload_register(array($this, "load"));
     }
 
+    /**
+     * Odhlásí class loader
+     */
     public function unregister() {
         spl_autoload_unregister(array($this, "load"));
     }

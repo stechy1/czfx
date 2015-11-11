@@ -8,10 +8,10 @@ use app\model\database\Database;
 use app\model\factory\RequestFactory;
 use app\model\service\Container;
 
-define("__BASEDIR__", dirname(__FILE__));
 
 /**
  * Třída představující vstupní bod aplikace
+ * @Inject Container
  * @package app
  */
 class App {
@@ -20,23 +20,11 @@ class App {
      * @var Container
      */
     private $container;
-    /**
-     * @var Database
-     */
-    private $database;
-
-    /**
-     * App constructor.
-     */
-    public function __construct () {
-        $this->container = Container::getContainer();
-        $this->container->mapValue('container', $this->container);
-        $this->database = $this->container->getInstanceOf('database');
-
-        $this->database->connect(DATABASE_HOST, DATABASE_LOGIN, DATABASE_PASS, DATABASE_SCHEME);
-    }
 
     public function run() {
+        $database = $this->container->getInstanceOf('database');
+        $database->connect(DATABASE_HOST, DATABASE_LOGIN, DATABASE_PASS, DATABASE_SCHEME);
+
         /**
          * @var $router RouterController
          */
