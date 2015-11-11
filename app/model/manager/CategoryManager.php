@@ -53,7 +53,7 @@ class CategoryManager {
      * @throws MyException Pokud se odebrání nepovede
      */
     public function delete (Category $category, $removeArticles = false) {
-        $fromDb = $this->database->delete("categories", "WHERE category_id = ?", [$category->getId()]);
+        $fromDb = $this->database->delete("categories", " WHERE category_id = ?", [$category->getId()]);
 
         if (!$fromDb)
             throw new MyException("Odstranění kategorie se nezdařilo");

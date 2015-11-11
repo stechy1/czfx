@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/apache/log4php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/facebook/php-sdk-v4" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/recaptcha/php5" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -24,11 +25,13 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/vendor/apache/log4php" />
           <root url="file://$MODULE_DIR$/vendor/composer" />
+          <root url="file://$MODULE_DIR$/vendor/facebook/php-sdk-v4" />
           <root url="file://$MODULE_DIR$/vendor/recaptcha/php5" />
         </CLASSES>
         <SOURCES>
           <root url="file://$MODULE_DIR$/vendor/apache/log4php" />
           <root url="file://$MODULE_DIR$/vendor/composer" />
+          <root url="file://$MODULE_DIR$/vendor/facebook/php-sdk-v4" />
           <root url="file://$MODULE_DIR$/vendor/recaptcha/php5" />
         </SOURCES>
       </library>

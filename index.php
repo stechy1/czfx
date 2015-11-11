@@ -8,7 +8,6 @@ session_start();
 define("__HOME__", $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 
 require "vendor/autoload.php";
-//require "lib/recaptchalib.php";
 
 Logger::configure("app/config/log4php.xml");
 $logger = Logger::getLogger("main");
