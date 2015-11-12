@@ -18,9 +18,6 @@ use app\model\service\exception\MyException;
  */
 class AdminCategoryManagerController extends AdminBaseController {
 
-    const
-        CATEGORIES_ON_PAGE = 10;
-
     /**
      * @var CategoryFactory
      */
@@ -41,7 +38,7 @@ class AdminCategoryManagerController extends AdminBaseController {
 
         $pg = new BootPagination();
         $pg->pagenumber = $page;
-        $pg->pagesize = self::CATEGORIES_ON_PAGE;
+        $pg->pagesize = ADMIN_CATEGORY_MANAGER_CATEGORY_COUNT;
         $pg->totalrecords = $catCount;
         $pg->paginationstyle = 1;
         $pg->showfirst = true;
@@ -51,7 +48,7 @@ class AdminCategoryManagerController extends AdminBaseController {
 
         $this->data['paginator'] = $pg;
         try {
-            $this->data['categories'] = $this->categoryfactory->getLastXCategoriesFromAll($page, self::CATEGORIES_ON_PAGE);
+            $this->data['categories'] = $this->categoryfactory->getLastXCategoriesFromAll($page, ADMIN_CATEGORY_MANAGER_CATEGORY_COUNT);
         } catch (MyException $ex) {
             $this->data['categories'] = null;
         }

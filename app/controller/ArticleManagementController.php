@@ -25,9 +25,6 @@ use app\model\util\BootPagination;
  */
 class ArticleManagementController extends BaseController {
 
-    const
-        ARTICLE_ON_PAGE = 10;
-
     /**
      * @var ArticleManager
      */
@@ -73,7 +70,7 @@ class ArticleManagementController extends BaseController {
 
             $pg = new BootPagination();
             $pg->pagenumber = $page;
-            $pg->pagesize = self::ARTICLE_ON_PAGE;
+            $pg->pagesize = ARTICLE_MANAGEMENT_ARTICLE_COUNT;
             $pg->totalrecords = $artCount;
             $pg->paginationstyle = 1;
             $pg->showfirst = true;
@@ -81,7 +78,7 @@ class ArticleManagementController extends BaseController {
             $pg->defaultUrl = "article-management";
             $pg->paginationUrl = "article-management?page=[p]";
 
-            $this->data['articles'] = $this->articlefactory->getXArticlesFromCurrentUser($page, self::ARTICLE_ON_PAGE);
+            $this->data['articles'] = $this->articlefactory->getXArticlesFromCurrentUser($page, ARTICLE_MANAGEMENT_ARTICLE_COUNT);
             $this->data['paginator'] = $pg;
 
             $this->data['hasArticles'] = true;

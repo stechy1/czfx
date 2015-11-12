@@ -18,9 +18,6 @@ use app\model\service\exception\MyException;
  */
 class AdminArticleManagerController extends AdminBaseController {
 
-    const
-        ARTICLES_ON_PAGE = 10;
-
     /**
      * @var ArticleFactory
      */
@@ -41,7 +38,7 @@ class AdminArticleManagerController extends AdminBaseController {
 
         $pg = new BootPagination();
         $pg->pagenumber = $page;
-        $pg->pagesize = self::ARTICLES_ON_PAGE;
+        $pg->pagesize = ADMIN_ARTICLE_MANAGER_ARTICLE_COUNT;
         $pg->totalrecords = $artCount;
         $pg->paginationstyle = 1;
         $pg->showfirst = true;
@@ -51,7 +48,7 @@ class AdminArticleManagerController extends AdminBaseController {
 
         $this->data['paginator'] = $pg;
         try {
-            $this->data['articles'] = $this->articlefactory->getXArticlesFromAll($page, self::ARTICLES_ON_PAGE);
+            $this->data['articles'] = $this->articlefactory->getXArticlesFromAll($page, ADMIN_ARTICLE_MANAGER_ARTICLE_COUNT);
         } catch (MyException $ex) {
             $this->data['articles'] = null;
         }

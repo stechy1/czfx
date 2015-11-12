@@ -18,9 +18,6 @@ use app\model\util\BootPagination;
  */
 class AdminReportManagerController extends AdminBaseController {
 
-    const
-        REPORTS_ON_PAGE = 10;
-
     /**
      * @var ReportFactory
      */
@@ -40,7 +37,7 @@ class AdminReportManagerController extends AdminBaseController {
 
         $pg = new BootPagination();
         $pg->pagenumber = $page;
-        $pg->pagesize = self::REPORTS_ON_PAGE;
+        $pg->pagesize = ADMIN_REPORT_MANAGER_REPORT_COUNT;
         $pg->totalrecords = $repCount;
         $pg->paginationstyle = 1;
         $pg->showfirst = true;
@@ -50,7 +47,7 @@ class AdminReportManagerController extends AdminBaseController {
 
         $this->data['paginator'] = $pg;
         try {
-            $this->data['reports'] = $this->reportfactory->getXReports($page, self::REPORTS_ON_PAGE);
+            $this->data['reports'] = $this->reportfactory->getXReports($page, ADMIN_REPORT_MANAGER_REPORT_COUNT);
         } catch (MyException $ex) {
             $this->data['reports'] = null;
         }

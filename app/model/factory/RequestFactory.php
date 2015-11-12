@@ -33,7 +33,7 @@ class RequestFactory {
      * @return Request
      */
     public function createHttpRequest() {
-        if (defined("UGLY_URL")) {
+        if (defined("UGLY_URL") && UGLY_URL) {
             $requestUrl = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '/';
             $requestUrl = preg_replace("/.=/", "", $requestUrl); //str_replace("c=", "", $requestUrl);
         } else

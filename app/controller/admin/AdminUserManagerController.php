@@ -15,9 +15,6 @@ use app\model\service\exception\MyException;
  */
 class AdminUserManagerController extends AdminBaseController {
 
-    const
-        USERS_ON_PAGE = 10;
-
     /**
      * @var UserFactory
      */
@@ -34,7 +31,7 @@ class AdminUserManagerController extends AdminBaseController {
 
         $pg = new BootPagination();
         $pg->pagenumber = $page;
-        $pg->pagesize = self::USERS_ON_PAGE;
+        $pg->pagesize = ADMIN_USER_MANAGER_USER_COUNT;
         $pg->totalrecords = $userCount;
         $pg->paginationstyle = 1;
         $pg->showfirst = true;
@@ -44,7 +41,7 @@ class AdminUserManagerController extends AdminBaseController {
 
         $this->data['paginator'] = $pg;
         try {
-            $this->data['users'] = $this->userfactory->getXUsers($page, self::USERS_ON_PAGE);
+            $this->data['users'] = $this->userfactory->getXUsers($page, ADMIN_USER_MANAGER_USER_COUNT);
         } catch (MyException $ex) {
             $this->data['users'] = null;
         }

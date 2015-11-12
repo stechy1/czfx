@@ -19,10 +19,6 @@ use app\model\service\exception\MyException;
  */
 class IndexController extends BaseController {
 
-    const
-        ARTICLE_COUNT = 7,
-        POST_COUNT = 10;
-
     /**
      * @var ArticleFactory
      */
@@ -39,8 +35,8 @@ class IndexController extends BaseController {
     function defaultAction (IRequest $request) {
         $articles = $posts = null;
         try {
-            $articles = $this->articlefactory->getLastXArticles(self::ARTICLE_COUNT);
-            $posts = $this->forummanager->getLastPosts(self::POST_COUNT);
+            $articles = $this->articlefactory->getLastXArticles(INDEX_ARTICLE_COUNT);
+            $posts = $this->forummanager->getLastPosts(INDEX_POST_COUNT);
         } catch (MyException $ex) {}
 
         $this->data['articles'] = $articles;
@@ -56,7 +52,7 @@ class IndexController extends BaseController {
      */
     function defaultAjaxAction(IRequest $request) {
         try {
-            $posts = $this->forummanager->getLastPosts(self::POST_COUNT, false);
+            $posts = $this->forummanager->getLastPosts(INDEX_POST_COUNT, false);
 
             $i = 0;
             foreach ($posts as $post) {

@@ -67,7 +67,7 @@
         </div>
     </div>
 </footer>
-<? if (defined("UGLY_URL")) echo '<script type="text/javascript" src="js/ugly.js"></script>'; ?>
+<? if (defined("UGLY_URL") && UGLY_URL) echo '<script type="text/javascript" src="js/ugly.js"></script>'; ?>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-notify.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-switch.min.js"></script>
