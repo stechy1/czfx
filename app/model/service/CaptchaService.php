@@ -25,7 +25,7 @@ class CaptchaService {
      * @throws MyException Pokud se kontrola nepodaří
      */
     public static function verify($text) {
-        $captcha = new Captcha();
+        /*$captcha = new Captcha();
         $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
 
         if (!isset($_SERVER['REMOTE_ADDR']))
@@ -35,7 +35,7 @@ class CaptchaService {
 
         if (!$response->isValid()) {
             throw new MyException(self::$errorArray[$response->getError()]);
-        }
+        }*/
 
         return true;
     }
@@ -45,12 +45,14 @@ class CaptchaService {
      * @throws \Captcha\Exception
      */
     public static function printCaptcha() {
+        echo '';
+        /*
         $captcha = new Captcha();
         $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
         $captcha->setPublicKey(RECAPTCHA_PUBLIC_KEY);
         $captcha->setTheme("dark");
 
-        echo $captcha->html();
+        echo $captcha->html();*/
     }
 
 }

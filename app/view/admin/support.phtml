@@ -1,0 +1,59 @@
+<ol class="breadcrumb">
+    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li class="active">Správce podpory</li>
+</ol>
+
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Správce podpory</h1>
+    </div>
+    <div class="panel-body">
+        <? if ($reports) : ?>
+            <? $i = 0; ?>
+            <div class="row">
+            <? foreach ($reports as $report) : ?>
+                <? if ($i == 4) : ?>
+                    </div>
+                    <div class="row">
+                    <? $i = 0; endif ?>
+                <? $i++; ?>
+                <?= (new \app\model\snippet\ReportSnippet($report))->render() ?>
+            <? endforeach ?>
+            </div>
+        <? else : ?>
+            <p class="label label-success">Žádné zprávy nejsou k dispozici.</p>
+        <? endif ?>
+    </div>
+    <div class="panel-footer"></div>
+</div>
+
+<div class="col-xs-8 col-sm-6 col-xs-offset-3 col-sm-offset-4">
+    <nav class="center-block">
+        <ul class="pagination">
+            <?= $paginator->process() ?>
+        </ul>
+    </nav>
+</div>
+
+<script type="text/javascript" src="js/supportManager.js"></script>
+<script type="text/javascript">
+
+    var m = new SupportManager();
+
+    jQuery(document).ready(function () {
+        jQuery(".mark-as-read").click(function() {
+            var self = $(this);
+            var id = self.data("reportid");
+            m.markAsRead(id, function () {
+                self.parent().fadeOut().remove();
+            });
+        });
+
+        jQuery(".report-delete").click(function () {
+            var id = $(this).data("reportid");
+            m.delete(id, function () {
+                $("#report-" + id).fadeOut().remove();
+            });
+        });
+    });
+</script>

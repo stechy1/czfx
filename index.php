@@ -10,8 +10,6 @@ define("__HOME__", $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 require "vendor/autoload.php";
 
 Logger::configure("app/config/log4php.xml");
-$logger = Logger::getLogger("main");
-$logger->info("Hello log4php");
 
 /** @var Container $container */
 $container = require("app/bootstrap.php");

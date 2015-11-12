@@ -15,8 +15,10 @@
                 <span class="btn btn-xs btn-danger remove-post" data-postid="<?= $post['post_id'] ?>" style=" position: absolute; right: 10px; z-index: 2;">Smazat</span>
                 <? endif ?>
                 <div class="col-xs-3 col-sm-2 col-md-1 author">
-                    <img class="img-responsive img-circle center-block user-image" src="uploads/image/avatar/<?= $post['user_avatar'] ?>.png" alt="<?= $post['user_nick']; ?>"/>
-                    <p><?= $post['user_nick']; ?></p>
+                    <a href="profile/<?= $post['post_by'] ?>">
+                        <img class="img-responsive img-circle center-block user-image" src="uploads/image/avatar/<?= $post['user_avatar'] ?>.png" alt="<?= $post['user_nick']; ?>"/>
+                        <p class="nodecoration"><?= $post['user_nick']; ?></p>
+                    </a>
                 </div>
                 <div class="col-xs-9 col-md-10 col-lg-11" style="min-height: 70px;">
                     <p class="text-justify"><?= $parseDown->text($post['post_content']); ?></p>

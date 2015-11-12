@@ -20,6 +20,8 @@
     right: 0;
 }
 
+
+
 pre {
     -ms-word-wrap: normal;
     word-wrap: normal;
@@ -88,9 +90,21 @@ pre code {
     background-color: #484848;
     border-bottom: 1px solid beige;
 }
+.panel-heading .report-delete {
+    position: absolute;
+    right: 20px;
+    top: 5px;
+}
+.panel-heading .report-delete:hover {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.1);
+}
 .panel.articles {
     background: #2A2929;
     overflow: hidden;
+}
+.panel.read {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .article .panel-body {
@@ -273,8 +287,11 @@ input[type="file"] {
     cursor: pointer;
     overflow: hidden;
 }
+.minimalization:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
 .minimalization:before {
-    content: '_';
+    content: '-';
 }
 
 /** Bootstrap navbar left, right, below */

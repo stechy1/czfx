@@ -4,18 +4,23 @@
             <h1 class="page-header">Podpora</h1>
         </div>
         <div class="panel-body">
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="name">Uživatelské jméno:</label>
-
-                <div class="col-md-4">
-                    <input id="name" name="name" type="text" placeholder="uživatelské jméno"
-                           class="form-control input-md" required="">
+            <div class="col-md-12">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="report_type">Typ zprávy:</label>
+                    <select class="form-control" name="report_type" id="report_type" required="">
+                        <option value="0">Připomínka</option>
+                        <option value="1">Návrh</option>
+                        <option value="2">Chyba</option>
+                        <option value="3">Pochvala</option>
+                    </select>
                 </div>
             </div>
-
-            <div id="mainEditorContainer"></div>
-
-            <div class="g-recaptcha" data-theme="dark" data-sitekey="6LcN3g0TAAAAAO-4iq4hSU-m24HFNUJBy-n07Xck"></div>
+            <div class="col-md-12">
+                <div id="mainEditorContainer"></div>
+            </div>
+            <div class="col-md-12">
+                <? \app\model\service\CaptchaService::printCaptcha(); ?>
+            </div>
         </div>
         <div class="panel-footer">
             <input type="submit" class="btn btn-sm btn-primary">

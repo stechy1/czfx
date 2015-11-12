@@ -61,7 +61,10 @@ class RouterController extends BaseController {
         try {
             call_user_func_array(array($this->controller, $action), array($request));
         } catch (\Exception $ex) {
-            echo "Neočekávaná vyjímka";
+            $l = \Logger::getLogger("RouterController");
+            $l->fatal($ex->getMessage());
+            $l->debug($ex->getTrace());
+            $this->redirect("error");
         }
 
         $this->controller->onExit();

@@ -4,6 +4,7 @@ namespace app\controller;
 
 
 use app\model\callback\CallBackMessage;
+use app\model\factory\ReportFactory;
 use app\model\manager\SupportManager;
 use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
@@ -13,6 +14,7 @@ use app\model\service\exception\MyException;
 /**
  * Class SupportController
  * @Inject SupportManager
+ * @Inject ReportFactory
  * @package app\controller
  */
 class SupportController extends BaseController {
@@ -21,6 +23,10 @@ class SupportController extends BaseController {
      * @var SupportManager
      */
     private $supportmanager;
+    /**
+     * @var ReportFactory
+     */
+    private $reportfactory;
 
     /**
      * Výchozí akce kontroleru
@@ -39,7 +45,8 @@ class SupportController extends BaseController {
         try {
             CaptchaService::verify($request->getPost("g-recaptcha-response", null));
             $this->validateUser(UserRole::MEMBER);
-            $this->supportmanager->addReport($_POST);
+            $message = $this->reportfactory->getReportFromRawData($request->getPost());
+            $this->supportmanager->addReport($message);
             $this->addMessage(new CallBackMessage("Zpráva byla úspěšně poslána"));
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
