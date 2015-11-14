@@ -29,3 +29,16 @@ ArticleManager.prototype.validate = function(validationData) {
     });
 };
 
+ArticleManager.prototype.getNext = function(from, callback) {
+    jQuery.ajax({
+        type: "post",
+        url: "archive/getNext/" + from,
+        success: function (result) {
+            result = JSON.parse(result);
+            if(result.success) {
+                callback(result.data);
+            }
+            showUserMessages(result.messages)
+        }
+    });
+};

@@ -190,7 +190,7 @@ class ArticleFactory {
      * @throws MyException Pokud není nalezen žádný článek
      */
     public function getXArticlesFromAll($page, $recordsOnPage) {
-        $fromDb = $this->database->queryAll("SELECT article_id, article_title, article_validated, categories.category_name, users.user_nick
+        $fromDb = $this->database->queryAll("SELECT article_id, article_title, article_validated, article_url, article_description, article_date, categories.category_name, users.user_nick
                                  FROM articles
                                  LEFT JOIN categories ON categories.category_id = article_category
                                  LEFT JOIN users ON users.user_id = article_author
@@ -231,7 +231,7 @@ class ArticleFactory {
      */
     public function getArticlesFromCategoryURL($catURL)
     {
-        $fromDb = $this->database->queryAll("SELECT articles.article_title, articles.article_url, articles.article_description
+        $fromDb = $this->database->queryAll("SELECT articles.article_title, articles.article_url, articles.article_description, articles.article_date
                                     FROM categories
                                     LEFT JOIN articles
                                     ON (articles.article_category = categories.category_id)

@@ -29,28 +29,12 @@ use app\model\util\StringUtils; ?>
             </div>
             <? if ($articles) : ?>
                 <? foreach ($articles as $article) : ?>
-                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <article class="panel article">
-                            <span class="minimalization"></span>
-                            <div class="panel-heading">
-                                <a href="article/<?= $article['article_url'] ?>"> <?= StringUtils::shorten($article['article_title'], 20) ?></a>
-                            </div>
-                            <div class="panel-body">
-                                <img src="img/article-64.png" alt="Article" class="left"/>
-
-                                <p class="small"><?= app\model\util\StringUtils::shorten($article['article_description'], 75) ?></p>
-                            </div>
-                            <div class="panel-footer">
-                            <span class="right"
-                                  style="margin-top: -10px;"><?= DateUtils::prettyDateTime($article['article_date']) ?></span>
-                            </div>
-                        </article>
-                    </div>
+                    <?= (new \app\model\snippet\ArticleIndexSnippet($article))->render() ?>
                 <? endforeach?>
             <? endif ?>
         </div>
         <div class="panel-footer">
-            <a href="browse/articles" class="btn btn-sm btn-primary">Archiv článků</a>
+            <a href="archive" class="btn btn-sm btn-primary">Archiv článků</a>
         </div>
     </div>
 </div>

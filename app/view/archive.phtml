@@ -1,0 +1,62 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Archiv článků</h1>
+    </div>
+    <div class="panel-body">
+        <? use app\model\util\DateUtils;
+        use app\model\util\StringUtils;
+
+        if ($articles) : ?>
+            <div class="articles">
+            <? foreach ($articles as $article) : ?>
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <article class="panel article">
+                        <span class="minimalization"></span>
+                        <div class="panel-heading">
+                            <a href="article/<?= $article['article_url'] ?>"> <?= StringUtils::shorten($article['article_title'], 20) ?></a>
+                        </div>
+                        <div class="panel-body">
+                            <img src="img/article-64.png" alt="Article" class="left"/>
+
+                            <p class="small"><?= app\model\util\StringUtils::shorten($article['article_description'], 75) ?></p>
+                        </div>
+                        <div class="panel-footer">
+                            <span class="right"
+                                  style="margin-top: -10px;"><?= DateUtils::prettyDateTime($article['article_date']) ?></span>
+                        </div>
+                    </article>
+                </div>
+            <? endforeach?>
+            </div>
+        <? endif ?>
+    </div>
+    <div class="panel-footer">
+        <span class="btn btn-xs btn-primary load-next" data-page="1">Načíst další</span>
+    </div>
+</div>
+
+<? if($articles) : ?>
+
+<? endif ?>
+
+<script type="text/javascript" src="js/articleManager.js"></script>
+<script type="text/javascript">
+    var downloading = false;
+    var articleManager = new ArticleManager();
+
+    jQuery(function() {
+
+        jQuery(".load-next").click(function () {
+            var self = $(this);
+            var id = self.data("page");
+            articleManager.getNext(id, function (data) {
+                var articles = jQuery(".articles");
+                for (var i = 0; i < data.length; i++) {
+                    articles.append(data[i]);
+                }
+                self.data("page", ++id);
+            });
+        });
+    });
+
+</script>

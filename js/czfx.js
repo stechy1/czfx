@@ -9,7 +9,7 @@ jQuery(function () {
         jQuery(target).fadeToggle();
     });
 
-    jQuery(".fileinput-button").click(function(e) {
+    jQuery(".fileinput-button").click(function() {
         $(this).next().trigger('click');
     });
 
