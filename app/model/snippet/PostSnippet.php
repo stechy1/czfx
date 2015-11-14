@@ -3,16 +3,15 @@
 namespace app\model\snippet;
 
 
-use app\model\html\element\AnchorElement;
-use app\model\html\element\DivElement;
-use app\model\html\element\SmallElement;
-use app\model\html\HtmlBuilder;
+
 use app\model\util\DateUtils;
 use app\model\util\StringUtils;
+use stechy1\html\element\AnchorElement;
+use stechy1\html\element\DivElement;
+use stechy1\html\element\SmallElement;
+use stechy1\html\HtmlBuilder;
 
 class PostSnippet extends ASnippet {
-
-    const POST_CONTENT_LENGTH = 60;
 
     private $userID;
     private $userNick;
@@ -57,7 +56,7 @@ class PostSnippet extends ASnippet {
             ))->addClass('panel-heading'),
             (new DivElement(
                 (new SmallElement(
-                    StringUtils::shorten($this->postContent, self::POST_CONTENT_LENGTH)
+                    StringUtils::shorten($this->postContent, INDEX_POST_CONTENT_LENGTH)
                 ))
             ))->addClass('panel-body'),
             (new DivElement(
@@ -67,7 +66,9 @@ class PostSnippet extends ASnippet {
             ))->addClass('panel-footer')
         ]))->addClass(['panel', 'post']);
 
-        $builder = new HtmlBuilder($panel);
+        $container = (new DivElement($panel))->addClass("col-xs-12 col-sm-6 col-md-4");
+
+        $builder = new HtmlBuilder($container);
         $this->html = $builder->render();
     }
 }

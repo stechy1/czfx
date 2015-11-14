@@ -1,54 +1,50 @@
 <? use app\model\snippet\PostSnippet;
 use app\model\util\DateUtils;
 use app\model\util\StringUtils; ?>
-<div class="col-md-8 col-sm-8">
+<div class="col-md-12">
     <div id="mainPanel" class="panel articles">
         <span class="minimalization"></span>
 
         <div class="panel-heading">Nově přidané články</div>
         <div class="panel-body">
-            <div class="col-md-12">
-                <div class="panel article">
+            <div class="col-md-8 col-lg-6">
+                <article class="panel article">
                     <span class="minimalization"></span>
                     <? if ($articles) : ?>
                         <? $lastArt = array_shift($articles); ?>
                         <div class="panel-heading">
-                            <h4>
-                                <a href="article/<?= $lastArt['article_url'] ?>"> <?= StringUtils::shorten($lastArt['article_title'], 150) ?></a>
-                            </h4>
+                            <a href="article/<?= $lastArt['article_url'] ?>"> <?= StringUtils::shorten($lastArt['article_title'], 150) ?></a>
                         </div>
                         <div class="panel-body">
                             <img src="img/article-64.png" alt="Article" class="left"/>
 
-                            <p><?= StringUtils::shorten($lastArt['article_description'], 380) ?></p>
+                            <p class="small"><?= StringUtils::shorten($lastArt['article_description'], 380) ?></p>
                         </div>
                         <div class="panel-footer">
                         <span class="right"
                               style="margin-top: -10px;"><?= DateUtils::prettyDateTime($lastArt['article_date']) ?></span>
                         </div>
                     <? endif ?>
-                </div>
+                </article>
             </div>
             <? if ($articles) : ?>
                 <? foreach ($articles as $article) : ?>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-                        <div class="panel article">
+                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                        <article class="panel article">
                             <span class="minimalization"></span>
                             <div class="panel-heading">
-                                <h4>
-                                    <a href="article/<?= $article['article_url'] ?>"> <?= StringUtils::shorten($article['article_title'], 20) ?></a>
-                                </h4>
+                                <a href="article/<?= $article['article_url'] ?>"> <?= StringUtils::shorten($article['article_title'], 20) ?></a>
                             </div>
                             <div class="panel-body">
                                 <img src="img/article-64.png" alt="Article" class="left"/>
 
-                                <p><?= app\model\util\StringUtils::shorten($article['article_description'], 75) ?></p>
+                                <p class="small"><?= app\model\util\StringUtils::shorten($article['article_description'], 75) ?></p>
                             </div>
                             <div class="panel-footer">
                             <span class="right"
                                   style="margin-top: -10px;"><?= DateUtils::prettyDateTime($article['article_date']) ?></span>
                             </div>
-                        </div>
+                        </article>
                     </div>
                 <? endforeach?>
             <? endif ?>
@@ -58,23 +54,25 @@ use app\model\util\StringUtils; ?>
         </div>
     </div>
 </div>
-<div class="col-md-4 col-sm-4 separator-left">
+<aside class="col-md-12">
     <? if ($posts) : ?>
-        <div class="panel post-group feeds">
+        <div class="panel post-group ">
             <div class="panel-heading">O čem se mluví</div>
             <div class="panel-body">
-                <div id="posts-group" class="panel-group">
+                <div class="row">
+                <div class="panel-group feeds">
                     <? foreach ($posts as $post) : ?>
                         <? $snippet = new PostSnippet($post);
                         echo $snippet->render(); ?>
                     <? endforeach ?>
+                </div>
                 </div>
             </div>
         </div>
     <? else : ?>
         <p>Forum je prázdné...</p>
     <? endif ?>
-</div>
+</aside>
 
 <script type="text/javascript" src="js/forumManager.js"></script>
 <script type="text/javascript">
@@ -90,7 +88,12 @@ use app\model\util\StringUtils; ?>
             var scrollPos = target.scrollTop;
 
             if(scrollPos >= scrollHeight - cHeight - 100) {
-                forumManager.getNext();
+                forumManager.getNext(function (data) {
+                    var postsGroup = jQuery(".feeds");
+                    for (var i = 0; i < data.length; i++) {
+                        postsGroup.append(data[i]);
+                    }
+                });
             }
         });
     });

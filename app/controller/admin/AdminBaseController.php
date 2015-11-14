@@ -22,10 +22,9 @@ class AdminBaseController extends BaseController {
             $this->validateUser();
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-            $this->redirect('profile');
+            $this->redirect('login');
         }
     }
-
 
     /**
      * Zvaliduje uživatele.

@@ -3,14 +3,15 @@
 namespace app\model\snippet;
 
 
-use app\model\html\element\AnchorElement;
-use app\model\html\element\DivElement;
-use app\model\html\element\HeadingElement;
-use app\model\html\element\ImageElement;
-use app\model\html\element\ParagraphElement;
-use app\model\html\element\SpanElement;
-use app\model\html\HtmlBuilder;
-use app\model\html\StyleValue;
+
+use stechy1\html\element\AnchorElement;
+use stechy1\html\element\DivElement;
+use stechy1\html\element\HeadingElement;
+use stechy1\html\element\ImageElement;
+use stechy1\html\element\ParagraphElement;
+use stechy1\html\element\SpanElement;
+use stechy1\html\HtmlBuilder;
+use stechy1\html\StyleValue;
 
 class CategorySnippet extends ASnippet {
 

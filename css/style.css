@@ -69,8 +69,6 @@ pre code {
     margin-bottom: 5px !important;
 }
 
-
-
 /** Index */
 .thumbnail.article {
     height: 150px;
@@ -107,12 +105,13 @@ pre code {
     background: rgba(0, 0, 0, 0.1);
 }
 
-.article .panel-body {
-    min-height: 150px;
-}
 .article .panel-heading {
     /*background-color: #484848;*/
 }
+.article img {
+    width: 32px;
+}
+
 
 .post .panel-heading {
     padding: 2px 5px;
@@ -125,9 +124,9 @@ pre code {
     text-align: right;
 }
 
-.post-group {
+.feeds {
+    height: 200px;
     overflow-y: scroll;
-    height: 900px;
 }
 
 /** Login */
@@ -644,7 +643,7 @@ input[type="file"] {
 }
 
 /** Footer */
-.footer {
+footer {
     display: none;
     position: fixed;
     bottom: 0;
@@ -656,12 +655,8 @@ input[type="file"] {
 }
 
 @media (min-width: 768px) {
-    .footer {
+    footer {
         display: block;
-    }
-
-    .separator-left {
-        border-left: 2px solid black;
     }
 
     .editorAttachment {
@@ -675,5 +670,7 @@ input[type="file"] {
         padding: 16px 16px;
     }
 
+    .article img {
+        width: 64px;
+    }
 }
-

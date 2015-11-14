@@ -1,12 +1,8 @@
-/**
- * Created by Petr on 10. 6. 2015.
- */
-
 var isDownloading = false;
 
 var ForumManager = function () {};
 
-ForumManager.prototype.getNext = function() {
+ForumManager.prototype.getNext = function(callback) {
     if(isDownloading)
         return false;
 
@@ -18,10 +14,7 @@ ForumManager.prototype.getNext = function() {
             result = JSON.parse(result);
             if(result.success) {
                 var data = result.data;
-                var postsGroup = jQuery("#posts-group");
-                for (var i = 0; i < data.length; i++) {
-                    postsGroup.append(data[i]);
-                }
+                callback(data);
                 isDownloading = false;
             }
         }
@@ -68,8 +61,4 @@ ForumManager.prototype.deleteCategory = function(id, callback) {
             showUserMessages(result.messages);
         }
     });
-};
-
-ForumManager.prototype.addCategory = function(id, callback) {
-
 };

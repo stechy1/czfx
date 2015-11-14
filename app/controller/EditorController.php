@@ -9,8 +9,8 @@ use app\model\factory\ArticleFactory;
 use app\model\factory\CategoryFactory;
 use app\model\manager\FileManager;
 use app\model\service\request\IRequest;
-use app\model\util\ParsedownExtra;
 use app\model\service\exception\MyException;
+use ParsedownExtra;
 
 /**
  * Class EditorController
@@ -104,7 +104,6 @@ class EditorController extends BaseController {
             return;
         }
 
-        $convertor = new ParsedownExtra();
-        $this->callBack->addData(new CallBackData('text', $convertor->text($text)));
+        $this->callBack->addData(new CallBackData('text', ParsedownExtra::instance()->text($text)));
     }
 }

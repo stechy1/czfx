@@ -3,12 +3,13 @@
 namespace app\model\snippet;
 
 
-use app\model\html\element\AnchorElement;
-use app\model\html\element\DivElement;
-use app\model\html\element\ParagraphElement;
-use app\model\html\element\SpanElement;
-use app\model\html\HtmlBuilder;
-use app\model\html\NameValuePair;
+use app\model\util\MyParsedown;
+use stechy1\html\element\AnchorElement;
+use stechy1\html\element\DivElement;
+use stechy1\html\element\ParagraphElement;
+use stechy1\html\element\SpanElement;
+use stechy1\html\HtmlBuilder;
+use stechy1\html\NameValuePair;
 
 class ReportSnippet extends ASnippet {
 
@@ -53,7 +54,7 @@ class ReportSnippet extends ASnippet {
                 (new SpanElement($this->userNick))
             ]))->addClass("panel-heading"),
             (new DivElement(
-                (new ParagraphElement($this->message))
+                (new ParagraphElement())->addContent(MyParsedown::instance()->text($this->message))->setEscape(false)
             ))->addClass("panel-body"),
             $footer
         ]))->addClass(["panel read", "panel-$this->reportType"]);
@@ -63,4 +64,7 @@ class ReportSnippet extends ASnippet {
         $htmlBuilder = new HtmlBuilder($div);
         $this->html = $htmlBuilder->render();
     }
+
+
+
 }
