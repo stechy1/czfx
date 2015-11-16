@@ -126,7 +126,7 @@ abstract class BaseController {
      */
     public function redirect($url)
     {
-        if (defined("UGLY_URL") && UGLY_URL)
+        if (defined("UGLY_URL") && UGLY_URL == "true")
             $url = 'index.php?c=' . $url;
         header("Location: /$url");
         header("Connection: close");
