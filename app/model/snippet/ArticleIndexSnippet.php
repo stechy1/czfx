@@ -50,7 +50,7 @@ class ArticleIndexSnippet extends ASnippet {
             ))->addClass("panel-footer")
         ]))->addClass("panel article");
 
-        $container = (new DivElement($panel))->addClass("col-xs-12 col-sm-6 col-md-4 col-lg-3");
+        $container = (new DivElement($panel))->addClass("col-xs-12 col-sm-6 col-md-4 col-lg-3 isotope-grid-item");
 
         $builder = new HtmlBuilder($container);
         $this->html = $builder->render();

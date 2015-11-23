@@ -8,7 +8,6 @@ use app\model\factory\UserFactory;
 use app\model\manager\ForumManager;
 use app\model\service\CaptchaService;
 use app\model\service\request\IRequest;
-use app\model\UserRole;
 use app\model\service\exception\MyException;
 
 /**
@@ -38,7 +37,7 @@ class ForumController extends BaseController {
 
         try {
             $user = $this->userfactory->getUserFromSession();
-            $user->getRole()->valid(UserRole::ADMIN);
+            $user->getRole()->valid(USER_ROLE_ADMIN);
             $this->data['isAdmin'] = true;
         } catch (MyException $ex) {
             $this->data['isAdmin'] = false;
@@ -64,7 +63,7 @@ class ForumController extends BaseController {
 
             try {
                 $user = $this->userfactory->getUserFromSession();
-                $user->getRole()->valid(UserRole::ADMIN);
+                $user->getRole()->valid(USER_ROLE_ADMIN);
                 $this->data['isAdmin'] = true;
             } catch (MyException $ex) {
                 $this->data['isAdmin'] = false;
@@ -94,7 +93,7 @@ class ForumController extends BaseController {
         $topicID = $request->getParams()[1];
 
         try {
-            $this->validateUser(UserRole::ADMIN);
+            $this->validateUser(USER_ROLE_ADMIN);
             $this->forummanager->deleteTopic($topicID);
             $this->callBack->addMessage(new CallBackMessage("Téma bylo úspěšně smazáno"));
         } catch (MyException $ex) {
@@ -116,7 +115,7 @@ class ForumController extends BaseController {
             $this->data['posts'] = $this->forummanager->getPosts($topic);
             try {
                 $user = $this->userfactory->getUserFromSession();
-                $user->getRole()->valid(UserRole::ADMIN);
+                $user->getRole()->valid(USER_ROLE_ADMIN);
                 $this->data['isAdmin'] = true;
             } catch (MyException $ex) {
                 $this->data['isAdmin'] = false;
@@ -139,7 +138,7 @@ class ForumController extends BaseController {
 
     public function showPostsPostAction (IRequest $request) {
         try {
-            $this->validateUser(UserRole::MEMBER);
+            $this->validateUser(USER_ROLE_MEMBER);
             CaptchaService::verify($request->getPost("g-recaptcha-response", null));
             $this->forummanager->addPost($request->getPost('post_content'));
             $this->addMessage(new CallBackMessage("Zpráva byla úspěšně odeslána"));
@@ -160,7 +159,7 @@ class ForumController extends BaseController {
         $postID = $request->getParams()[1];
 
         try {
-            $this->validateUser(UserRole::ADMIN);
+            $this->validateUser(USER_ROLE_ADMIN);
             $this->forummanager->deletePost($postID);
             $this->callBack->addMessage(new CallBackMessage("Příspěvek byl úspěšně smazán"));
         } catch (MyException $ex) {
@@ -176,7 +175,7 @@ class ForumController extends BaseController {
 
     public function newTopicPostAction (IRequest $request) {
         try {
-            $this->validateUser(UserRole::MEMBER);
+            $this->validateUser(USER_ROLE_MEMBER);
             $url = $this->forummanager->addTopic($_POST['topic_subject'], $_POST['post_content']);
             $this->redirect("forum/" . $this->forummanager->getActualCategory() . "/" . $url);
         } catch (MyException $ex) {

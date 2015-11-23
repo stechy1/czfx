@@ -27,7 +27,11 @@ class ArchiveController extends BaseController {
      */
     public function defaultAction (IRequest $request) {
 
-        $articles = $this->articlefactory->getXArticlesFromAll(1, INDEX_ARTICLE_COUNT);
+        try {
+            $articles = $this->articlefactory->getXArticlesFromAll(1, INDEX_ARTICLE_COUNT, ArticleFactory::ARTICLE_IS_VALIDATED);
+        } catch (MyException $ex) {
+            $articles = null;
+        }
 
         $this->data['articles'] = $articles;
         $this->header['title'] = "Archiv článků";
@@ -44,7 +48,7 @@ class ArchiveController extends BaseController {
         $page = $request->getParams()[1];
 
         try {
-            $articles = $this->articlefactory->getXArticlesFromAll($page, 3);
+            $articles = $this->articlefactory->getXArticlesFromAll($page, 3, ArticleFactory::ARTICLE_IS_VALIDATED);
             $i = 0;
             foreach ($articles as $article) {
                 $this->callBack->addData(new CallBackData($i++, (new ArticleIndexSnippet($article))->render()), false);

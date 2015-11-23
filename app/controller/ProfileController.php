@@ -68,7 +68,7 @@ class ProfileController extends BaseController {
 
     public function uploadAjaxAction (IRequest $request) {
         try {
-            $this->validateUser(UserRole::MEMBER);
+            $this->validateUser(USER_ROLE_MEMBER);
             $result = $this->usermanager->changeAvatar($request->getFile('avatar'));
             $this->callBack->addData(new CallBackData("imgSrc", $result), false);
         } catch (MyException $ex) {

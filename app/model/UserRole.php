@@ -7,12 +7,6 @@ use Exception;
 
 class UserRole {
 
-    const
-        OLD_MEMBER = 1,
-        MEMBER = 2,
-        REDACTOR = 3,
-        ADMIN = 10;
-
     private $roleID;
 
     /**

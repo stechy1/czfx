@@ -24,7 +24,8 @@ class PostSnippet extends ASnippet {
 
 
     /**
-     * PostSnippet constructor.
+     * PostSnippet constructor
+     *
      * @param $data array
      */
     public function __construct($data) {
@@ -39,7 +40,8 @@ class PostSnippet extends ASnippet {
     }
 
     /**
-     * Build the snippet.
+     * Build the snippet
+     *
      * @return ISnippet
      */
     public function build() {
@@ -66,7 +68,7 @@ class PostSnippet extends ASnippet {
             ))->addClass('panel-footer')
         ]))->addClass(['panel', 'post']);
 
-        $container = (new DivElement($panel))->addClass("col-xs-12 col-sm-6 col-md-4");
+        $container = (new DivElement($panel))->addClass("col-xs-12 col-sm-6 col-md-4 isotope-grid-item");
 
         $builder = new HtmlBuilder($container);
         $this->html = $builder->render();

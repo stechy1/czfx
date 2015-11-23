@@ -49,7 +49,7 @@ abstract class BaseController {
      * Ošetří proměnnou pro výpis do HTML stránky
      *
      * @param null $x Proměnná pro ošetření
-     * @return array|null|string
+     * @return array|string|null
      */
     private function check($x = null)
     {
@@ -58,9 +58,8 @@ abstract class BaseController {
         elseif (is_string($x))
             return htmlspecialchars($x, ENT_QUOTES);
         elseif (is_array($x)) {
-            foreach ($x as $k => $v) {
+            foreach ($x as $k => $v)
                 $x[$k] = $this->check($v);
-            }
             return $x;
         } else
             return $x;
@@ -69,8 +68,7 @@ abstract class BaseController {
     /**
      * Vyrenderuje pohled
      */
-    public function renderView()
-    {
+    public function renderView () {
         if ($this->view) {
             extract($this->check($this->data));
             extract($this->data, EXTR_PREFIX_ALL, "");
@@ -83,19 +81,17 @@ abstract class BaseController {
      *
      * @param CallBackMessage $callBackMessage Zpráva pro uživatele
      */
-    public function addMessage(CallBackMessage $callBackMessage)
-    {
+    public function addMessage (CallBackMessage $callBackMessage) {
         if (isset($_SESSION['messages']))
-            $_SESSION['messages'][] = serialize($callBackMessage);
-        else
+            $_SESSION['messages'][] = serialize($callBackMessage); else
             $_SESSION['messages'] = array(serialize($callBackMessage));
     }
 
     /**
      * @param $messages array Pole zpráv pro uživatele.
      */
-    public function addMessages($messages) {
-        foreach($messages as $message) {
+    public function addMessages ($messages) {
+        foreach ($messages as $message) {
             $this->addMessage($message);
         }
     }
@@ -105,8 +101,7 @@ abstract class BaseController {
      *
      * @return array Pole zpráv
      */
-    public function getMessages()
-    {
+    public function getMessages () {
         if (isset($_SESSION['messages'])) {
             $messages = $_SESSION['messages'];
             unset($_SESSION['messages']);
@@ -124,8 +119,7 @@ abstract class BaseController {
      *
      * @param $url string Dané url
      */
-    public function redirect($url)
-    {
+    public function redirect ($url) {
         if (defined("UGLY_URL") && UGLY_URL == "true")
             $url = 'index.php?c=' . $url;
         header("Location: /$url");
@@ -141,7 +135,7 @@ abstract class BaseController {
      * @return bool True, pokud má uživatel dostatečné oprávnění, jinak false.
      * @throws MyException Pokud uživatel nemá dostatečná oprávnění.
      */
-    public function validateUser($role = null, $mustBeActivated = true) {
+    public function validateUser ($role = null, $mustBeActivated = true) {
         $user = null;
         try {
             $user = $this->userfactory->getUserFromSession();
@@ -168,33 +162,47 @@ abstract class BaseController {
     /**
      * Provede se před hlavním zpracováním požadavku v kontroleru
      */
-    public function onStartup() {}
+    public function onStartup () {
+    }
+
     /**
      * Provede se po zpracování hlavního požadavku v kontroleru
      */
-    public function onExit() {}
+    public function onExit () {
+    }
+
     /**
      * Výchozí akce kontroleru
      *
      * @param IRequest $request
      */
-    public function defaultAction(IRequest $request) {}
+    public function defaultAction (IRequest $request) {
+    }
+
     /**
      * Výchozí akce kontroleru po odeslání formuláře
      *
      * @param IRequest $request
      */
-    public function defaultPostAction(IRequest $request) {$this->redirect('index');}
+    public function defaultPostAction (IRequest $request) {
+        $this->redirect('index');
+    }
+
     /**
      * Výchozí reakce kontroleru na ajaxový požadavek
      *
      * @param IRequest $request
      */
-    public function defaultAjaxAction(IRequest $request) {$this->callBack->setFail();}
+    public function defaultAjaxAction (IRequest $request) {
+        $this->callBack->setFail();
+    }
+
     /**
      * Výchozí reakce kontroleru na ajaxový požadavek s postem
      *
      * @param IRequest $request
      */
-    public function defaultPostAjaxAction(IRequest $request) {$this->callBack->setFail();}
+    public function defaultPostAjaxAction (IRequest $request) {
+        $this->callBack->setFail();
+    }
 }

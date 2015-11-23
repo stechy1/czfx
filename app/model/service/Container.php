@@ -167,7 +167,7 @@ class Container {
      *
      * @param $className string Název třídy, kterou chcete získat
      * @param null $arguments Případné argumenty
-     * @return null|object Null, pokud instanci není možné vytvořit, jinak referenci na objekt
+     * @return object|null Null, pokud instanci není možné vytvořit, jinak referenci na objekt
      */
     public function getInstanceOf ($className, $arguments = null) {
         $className = strtolower($className);
@@ -185,7 +185,6 @@ class Container {
             }
             $obj = $reflection->newInstanceArgs($arguments);
         }
-
 
         $parentReflection = $reflection->getParentClass();
 

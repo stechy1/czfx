@@ -160,7 +160,7 @@ class FileManager {
     }
 
     /**
-     * Přešte soubor a vrátí jeho obsah v textové podobě
+     * Přečte soubor a vrátí jeho obsah v textové podobě
      *
      * @param $categoryURL string URL adresa kategorie článku (složka kategorie, ve které se článek nachází)
      * @param $articleURL string URL adresa článku (složka článku, ve které se článek nachází)

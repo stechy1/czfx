@@ -29,7 +29,7 @@ class ClassLoader {
      */
     public function load($class) {
         if (file_exists($this->rootFolder . $class . '.php')) {
-            require $class . '.php';
+            require $this->rootFolder . $class . '.php';
         }
     }
 

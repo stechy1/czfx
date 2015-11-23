@@ -23,7 +23,10 @@ use app\model\util\BootPagination;
  * @Inject FileManager
  * @package app\controller
  */
-class ArticleManagementController extends BaseController {
+class ArticleManagerController extends BaseController {
+
+    const
+        CONTROLLER = "article-manager";
 
     /**
      * @var ArticleManager
@@ -52,7 +55,7 @@ class ArticleManagementController extends BaseController {
      * Provede se před hlavním zpracováním požadavku v kontroleru
      */
     public function onStartup () {
-        $this->validateUser(UserRole::REDACTOR);
+        $this->validateUser(USER_ROLE_REDACTOR);
     }
 
     /**
@@ -61,7 +64,7 @@ class ArticleManagementController extends BaseController {
      */
     public function defaultAction (IRequest $request) {
         $this->header['title'] = 'Správce článků';
-        $this->view = 'article-management';
+        $this->view = 'article-manager';
 
         try {
             $page = (isset($_GET['page']) ? $_GET['page'] : 1);
@@ -75,8 +78,8 @@ class ArticleManagementController extends BaseController {
             $pg->paginationstyle = 1;
             $pg->showfirst = true;
             $pg->showlast = true;
-            $pg->defaultUrl = "article-management";
-            $pg->paginationUrl = "article-management?page=[p]";
+            $pg->defaultUrl = self::CONTROLLER;
+            $pg->paginationUrl = self::CONTROLLER . "?page=[p]";
 
             $this->data['articles'] = $this->articlefactory->getXArticlesFromCurrentUser($page, ARTICLE_MANAGEMENT_ARTICLE_COUNT);
             $this->data['paginator'] = $pg;
@@ -102,7 +105,7 @@ class ArticleManagementController extends BaseController {
     public function newPostAction (IRequest $request) {
         try {
             $this->articlemanager->add($this->articlefactory->getArticleFromPost($_POST));
-            $this->redirect('article-management');
+            $this->redirect(self::CONTROLLER);
         } catch (MyException $ex) {
             $this->header['title'] = "Nový článek";
             $this->view = 'article-editor';
@@ -121,7 +124,7 @@ class ArticleManagementController extends BaseController {
             $article = $this->articlefactory->getArticleFromURL($request->getParams()[1]);
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-            $this->redirect('article-management');
+            $this->redirect(self::CONTROLLER);
         }
         $article->storeToSession();
 
@@ -146,10 +149,10 @@ class ArticleManagementController extends BaseController {
         try {
             $article = $this->articlefactory->getArticleFromPost($request->getPost());
             $this->articlemanager->update($article);
-            $this->redirect('article-management');
+            $this->redirect(self::CONTROLLER);
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-            $this->redirect('article-management/edit/' . $request->getParams()[1]);
+            $this->redirect(self::CONTROLLER . '/edit/' . $request->getParams()[1]);
         }
     }
 

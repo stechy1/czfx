@@ -24,11 +24,11 @@
                 <span>Nahrát obrázek...</span>
             </span>
             <input id="avatar-upload" type="file" name="avatar-image" style="display: none;">
-            <? if ($user['user_role']->valid(app\model\UserRole::REDACTOR, false)) : ?>
-                <a href="article-management"><span class="btn btn-sm btn-info">Správce článků</span></a>
+            <? if ($user['user_role']->valid(USER_ROLE_REDACTOR, false)) : ?>
+                <a href="article-manager"><span class="btn btn-sm btn-info">Správce článků</span></a>
             <? endif ?>
             <a href="settings"><span class="btn btn-sm btn-warning">Nastavení</span></a>
-            <? if ($user['user_role']->valid(app\model\UserRole::ADMIN, false)) : ?>
+            <? if ($user['user_role']->valid(USER_ROLE_ADMIN, false)) : ?>
                 <a href="admin"><span class="btn btn-sm btn-danger right">Administrace</span></a>
             <? endif ?>
         <? endif ?>

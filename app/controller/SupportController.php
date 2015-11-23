@@ -44,7 +44,7 @@ class SupportController extends BaseController {
     public function defaultPostAction (IRequest $request) {
         try {
             CaptchaService::verify($request->getPost("g-recaptcha-response", null));
-            $this->validateUser(UserRole::MEMBER);
+            $this->validateUser(USER_ROLE_MEMBER);
             $message = $this->reportfactory->getReportFromRawData($request->getPost());
             $this->supportmanager->addReport($message);
             $this->addMessage(new CallBackMessage("Zpráva byla úspěšně poslána"));

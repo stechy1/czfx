@@ -76,7 +76,7 @@
         <div class="panel-footer">
             <input type="submit" class="btn btn-xs btn-primary"
                    value="<?= ($artAction == 'new') ? 'Vytvořit' : 'Upravit' ?>">
-            <a href="article-management" class="btn btn-xs btn-warning right">Zrušit</a>
+            <a href="article-manager" class="btn btn-xs btn-warning right">Zrušit</a>
         </div>
     </div>
 </form>
@@ -97,7 +97,7 @@
 
             $.ajax({
                 type: 'post',
-                url: 'article-management/get/articles/' + catID,
+                url: 'article-manager/get/articles/' + catID,
                 success: function (result) {
                     result = JSON.parse(result);
                     if (result.success) {
@@ -144,11 +144,7 @@
 
         jQuery.ajax({
             type: 'post',
-            url: 'article-management/get/article-content',
-            /*data: {
-             controller: 'article-manager',
-             action: 'getContent'
-             },*/
+            url: 'article-manager/get/article-content',
             success: function (result) {
                 result = JSON.parse(result);
                 if (result.success)

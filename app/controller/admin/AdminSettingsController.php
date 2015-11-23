@@ -4,17 +4,37 @@ namespace app\controller\admin;
 
 
 use app\model\callback\CallBackMessage;
+use app\model\manager\ConfigManager;
+use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 
+/**
+ * Class AdminSettingsController
+ * @Inject ConfigManager
+ * @package app\controller\admin
+ */
 class AdminSettingsController extends AdminBaseController {
+
+    const
+        CONFIG_FILE = "app/config/config";
+
+    /**
+     * @var ConfigManager
+     */
+    private $configmanager;
+
+    public function onStartup () {
+        parent::onStartup();
+
+        $this->configmanager->setConfigFile(self::CONFIG_FILE);
+        $this->configmanager->loadConfig();
+    }
 
     /**
      * @param IRequest $request
      */
     public function defaultAction (IRequest $request) {
-        $config = file_get_contents("app/config/config.json");
-        $config = (array) json_decode($config);
-
+        $config = $this->configmanager->getConfig();
 
         $this->data['values'] = $config;
 
@@ -23,50 +43,29 @@ class AdminSettingsController extends AdminBaseController {
     }
 
     public function updatePostAjaxAction (IRequest $request) {
-        $config = file_get_contents("app/config/config.json");
-        $config = json_decode($config, true);
+        try {
+            $key = $request->getPost("key");
+            $value = $request->getPost("value");
 
-        $key = $request->getPost("key");
-        if ($key == null) {
+            $this->configmanager->updateConfig($key, $value);
+
+            $this->configmanager->saveConfig();
+            $this->callBack->addMessage(new CallBackMessage("Hodnota byla úspěšně změněna"));
+        } catch (MyException $ex) {
             $this->callBack->setFail();
-            $this->callBack->addMessage(new CallBackMessage("Není co nastavovat", CallBackMessage::DANGER));
-            return;
+            $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
+    }
 
-        $value = $request->getPost("value", $config[$key]["value"]);
-        $config[$key]["key"] = $value;
+    public function setasdefaultPostAjaxAction (IRequest $request) {
+        try {
+            $this->configmanager->saveDefaultConfig($request->getPost());
 
-        //file_put_contents("app/config/config.json", json_encode($config));
-        $realConfig = "<?php\n";
-        foreach($config as $key => $value) {
-            $realConfig .= 'define("' . $key . '", ';
-            if ($value['type'] == "text")
-                $realConfig .= '"';
-            $realConfig .= $value['key'];
-            if ($value['type'] == "text")
-                $realConfig .= '"';
-            $realConfig .= ');' . "\n";
+        } catch (MyException $ex) {
+            $this->callBack->setFail();
+            $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
+    }
 
-        file_put_contents("app/config/config.php", $realConfig);
+
 }
-}
-// TODO nastavení připojení k databázi
-// TODO nastavení zapnutí hezkých url adres
-// TODO nastavení veškerých konstant
-/*
- * ArticleManagement/ARTICLE_ON_PAGE;
- * Index/ARTICLE_COUNT, POST_COUNT;
- * AdminArticleManager/ARTICLES_ON_PAGE;
- * AdminCategoryManager/CATEGORIES_ON_PAGE;
- * AdminReportManager/REPORTS_ON_PAGE;
- * AdminUserManager/USERS_ON_PAGE;
- */
-// TODO nastavení veřejných a privátních klíčů služeb třetích stran
-/*
- * RECAPTCHA
- * FACEBOOK
- * GOOGLE
- * TWITTER
- * OPEN_ID
- */

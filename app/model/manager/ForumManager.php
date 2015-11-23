@@ -25,31 +25,26 @@ class ForumManager {
      * @return array Pole kategorií
      * @throws MyException Pokud není nalezena žádná kategorie
      */
+    // TODO dodělat dotaz pro category_topics_count!
     public function getCategories () {
-        $fromDb = $this->database->queryAll("SELECT
-                                      forum_categories.category_id,
-                                      forum_categories.category_name,
-                                      forum_categories.category_url,
-                                      forum_categories.category_description,
-                                      COUNT(forum_categories.category_id) AS topic_posts_count,
-                                      (
-                                        SELECT COUNT(mycount)
-                                        FROM (SELECT COUNT(forum_topics.topic_id) AS mycount
-                                              FROM forum_categories
-                                                INNER JOIN forum_topics ON forum_topics.topic_cat = category_id
-                                              GROUP BY topic_id) AS m
-
-                                      )                                   AS category_topics_count,
-                                      MAX(forum_posts.post_date)          AS post_date,
-                                      users.user_nick                     AS nick
-                                    FROM forum_categories
-                                      INNER JOIN (
-                                          forum_topics
-                                          INNER JOIN (forum_posts
-                                          INNER JOIN users ON users.user_id = forum_posts.post_by
-                                          ) ON forum_topics.topic_id = forum_posts.post_topic
-                                        ) ON forum_topics.topic_cat = category_id
-                                    GROUP BY category_id");
+        $query = "SELECT
+                  forum_categories.category_id,
+                  forum_categories.category_name,
+                  forum_categories.category_url,
+                  forum_categories.category_description,
+                  (SELECT COUNT(topic_id) FROM forum_categories WHERE topic_cat = category_id ) AS category_topics_count,
+                  (SELECT COUNT(post_id) FROM forum_topics WHERE post_topic = topic_id) AS topic_posts_count,
+                  MAX(forum_posts.post_date)          AS post_date,
+                  users.user_nick                     AS nick
+                FROM forum_categories
+                  INNER JOIN (
+                      forum_topics
+                      INNER JOIN (forum_posts
+                      INNER JOIN users ON users.user_id = forum_posts.post_by
+                      ) ON forum_topics.topic_id = forum_posts.post_topic
+                    ) ON forum_topics.topic_cat = category_id
+                GROUP BY category_id";
+        $fromDb = $this->database->queryAll($query);
 
         if (!$fromDb)
             throw new MyException("Nenalezeny zádné kategorie");

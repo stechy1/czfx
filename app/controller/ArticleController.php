@@ -41,14 +41,14 @@ class ArticleController extends BaseController {
             $artURL = $request->getParams()[0];
 
             try {
-                $article = $this->articlefactory->getArticleFromURL($artURL);
+                $article = $this->articlefactory->getArticleFromURL($artURL, ArticleFactory::ARTICLE_IS_VALIDATED);
                 try {
-                    $previousArticle = $this->articlefactory->getArticleFromID($article->getPreviousID())->toArray();
+                    $previousArticle = $this->articlefactory->getArticleFromID($article->getPreviousID(), ArticleFactory::ARTICLE_IS_VALIDATED)->toArray();
                 } catch (MyException $ex) {
                     $previousArticle = null;
                 }
                 try {
-                    $nextArticle = $this->articlefactory->getArticleFromID($article->getNextID())->toArray();
+                    $nextArticle = $this->articlefactory->getArticleFromID($article->getNextID(), ArticleFactory::ARTICLE_IS_VALIDATED)->toArray();
                 } catch (MyException $ex) {
                     $nextArticle = null;
                 }

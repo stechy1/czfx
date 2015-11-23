@@ -17,6 +17,9 @@ use app\model\service\exception\MyException;
  */
 class ArticleFactory {
 
+    const
+        ARTICLE_IS_VALIDATED = true;
+
     /**
      * @var Database
      */
@@ -66,11 +69,12 @@ class ArticleFactory {
      * Vytvoří a vrátí novou instanci článku na základě URL adresy článku
      *
      * @param $artURL string URL adresa článku
+     * @param bool $validated
      * @return Article Nová instance reprezentující článek
      * @throws MyException Pokud článek není nalezen
      */
-    public function getArticleFromURL($artURL) {
-        $fromDb = $this->database->queryOne("SELECT a1.article_id, a1.article_title , a1.article_tags, a1.article_description,
+    public function getArticleFromURL($artURL, $validated = false) {
+        $query = "SELECT a1.article_id, a1.article_title , a1.article_tags, a1.article_description,
                                          a1.article_url, a1.article_date, a1.article_next, a1.article_previous, a1.article_category,
                                          a1.article_author,
                                          a2.article_title AS previous_article_title, a2.article_url AS previous_article_url,
@@ -83,7 +87,10 @@ class ArticleFactory {
                                   LEFT JOIN categories ON categories.category_id = a1.article_category
                                   LEFT JOIN users ON users.user_id = a1.article_author
                                   LEFT JOIN user_info ON user_info.user_info_user_id = a1.article_author
-                                  WHERE a1.article_url = ?"
+                                  WHERE a1.article_url = ?";
+        if($validated)
+            $query .= " AND a1.article_validated = 1";
+        $fromDb = $this->database->queryOne($query
             , [$artURL]);
 
         if (!$fromDb)
@@ -123,23 +130,27 @@ class ArticleFactory {
      * Vytvoří a vrátí novou instanci článku na základě ID článku
      *
      * @param $artID integer ID článku
+     * @param bool $validated
      * @return Article Nová instance reprezentující článek
      * @throws MyException Pokud článek není nalezen
      */
-    public function getArticleFromID($artID) {
-        $fromDb = $this->database->queryOne("SELECT a1.article_id, a1.article_title , a1.article_tags, a1.article_description,
-                                         a1.article_url, a1.article_date, a1.article_next, a1.article_previous, a1.article_category,
-                                         a2.article_title AS previous_article_title, a2.article_url AS previous_article_url,
-                                         a3.article_title AS next_article_title, a3.article_url AS next_article_url,
-                                         categories.category_name, categories.category_url,
-                                         users.user_nick, user_info.user_info_avatar, user_info.user_info_motto
-                                  FROM articles a1
-                                  LEFT JOIN articles a2 ON a2.article_id = a1.article_previous
-                                  LEFT JOIN articles a3 ON a3.article_id = a1.article_next
-                                  LEFT JOIN categories ON categories.category_id = a1.article_category
-                                  LEFT JOIN users ON users.user_id = a1.article_author
-                                  LEFT JOIN user_info ON user_info.user_info_user_id = a1.article_author
-                                  WHERE a1.article_id = ?"
+    public function getArticleFromID($artID, $validated = false) {
+        $query = "SELECT a1.article_id, a1.article_title , a1.article_tags, a1.article_description,
+                         a1.article_url, a1.article_date, a1.article_next, a1.article_previous, a1.article_category,
+                         a2.article_title AS previous_article_title, a2.article_url AS previous_article_url,
+                         a3.article_title AS next_article_title, a3.article_url AS next_article_url,
+                         categories.category_name, categories.category_url,
+                         users.user_nick, user_info.user_info_avatar, user_info.user_info_motto
+                  FROM articles a1
+                  LEFT JOIN articles a2 ON a2.article_id = a1.article_previous
+                  LEFT JOIN articles a3 ON a3.article_id = a1.article_next
+                  LEFT JOIN categories ON categories.category_id = a1.article_category
+                  LEFT JOIN users ON users.user_id = a1.article_author
+                  LEFT JOIN user_info ON user_info.user_info_user_id = a1.article_author
+                  WHERE a1.article_id = ?";
+        if($validated)
+            $query .= " AND a1.article_validated = 1";
+        $fromDb = $this->database->queryOne($query
             , [$artID]);
 
         if (!$fromDb)
@@ -171,9 +182,9 @@ class ArticleFactory {
      */
     public function getXArticlesFromCurrentUser($page, $recordsOnPage) {
         $fromDb = $this->database->queryAll("SELECT articles.article_id, articles.article_title, articles.article_validated, articles.article_url
-                                    FROM articles
-                                    WHERE articles.article_author = ?
-                                    ORDER BY articles.article_validated, articles.article_date DESC LIMIT ?, ?", [$_SESSION['user']['id'], ($page - 1) * $recordsOnPage, $recordsOnPage]);
+                                                FROM articles
+                                                WHERE articles.article_author = ?
+                                                ORDER BY articles.article_validated, articles.article_date DESC LIMIT ?, ?", [$_SESSION['user']['id'], ($page - 1) * $recordsOnPage, $recordsOnPage]);
 
         if (!$fromDb)
             throw new MyException("Zatím nemáte žádné články");
@@ -186,15 +197,19 @@ class ArticleFactory {
      *
      * @param $page int Aktuální stránka
      * @param $recordsOnPage int Počet článků, které se mají zobrazit
+     * @param bool $validated
      * @return mixed Pole obsahující články
      * @throws MyException Pokud není nalezen žádný článek
      */
-    public function getXArticlesFromAll($page, $recordsOnPage) {
-        $fromDb = $this->database->queryAll("SELECT article_id, article_title, article_validated, article_url, article_description, article_date, categories.category_name, users.user_nick
-                                 FROM articles
-                                 LEFT JOIN categories ON categories.category_id = article_category
-                                 LEFT JOIN users ON users.user_id = article_author
-                                 ORDER BY article_id DESC LIMIT ?, ?", [($page - 1) * $recordsOnPage, $recordsOnPage]);
+    public function getXArticlesFromAll($page, $recordsOnPage, $validated = false) {
+        $query = "SELECT article_id, article_title, article_validated, article_url, article_description, article_date, categories.category_name, users.user_nick
+                     FROM articles
+                     LEFT JOIN categories ON categories.category_id = article_category
+                     LEFT JOIN users ON users.user_id = article_author";
+        if($validated)
+            $query .= " WHERE article_validated = 1";
+        $query .= " ORDER BY article_id DESC LIMIT ?, ?";
+        $fromDb = $this->database->queryAll($query, [($page - 1) * $recordsOnPage, $recordsOnPage]);
 
         if (!$fromDb)
             throw new MyException("Žádné články nenalezeny");
@@ -211,9 +226,9 @@ class ArticleFactory {
      */
     public function getArticlesFromCategoryID($catID) {
         $fromDb = $this->database->queryAll("SELECT article_id, article_title
-                                    FROM articles
-                                    WHERE article_category = ?
-                                    ORDER BY articles.article_date DESC",
+                                                FROM articles
+                                                WHERE article_category = ?
+                                                ORDER BY articles.article_date DESC",
             [$catID]);
 
         if (!$fromDb)
@@ -232,11 +247,11 @@ class ArticleFactory {
     public function getArticlesFromCategoryURL($catURL)
     {
         $fromDb = $this->database->queryAll("SELECT articles.article_title, articles.article_url, articles.article_description, articles.article_date
-                                    FROM categories
-                                    LEFT JOIN articles
-                                    ON (articles.article_category = categories.category_id)
-                                    WHERE categories.category_url = ? AND articles.article_validated = ?
-                                    ORDER BY articles.article_date ASC",
+                                                FROM categories
+                                                LEFT JOIN articles
+                                                ON (articles.article_category = categories.category_id)
+                                                WHERE categories.category_url = ? AND articles.article_validated = ?
+                                                ORDER BY articles.article_date ASC",
             [$catURL, 1]);
 
         if (!$fromDb)
@@ -254,12 +269,12 @@ class ArticleFactory {
      */
     public function getLastXArticles($count) {
         $fromDb = $this->database->queryAll("SELECT article_title, article_url, article_description, article_date
-                                    FROM articles
-                                    WHERE articles.article_validated = ? ORDER BY article_date DESC LIMIT ?"
+                                                FROM articles
+                                                WHERE articles.article_validated = ? ORDER BY article_date DESC LIMIT ?"
             , [1, $count]);
 
         if (!$fromDb)
-            throw new MyException("V zadané kategorii nejsou žádné články");
+            throw new MyException("Nebyly nalezeny žádné články");
 
         return $fromDb;
     }

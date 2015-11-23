@@ -1,62 +1,68 @@
 <? use app\model\snippet\PostSnippet;
 use app\model\util\DateUtils;
 use app\model\util\StringUtils; ?>
-<div class="col-md-12">
-    <div id="mainPanel" class="panel articles">
-        <span class="minimalization"></span>
+<section class="row">
+    <div class="col-md-12">
+        <div id="mainPanel" class="panel articles">
+            <span class="minimalization"></span>
+            <div class="panel-heading">Nově přidané články</div>
+            <div class="panel-body">
+                <? if ($articles) : ?>
+                    <div class="col-sm-12 col-md-8 col-lg-6">
+                    <article class="panel article">
+                        <span class="minimalization"></span>
+                        <? if ($articles) : ?>
+                            <? $lastArt = array_shift($articles); ?>
+                            <div class="panel-heading">
+                                <a href="article/<?= $lastArt['article_url'] ?>"> <?= StringUtils::shorten($lastArt['article_title'], INDEX_ARTICLE_TITLE_LENGTH) ?></a>
+                            </div>
+                            <div class="panel-body">
+                                <img src="img/article-64.png" alt="Article" class="left"/>
 
-        <div class="panel-heading">Nově přidané články</div>
-        <div class="panel-body">
-            <div class="col-md-8 col-lg-6">
-                <article class="panel article">
-                    <span class="minimalization"></span>
+                                <p class="small"><?= StringUtils::shorten($lastArt['article_description'], INDEX_ARTICLE_DESCRIPTION_LENGTH) ?></p>
+                            </div>
+                            <div class="panel-footer">
+                            <span class="right" style="margin-top: -10px;"><?= DateUtils::prettyDateTime($lastArt['article_date']) ?></span>
+                            </div>
+                        <? endif ?>
+                    </article>
+                </div>
                     <? if ($articles) : ?>
-                        <? $lastArt = array_shift($articles); ?>
-                        <div class="panel-heading">
-                            <a href="article/<?= $lastArt['article_url'] ?>"> <?= StringUtils::shorten($lastArt['article_title'], 150) ?></a>
-                        </div>
-                        <div class="panel-body">
-                            <img src="img/article-64.png" alt="Article" class="left"/>
-
-                            <p class="small"><?= StringUtils::shorten($lastArt['article_description'], 380) ?></p>
-                        </div>
-                        <div class="panel-footer">
-                        <span class="right"
-                              style="margin-top: -10px;"><?= DateUtils::prettyDateTime($lastArt['article_date']) ?></span>
-                        </div>
-                    <? endif ?>
-                </article>
+                    <? foreach ($articles as $article) : ?>
+                        <?= (new \app\model\snippet\ArticleIndexSnippet($article))->render() ?>
+                    <? endforeach?>
+                <? endif ?>
+                <? else : ?>
+                    <div class="col-md-8">V systému se nenacházejí žádné schválené články</div>
+                <? endif ?>
             </div>
-            <? if ($articles) : ?>
-                <? foreach ($articles as $article) : ?>
-                    <?= (new \app\model\snippet\ArticleIndexSnippet($article))->render() ?>
-                <? endforeach?>
-            <? endif ?>
-        </div>
-        <div class="panel-footer">
-            <a href="archive" class="btn btn-sm btn-primary">Archiv článků</a>
+            <div class="panel-footer">
+                <a href="archive" class="btn btn-sm btn-primary">Archiv článků</a>
+            </div>
         </div>
     </div>
-</div>
-<aside class="col-md-12">
-    <? if ($posts) : ?>
-        <div class="panel post-group ">
-            <div class="panel-heading">O čem se mluví</div>
-            <div class="panel-body">
-                <div class="row">
-                <div class="panel-group feeds">
-                    <? foreach ($posts as $post) : ?>
-                        <? $snippet = new PostSnippet($post);
-                        echo $snippet->render(); ?>
-                    <? endforeach ?>
-                </div>
+</section>
+<section class="row">
+    <div class="col-md-12">
+        <? if ($posts) : ?>
+            <div class="panel post-group ">
+                <div class="panel-heading">O čem se mluví</div>
+                <div class="panel-body">
+                    <div class="row feeds-container">
+                        <div class="panel-group feeds isotope-grid">
+                            <? foreach ($posts as $post) : ?>
+                                <? $snippet = new PostSnippet($post);
+                                echo $snippet->render(); ?>
+                            <? endforeach ?>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    <? else : ?>
-        <p>Forum je prázdné...</p>
-    <? endif ?>
-</aside>
+        <? else : ?>
+            <p>Forum je prázdné...</p>
+        <? endif ?>
+    </div>
+</section>
 
 <script type="text/javascript" src="js/forumManager.js"></script>
 <script type="text/javascript">
@@ -65,7 +71,7 @@ use app\model\util\StringUtils; ?>
 
     jQuery(function() {
 
-        jQuery(".feeds").scroll(function(e) {
+        jQuery(".feeds-container").scroll(function(e) {
             var target = e.target;
             var cHeight = target.clientHeight;
             var scrollHeight = target.scrollHeight;
@@ -75,7 +81,8 @@ use app\model\util\StringUtils; ?>
                 forumManager.getNext(function (data) {
                     var postsGroup = jQuery(".feeds");
                     for (var i = 0; i < data.length; i++) {
-                        postsGroup.append(data[i]);
+                        //postsGroup.append(data[i]);
+                        postsGroup.isotope("insert", $(data[i]));
                     }
                 });
             }

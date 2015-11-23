@@ -58,6 +58,14 @@ class SupportManager {
     }
 
     /**
+     * Vrátí počet nepřečtených zpráv
+     * @return int
+     */
+    public function getUnreadedCount() {
+        return $this->database->queryItself("SELECT COUNT(report_id) FROM reports WHERE report_read = 0");
+    }
+
+    /**
      * Odstraní zprávu z databáze
      *
      * @param $repID int ID zprávy

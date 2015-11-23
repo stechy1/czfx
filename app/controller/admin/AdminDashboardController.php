@@ -59,6 +59,7 @@ class AdminDashboardController extends AdminBaseController {
             ]
     );
 
+
     /**
      * @param IRequest $request
      */

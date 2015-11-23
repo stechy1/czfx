@@ -12,9 +12,12 @@
             <? $value = (array)$value ?>
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                 <label for="<?= $key ?>"><?= $value['name'] ?></label>
-                <input type="<?= $value['type'] ?>" class="form-control" name="<?= $key ?>" value="<?= $value['key'] ?>">
+                <input type="<?= $value['type'] ?>" class="form-control config-item" name="<?= $key ?>" value="<?= $value['key'] ?>">
             </div>
         <? endforeach ?>
+    </div>
+    <div class="panel-footer">
+        <span class="btn btn-xs btn-danger set-as-default">Nastavit jako výchozí</span>
     </div>
 </div>
 
@@ -31,6 +34,18 @@
 
                 m.update(name, val);
             }
-        })
+        });
+
+        jQuery(".set-as-default").click(function () {
+            var formData = new FormData();
+            jQuery(".config-item").each(function () {
+                var self = $(this);
+                var key = self.attr("name");
+                var val = self.val();
+                formData.append(key, val);
+            });
+
+            m.setAsDefault(formData);
+        });
     });
 </script>

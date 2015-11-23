@@ -1,4 +1,6 @@
-var ArticleManager = function (){};
+var ArticleManager = function (){
+    this.hasNext = true;
+};
 
 ArticleManager.prototype.delete = function(artID, callback) {
     jQuery.ajax({
@@ -30,6 +32,10 @@ ArticleManager.prototype.validate = function(validationData) {
 };
 
 ArticleManager.prototype.getNext = function(from, callback) {
+    if(!this.hasNext)
+        return;
+
+    var self = this;
     jQuery.ajax({
         type: "post",
         url: "archive/getNext/" + from,
@@ -39,6 +45,7 @@ ArticleManager.prototype.getNext = function(from, callback) {
                 callback(result.data);
             }
             showUserMessages(result.messages)
+            self.hasNext = result.success;
         }
     });
 };

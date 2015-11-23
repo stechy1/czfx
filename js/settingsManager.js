@@ -15,3 +15,21 @@ SettingsManager.prototype.update = function (k, v) {
         }
     });
 };
+
+
+SettingsManager.prototype.setAsDefault = function (data, callback) {
+    jQuery.ajax({
+        method: "post",
+        url: "admin-settings/setAsDefault",
+        data: data,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            result = JSON.parse(result);
+            if (result.success)
+                callback();
+
+            showUserMessages(result.messages);
+        }
+    });
+};

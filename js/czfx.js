@@ -22,6 +22,7 @@ jQuery(function () {
         onColor: 'success',
         offColor: 'danger'
     });
+    jQuery(".isotope-grid").isotope();
 
 });
 

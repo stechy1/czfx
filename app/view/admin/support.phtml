@@ -10,11 +10,9 @@
     <div class="panel-body">
         <? if ($reports) : ?>
             <? $i = 0; ?>
-            <div class="row">
+            <div class="row isotope-grid">
             <? foreach ($_reports as $report) : ?>
                 <? if ($i == 4) : ?>
-                    </div>
-                    <div class="row">
                     <? $i = 0; endif ?>
                 <? $i++; ?>
                 <?= (new \app\model\snippet\ReportSnippet($report))->render() ?>
@@ -41,11 +39,13 @@
     var m = new SupportManager();
 
     jQuery(document).ready(function () {
+
         jQuery(".mark-as-read").click(function() {
             var self = $(this);
             var id = self.data("reportid");
             m.markAsRead(id, function () {
                 self.parent().fadeOut().remove();
+                jQuery(".isotope-grid").isotope("layout");
             });
         });
 

@@ -20,8 +20,6 @@
     right: 0;
 }
 
-
-
 pre {
     -ms-word-wrap: normal;
     word-wrap: normal;
@@ -124,7 +122,7 @@ pre code {
     text-align: right;
 }
 
-.feeds {
+.feeds-container {
     height: 200px;
     overflow-y: scroll;
 }

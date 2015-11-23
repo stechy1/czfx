@@ -59,7 +59,7 @@ class ReportSnippet extends ASnippet {
             $footer
         ]))->addClass(["panel read", "panel-$this->reportType"]);
 
-        $div = (new DivElement($panel))->addClass("col-sm-6 col-md-4 col-lg-3")->setID("report-$this->id");
+        $div = (new DivElement($panel))->addClass("col-sm-6 col-md-4 col-lg-3 isotope-grid-item")->setID("report-$this->id");
 
         $htmlBuilder = new HtmlBuilder($div);
         $this->html = $htmlBuilder->render();
