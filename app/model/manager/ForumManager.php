@@ -25,25 +25,24 @@ class ForumManager {
      * @return array Pole kategorií
      * @throws MyException Pokud není nalezena žádná kategorie
      */
-    // TODO dodělat dotaz pro category_topics_count!
     public function getCategories () {
         $query = "SELECT
-                  forum_categories.category_id,
-                  forum_categories.category_name,
-                  forum_categories.category_url,
-                  forum_categories.category_description,
-                  (SELECT COUNT(topic_id) FROM forum_categories WHERE topic_cat = category_id ) AS category_topics_count,
-                  (SELECT COUNT(post_id) FROM forum_topics WHERE post_topic = topic_id) AS topic_posts_count,
-                  MAX(forum_posts.post_date)          AS post_date,
-                  users.user_nick                     AS nick
-                FROM forum_categories
-                  INNER JOIN (
-                      forum_topics
-                      INNER JOIN (forum_posts
-                      INNER JOIN users ON users.user_id = forum_posts.post_by
-                      ) ON forum_topics.topic_id = forum_posts.post_topic
-                    ) ON forum_topics.topic_cat = category_id
-                GROUP BY category_id";
+                      forum_categories.category_id,
+                      forum_categories.category_name,
+                      forum_categories.category_url,
+                      forum_categories.category_description,
+                      (SELECT COUNT(topic_id)
+                       FROM forum_topics
+                       WHERE topic_cat = category_id
+                       GROUP BY category_id)           AS category_topics_count,
+                      (SELECT COUNT(post_id)
+                       FROM forum_topics
+                       WHERE post_topic = topic_id) AS topic_posts_count,
+                      MAX(forum_posts.post_date)    AS post_date,
+                      users.user_nick               AS nick
+                    FROM forum_categories, forum_topics, forum_posts, users
+                    WHERE topic_cat = category_id AND topic_id = post_topic AND users.user_id = post_by
+                    GROUP BY forum_categories.category_id";
         $fromDb = $this->database->queryAll($query);
 
         if (!$fromDb)
@@ -97,19 +96,34 @@ class ForumManager {
             $catURL = $_SESSION['forum']['categoryURL']; else
             $_SESSION['forum']['categoryURL'] = $catURL;
 
-        $fromDb = $this->database->queryAll("SELECT forum_topics.topic_id, forum_topics.topic_subject, forum_topics.topic_date,
-                                           forum_topics.topic_url, forum_topics.topic_by,
-                                           (SELECT
-                                              COUNT(forum_posts.post_id)
-                                              FROM forum_posts
-                                              WHERE forum_posts.post_topic = forum_topics.topic_id
-                                           ) AS topic_posts_count
-                                    FROM forum_categories
-                                    INNER JOIN forum_topics
-                                      ON forum_topics.topic_cat = forum_categories.category_id
-                                    WHERE category_url = ? AND forum_topics.topic_id < ?
-                                    ORDER BY forum_topics.topic_id DESC
-                                    LIMIT 12", [$catURL, $from]);
+        $query = "SELECT
+                  forum_topics.topic_id,
+                  forum_topics.topic_subject,
+                  forum_topics.topic_date,
+                  forum_topics.topic_url,
+                  (
+                    SELECT COUNT(forum_posts.post_id)
+                    FROM forum_posts
+                    WHERE forum_posts.post_topic = forum_topics.topic_id
+                  ) AS topic_posts_count,
+                  (
+                    SELECT MAX(forum_posts.post_date)
+                    FROM forum_posts
+                    WHERE forum_posts.post_topic = topic_id
+                  ) AS last_post_date,
+                  (
+                    SELECT users.user_nick
+                    FROM forum_posts
+                      LEFT JOIN users ON user_id = post_by
+                    WHERE post_date = last_post_date
+                  ) AS last_post_user
+                FROM forum_categories
+                  INNER JOIN forum_topics
+                    ON forum_topics.topic_cat = forum_categories.category_id
+                WHERE category_url = ? AND forum_topics.topic_id < ?
+                ORDER BY forum_topics.topic_id DESC
+                LIMIT 12";
+        $fromDb = $this->database->queryAll($query, [$catURL, $from]);
 
         if (!$fromDb)
             throw new MyException("Kategorie neobsahuje žádná vlákna");

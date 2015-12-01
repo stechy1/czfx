@@ -12,7 +12,6 @@ use app\model\manager\ArticleManager;
 use app\model\manager\FileManager;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
-use app\model\UserRole;
 use app\model\util\BootPagination;
 
 /**

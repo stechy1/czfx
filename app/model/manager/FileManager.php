@@ -194,11 +194,7 @@ class FileManager {
      * @return string Obsah souboru
      */
     public function readFile($path) {
-        $file = fopen($path, "r");
-        $text = fread($file, filesize($path));
-        fclose($file);
-
-        return $text;
+        return file_get_contents($path);
     }
 
     /**

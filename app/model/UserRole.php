@@ -3,7 +3,7 @@
 namespace app\model;
 
 
-use Exception;
+use app\model\service\exception\MyException;
 
 class UserRole {
 
@@ -24,14 +24,14 @@ class UserRole {
      * @param $requiredRole int Požadované oprávnění
      * @param bool $throwException True, pokud se v případě neúspěchu má vyvolat vyjímka, jinak se vrátí false
      * @return bool True, pokud je oprávnění v pořádku
-     * @throws Exception
+     * @throws MyException
      */
     public function valid ($requiredRole, $throwException = true) {
         if ($this->roleID >= $requiredRole)
             return true;
 
         if ($throwException)
-            throw new Exception("Nedostatečná oprávnění");
+            throw new MyException("Nedostatečná oprávnění");
 
         return false;
     }

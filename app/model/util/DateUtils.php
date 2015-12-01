@@ -2,8 +2,8 @@
 
 namespace app\model\util;
 
-use InvalidArgumentException;
 use DateTime;
+use InvalidArgumentException;
 
 /**
  * Class DateUtils

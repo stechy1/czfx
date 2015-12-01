@@ -78,16 +78,20 @@ class ConfigManager {
 
     /**
      * Uloží změny konfigurace
+     *
+     * @throws MyException Pokud se nepodaří změna uložit na disk
      */
     public function saveConfig() {
-        file_put_contents($this->configPHPfile, $this->buildConfig());
+        $success = file_put_contents($this->configPHPfile, $this->buildConfig());
+        if(!$success)
+            throw new MyException("Konfiguraci se nepodařilo uložiz");
     }
 
     /**
      * Nastaví aktuální konfiguraci jako výchozí
      *
      * @param $newConfig array Nová konfigurace
-     * @throws MyException
+     * @throws MyException Pokud se nepodaří změna uložit na disk
      */
     public function saveDefaultConfig($newConfig) {
         $tmpConfig = array();
@@ -103,7 +107,10 @@ class ConfigManager {
 
         $this->config = $tmpConfig;
 
-        file_put_contents($this->configJSONfile, json_encode($this->config));
+        $success = file_put_contents($this->configJSONfile, json_encode($this->config));
+        if(!$success)
+            throw new MyException("Konfiguraci se nepodařilo uložit");
+
         $this->saveConfig();
     }
 }

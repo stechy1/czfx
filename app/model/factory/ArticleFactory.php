@@ -6,8 +6,8 @@ namespace app\model\factory;
 use app\model\Article;
 use app\model\database\Database;
 use app\model\manager\FileManager;
-use app\model\util\StringUtils;
 use app\model\service\exception\MyException;
+use app\model\util\StringUtils;
 
 /**
  * Class ArticleFactory - Továrna na články

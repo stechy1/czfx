@@ -7,8 +7,8 @@ use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
 use app\model\manager\ForumManager;
 use app\model\service\CaptchaService;
-use app\model\service\request\IRequest;
 use app\model\service\exception\MyException;
+use app\model\service\request\IRequest;
 
 /**
  * Class ForumController

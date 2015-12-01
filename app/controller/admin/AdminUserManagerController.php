@@ -4,9 +4,9 @@ namespace app\controller\admin;
 
 
 use app\model\factory\UserFactory;
+use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 use app\model\util\BootPagination;
-use app\model\service\exception\MyException;
 
 /**
  * Class AdminUserManagerController

@@ -4,7 +4,6 @@ namespace app\model\service;
 
 
 use app\model\service\exception\MyException;
-use Captcha\Captcha;
 
 /**
  * Class CaptchaService

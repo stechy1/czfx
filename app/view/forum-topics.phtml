@@ -3,7 +3,7 @@
     <li class="active"><?= $categoryName ?></li>
 </ol>
 
-<div style="margin-bottom: 10px;"><span class="btn btn-primary"><a href="forum/new-topic">Nové vlákno</a></span></div>
+<div style="margin-bottom: 10px;"><span class="btn btn-xs btn-primary"><a href="forum/new-topic">Nové vlákno</a></span></div>
 <? if (isset($topics)) : ?>
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
@@ -28,7 +28,7 @@
                         </h4>
                     </td>
                     <td class="text-center"><?= $topic['topic_posts_count']; ?></td>
-                    <td>Undefined</td>
+                    <td class="text-center"><?= ($topic['last_post_user']) ?: "Nikdo"; ?><br><?= app\model\util\DateUtils::formatDateTime($topic['last_post_date']); ?></td>
                     <? if ($isAdmin) : ?>
                     <td>
                         <span class="btn btn-xs btn-danger delete-topic" data-topicid="<?= $topic['topic_id'] ?>">Smazat</span>

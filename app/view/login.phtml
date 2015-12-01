@@ -5,25 +5,28 @@
         </div>
         <div class="panel-body">
             <fieldset>
+                <input type="hidden" name="form-name" value="login-form">
+
                 <div class="form-group">
                     <div class="input-group">
-                        <input id="nick" class="form-control" placeholder="Uživatelské jméno" name="nick" type="text">
-                        <label for="nick" class="input-group-addon glyphicon glyphicon-user"></label>
+                        <?= $form['email'] ?>
+                        <label for="email" class="input-group-addon glyphicon glyphicon-user"></label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input id="password" class="form-control" placeholder="Heslo" name="password" type="password"
-                               value="">
+                        <?= $form['password'] ?>
                         <label for="password" class="input-group-addon glyphicon glyphicon-lock"></label>
                     </div>
                 </div>
-                <div class="checkbox">
+                <div class="checkbox col-sm-6">
                     <label>
                         <input name="remember" type="checkbox" value="remember me"> Pamatovat si mě
                     </label>
                 </div>
-
+                <div class="col-sm-6 text-right" style="margin-top: 10px">
+                    <a href="login/new-password-request">Zapomněl jsi heslo?</a>
+                </div>
             </fieldset>
         </div>
         <div class="panel-footer">

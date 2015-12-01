@@ -9,7 +9,6 @@ namespace app\model\util;
  */
 class StringUtils
 {
-
 	/**
 	 * Zjistí, zda text začíná určitým podřetězcem
 	 *

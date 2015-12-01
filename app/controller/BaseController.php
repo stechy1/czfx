@@ -6,8 +6,8 @@ namespace app\controller;
 use app\model\callback\AjaxCallBack;
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
-use app\model\service\request\IRequest;
 use app\model\service\exception\MyException;
+use app\model\service\request\IRequest;
 
 
 /**
@@ -92,6 +92,8 @@ abstract class BaseController {
      */
     public function addMessages ($messages) {
         foreach ($messages as $message) {
+            if (is_string($message))
+                $message = new CallBackMessage($message, CallBackMessage::DANGER);
             $this->addMessage($message);
         }
     }

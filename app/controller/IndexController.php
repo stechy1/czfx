@@ -7,9 +7,9 @@ use app\model\callback\CallBackData;
 use app\model\callback\CallBackMessage;
 use app\model\factory\ArticleFactory;
 use app\model\manager\ForumManager;
+use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 use app\model\snippet\PostSnippet;
-use app\model\service\exception\MyException;
 
 /**
  * Class IndexController

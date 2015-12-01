@@ -35,11 +35,6 @@ pre code {
     text-decoration: none;
 }
 
-
-.panel-body.hidden {
-    display: none;
-}
-
 /** Navbar */
 .navbar-nav > li > a {
     padding-top: 10px !important;
@@ -94,6 +89,9 @@ pre code {
 .panel-heading .report-delete:hover {
     cursor: pointer;
     background: rgba(0, 0, 0, 0.1);
+}
+.panel-body.hidden {
+    display: none;
 }
 .panel.articles {
     background: #2A2929;
@@ -581,63 +579,63 @@ input[type="file"] {
 
 }
 .editorToolBarElement {
-    width: 34px;
+    width: 32px;
     height: 32px;
-    background-repeat: no-repeat;
+    background: url("../img/editor/editor-icon-grid-24.png") no-repeat;
+    background-position-x: 2px;
     padding: 0;
     margin: 0 3px
 }
 .editorToolBarElement.h1 {
-    background-image: url(../img/editor/h1.png);
+    background-position-y: 8px;
 }
 .editorToolBarElement.h2 {
-    background-image: url(../img/editor/h2.png);
+    background-position-y: -17px;
 }
 .editorToolBarElement.h3 {
-    background-image: url(../img/editor/h3.png);
+    background-position-y: -40px;
 }
 .editorToolBarElement.h4 {
-    background-image: url(../img/editor/h4.png);
+    background-position-y: -63px;
 }
 .editorToolBarElement.h5 {
-    background-image: url(../img/editor/h5.png);
+    background-position-y: -86px;
 }
 .editorToolBarElement.h6 {
-    background-image: url(../img/editor/h6.png);
+    background-position-y: -109px;
 }
 .editorToolBarElement.bold {
-    background-image: url(../img/editor/bold.png);
+    background-position-y: -335px;
 }
 .editorToolBarElement.italic {
-    background-image: url(../img/editor/italic.png);
+    background-position-y: -154px;
 }
 .editorToolBarElement.strikethrough {
-    background-image: url(../img/editor/strikethrough.png);
+    background-position-y: -284px;
 }
 .editorToolBarElement.code {
-    background-image: url(../img/editor/code.png);
-    width: 80px;
+    background-position-y: -383px;
 }
 .editorToolBarElement.inline-code {
-    background-image: url("../img/editor/inline-code.png");
+    background-position-y: -132px;
 }
 .editorToolBarElement.quotes {
-    background-image: url("../img/editor/quotes.png");
+    background-position-y: -259px;
 }
 .editorToolBarElement.ordered-list {
-    background-image: url("../img/editor/ordered-list.png");
+    background-position-y: -203px;
 }
 .editorToolBarElement.unordered-list {
-    background-image: url("../img/editor/unordered-list.png");
+    background-position-y: -310px;
 }
 .editorToolBarElement.link {
-    background-image: url("../img/editor/link.png");
+    background-position-y: -177px;
 }
 .editorToolBarElement.preview {
-    background-image: url("../img/editor/preview.png");
+    background-position-y: -229px;
 }
 .editorToolBarElement.attachment {
-    background-image: url("../img/editor/attachment.png");
+    background-position-y: -359px;
 }
 
 /** Footer */

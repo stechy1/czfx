@@ -7,9 +7,8 @@ use app\model\callback\CallBackData;
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
 use app\model\manager\UserManager;
-use app\model\service\request\IRequest;
-use app\model\UserRole;
 use app\model\service\exception\MyException;
+use app\model\service\request\IRequest;
 
 /**
  * Class ProfileController

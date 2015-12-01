@@ -20,39 +20,31 @@
                 <? endif ?>
             </div>
         </div>
-        <div class="col-xs-4 col-md-1">
+        <div class="col-xs-4 col-sm-3">
             <div class="tabs-left">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#general" data-toggle="tab">Obecné</a></li>
+                    <li><a href="#password" data-toggle="tab">Změna hesla</a></li>
                     <li><a href="#personal" data-toggle="tab">Osobní</a></li>
                     <li><a href="#location" data-toggle="tab">Poloha</a></li>
                 </ul>
             </div>
         </div>
-        <div class="col-xs-8 col-md-10">
+        <div class="col-xs-8 col-sm-9">
             <div class="tab-content">
                 <div id="general" class="tab-pane fade in active">
-                    <form method="post" action="settings/general" class="form-horizontal" name="general">
+                    <form method="post" action="settings/general" class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="newNick">Přihlašovací jméno:</label>
+                            <label class="col-md-3 control-label" for="newNick">Uživatelské jméno:</label>
 
                             <div class="col-md-5">
-                                <input id="newNick" name="newNick" type="text" placeholder="přihlašovací jméno"
+                                <input id="newNick" name="newNick" type="text" placeholder="Uživatelské jméno"
                                        class="form-control input-md" value="<?= $user['user_nick'] ?>">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="newPassword">Heslo:</label>
-
-                            <div class="col-md-5">
-                                <input id="newPassword" name="newPassword" type="password" placeholder="heslo"
-                                       class="form-control input-md">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="newEmail">E-mail:</label>
+                            <label class="col-md-3 control-label" for="newEmail">E-mail:</label>
 
                             <div class="col-md-5">
                                 <input id="newEmail" name="newEmail" type="text" placeholder="e-mail"
@@ -61,19 +53,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="actPassword">Aktuální heslo:</label>
+                            <label class="col-md-3 control-label" for="actPassword">Aktuální heslo:</label>
 
                             <div class="col-md-5">
-                                <input id="actPassword" name="actPassword" type="password" placeholder="aktuální heslo"
+                                <input id="actPassword" name="actPassword" type="password" placeholder="Aktuální heslo"
                                        class="form-control input-md" required="">
 
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-4 control-label"></label>
+                            <label class="col-md-3 control-label"></label>
 
                             <div class="col-md-8">
-                                <button class="btn btn-sm btn-primary" name="general" type="submit">
+                                <button class="btn btn-xs btn-primary" name="general" type="submit">
                                     <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
                                     Uložit změny
                                 </button>
@@ -82,50 +74,88 @@
                     </form>
                 </div>
 
+                <div id="password" class="tab-pane fade">
+                    <form method="post" action="settings/password" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="oldPassword">Staré heslo:</label>
+
+                            <div class="col-md-5">
+                                <input id="oldPassword" name="oldPassword" type="password" placeholder="Staré heslo"
+                                       class="form-control input-md">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="newPassword">Nové heslo:</label>
+
+                            <div class="col-md-5">
+                                <input id="newPassword" name="newPassword" type="password" placeholder="Nové heslo"
+                                       class="form-control input-md">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="newPassword2">Nové heslo znovu:</label>
+
+                            <div class="col-md-5">
+                                <input id="newPassword2" name="newPassword2" type="password" placeholder="Nové heslo znovu"
+                                       class="form-control input-md">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"></label>
+
+                            <div class="col-md-8">
+                                <button class="btn btn-xs btn-primary" id="submiter" name="general" type="submit">
+                                    <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+                                    Uložit změny
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
                 <div id="personal" class="tab-pane fade">
-                    <form method="post" action="settings/personal" class="form-horizontal" name="personal">
+                    <form method="post" action="settings/personal" class="form-horizontal">
+                        <?= $personalForm['0'] ?>
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="name">Jméno:</label>
+                            <label class="col-md-3 control-label" for="name">Jméno:</label>
 
                             <div class="col-md-5">
-                                <input id="name" name="name" placeholder="jméno"
-                                       class="form-control input-md" value="<?= $user['user_name'] ?>">
+                                <?= $personalForm['name'] ?>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="age">Věk:</label>
+                            <label class="col-md-3 control-label" for="age">Věk:</label>
 
                             <div class="col-md-5">
-                                <input id="age" name="age" placeholder="věk"
-                                       class="form-control input-md" value="<?= $user['user_age'] ?>">
+                                <?= $personalForm['age'] ?>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="age">Motto:</label>
+                            <label class="col-md-3 control-label" for="age">Motto:</label>
 
                             <div class="col-md-5">
-                                <input id="motto" name="motto" placeholder="motto"
-                                       class="form-control input-md" value="<?= $user['user_motto'] ?>">
+                                <?= $personalForm['motto'] ?>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="actPassword">Aktuální heslo:</label>
+                            <label class="col-md-3 control-label" for="actPassword">Aktuální heslo:</label>
 
                             <div class="col-md-5">
-                                <input id="actPassword" name="actPassword" type="password" placeholder="aktuální heslo"
-                                       class="form-control input-md" required="">
+                                <?= $personalForm['password'] ?>
 
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-4 control-label"></label>
+                            <label class="col-md-3 control-label"></label>
 
                             <div class="col-md-8">
-                                <button class="btn btn-primary" id="submiter" name="general" type="submit">
+                                <button class="btn btn-xs btn-primary" id="submiter" name="general" type="submit">
                                     <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
                                     Uložit změny
                                 </button>
@@ -134,19 +164,51 @@
                     </form>
                 </div>
 
-
                 <div id="location" class="tab-pane fade">
-                    <form method="post" action="settings/location" class="form-horizontal" name="location">
+                    <form method="post" action="settings/location" class="form-horizontal">
                         Obsah poloha
                     </form>
                 </div>
-
             </div>
         </div>
-        </form>
     </div>
     <div class="panel-footer">
-        <button id="delete-account" name="delete-account" class="btn btn-danger btn-sm delete-account">Smazat účet
-        </button>
+        <div class="row">
+            <div class="col-md-2">
+                <button id="show-delete-form" name="delete-account"
+                   class="btn btn-sm btn-danger">Smazat účet</button>
+            </div>
+            <div class="col-md-9">
+                <form action="settings/delete/me" method="post" class="form-horizontal" id="form-user-delete" style="display: none;">
+                    <div class="form-group">
+                        <div class="form-group row">
+                            <div class="col-md-2">
+                                <input type="password" name="password" class="form-control input-sm" placeholder="Aktuální heslo">
+
+                            </div>
+                            <div class="col-md-2">
+                                <input type="submit" id="delete-account" class="btn btn-sm btn-danger" value="Potvrdit">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+    jQuery(document).ready(function () {
+        jQuery("#show-delete-form").click(function () {
+            jQuery("#form-user-delete").fadeToggle("slow", "linear");
+        });
+
+        jQuery("#delete-account").click(function (e) {
+            var srsly = confirm("Opravdu si přejete smazat účet?");
+            if (!srsly) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+    });
+</script>

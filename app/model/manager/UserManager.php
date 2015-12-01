@@ -5,7 +5,6 @@ namespace app\model\manager;
 use app\model\database\Database;
 use app\model\factory\UserFactory;
 use app\model\service\exception\MyException;
-use app\model\User;
 use app\model\util\SimpleImage;
 use PDOException;
 
@@ -41,7 +40,7 @@ class UserManager {
      * @return string Hash osoleného hesla
      */
     public function hash ($heslo) {
-        $sul = '~e_;*G=_;G4T%;n;4V*D#$%';
+        $sul = PASSWORD_SALT;
         return hash('sha512', $heslo . $sul);
     }
 
@@ -49,10 +48,16 @@ class UserManager {
      * Zaregistruje nového uživatele
      *
      * @param $data array Registrační údaje
+     *         username     Uživatelské jméno
+     *         password     Heslo
+     *         password2    Heslo pro kontrolu
+     *         email        E-mail
      * @throws MyException Pokud se registrace nezdaří
      */
     public function register ($data) {
-        if ($data['password'] != $data['passwordAgain'])
+
+
+        if ($data['password'] != $data['password2'])
             throw new MyException('Hesla nesouhlasí.');
         $pass = $this->hash($data['password']);
         $checkCode = str_shuffle($this->hash($pass));
@@ -68,14 +73,9 @@ class UserManager {
         try {
             $this->database->insert('users', $user);
 
-            //mb_send_mail("pstechmu@students.zcu.cz", "Testovaci mail", "Toto je testovaci zprava");
-
-            /*$emailSender = new EmailSender();
-            $emailSender->sendhello($data['email'], "Hello", "This is a message");
-            $emailSender->sendCheckCode($data['email'], $checkCode);*/
 
         } catch (PDOException $chyba) {
-            throw new MyException('Uživatel s tímto jménem je již zaregistrovaný.');
+            throw new MyException('Uživatel s touto e-mailovou adresou je již zaregistrovaný.');
         }
     }
 
@@ -83,16 +83,18 @@ class UserManager {
      * Prihlásí uživatele do systému
      *
      * @param $data array Přihlašovací údaje
+     *         email      E-mail
+     *         password   Heslo
      * @throws MyException Pokud se přihlášení nezdaří
      */
     public function login ($data) {
-        $username = $data['nick'];
+        $email = $data['email'];
         $password = $data['password'];
         $fromDb = $this->database->queryOne('
                         SELECT user_id
                         FROM users
-                        WHERE user_nick = ? AND user_password = ?
-                ', [$username, $this->hash($password)]);
+                        WHERE user_mail = ? AND user_password = ? AND user_role >= ?
+                ', [$email, $this->hash($password), USER_ROLE_MEMBER]);
         if (!$fromDb)
             throw new MyException('Špatné jméno nebo heslo.');
 
@@ -101,69 +103,63 @@ class UserManager {
     }
 
     /**
-     * Aktualizuje uživatelská data
+     * Změní uživatelské heslo
      *
-     * @param $data array Uživatelská data
-     * @return bool True, pokud se aktualizace provedla úspěšně, jinak false
-     * @throws MyException
+     * @param $data
+     *         oldPassword      Staré heslo
+     *         newPassword      Nové heslo
+     *         newPassword2     Nové heslo pro kontrolu
+     * @return bool True, pokud byla změna hesla úspěšná
+     * @throws MyException Pokud nejsou vyplněny všechny položky, nebo pokud se hesla neshodují, nebo pokud se nepodaří heslo změnit
      */
-    public function updateUser ($data) {
-        $actPass = $this->hash($data['actPassword']);
-        /*if (!$_SESSION['user']['user_activated'])
-            throw new MyException("Musíte nejdříve aktivovat účet");
-        $actPass = $this->hash($data['actPassword']);
-        $settings = array();
-        if (!empty($data['newNick']))
-            $settings['user_nick'] = $data['newNick']; else
-            throw new MyException("Přihlašovací jméno nesmí být prázdné");
-        if (!empty($data['newPassword']))
-            $settings['user_password'] = $this->hash($data['newPassword']);
-        if (!empty($data['newEmail']))
-            $settings['user_mail'] = $data['newEmail'];
-        if ($settings) {
-            $uspech = $this->database->update("users", $settings, "WHERE user_id = ? AND user_password = ?", [$_SESSION['user']['user_id'], $actPass]);
-            if ($uspech) {
-                foreach ($settings as $key => $value)
-                    $_SESSION['user'][$key] = $value;
-                unset ($_SESSION['user']['user_password']);
-                return true;
-            }
-            throw new MyException("Špatné heslo");
-        } else
-            throw new MyException("Není co aktualizovat");*/
+    public function changePassword ($data) {
+        if (!isset($data['oldPassword']) || !isset($data['newPassword']) || !isset($data['newPassword2']))
+            throw new MyException("Nejsou vyplněny všechny povinné položky");
+
+        $oldPassword = $data['oldPassword'];
+        $newPassword = $data['newPassword'];
+        $newPassword2= $data['newPassword2'];
+
+        if ($newPassword == $oldPassword)
+            throw new MyException("Nové heslo se nesmí shodovat se starým heslem");
+
+        if ($newPassword != $newPassword2)
+            throw new MyException("Nové heslo se neshoduje s kontrolním");
+
+        $oldHash = $this->hash($oldPassword);
+        $hash = $this->hash($newPassword);
+
+        $fromDb = $this->database->update('users', ['user_password' => $hash], 'WHERE user_id = ? AND user_password = ?', [$_SESSION['user']['id'], $oldHash]);
+
+        if (!$fromDb)
+            throw new MyException("Heslo se nepodařilo změnit");
+
+        return true;
     }
 
     /**
-     * Aktualizuje uživatelská data
+     * Aktualizuje pouze ty prvky, které se nacházejí v poli keyArray
      *
-     * @param $data array Pole údajů
-     * @return bool True, pokud je aktualizace úspěšná
-     * @throws MyException Pokud se aktualizace nepovede
+     * @param $data array Pole nových dat
+     * @param $keyArray array Pole klíčových prvků, které se mají aktualizovat
+     * @param $password string Aktuální heslo pro kontrolu
+     * @return bool True, pokud se povedlo údaje aktualizovat
+     * @throws MyException Pokud se nepovedlo údaje aktualizovat
      */
-    public function updateUserData ($data) {
-        /*if (!$_SESSION['user']['user_activated'])
-            throw new MyException("Musíte nejdříve aktivovat účet");
-        $actPass = $this->hash($data['actPassword']);
-        $settings = array();
-        if (!empty($data['name']))
-            $settings['user_info_name'] = $data['name'];
-        if (!empty($data['age']))
-            $settings['user_info_age'] = $data['age'];
-        if (!empty($data['motto']))
-            $settings['user_info_motto'] = $data['motto'];
-        if ($settings) {
-            $fromDb = $this->database->queryOne("SELECT COUNT(user_id) FROM users WHERE user_id = ? AND user_password = ?", [$_SESSION['user']['user_id'], $actPass]);
-            if (!$fromDb['COUNT(user_id)'])
-                throw new MyException("Špatné heslo");
-            $uspech = $this->database->update("user_info", $settings, "WHERE user_info_user_id = ?", [$_SESSION['user']['user_id']]);
-            if ($uspech) {
-                foreach ($settings as $key => $value)
-                    $_SESSION['user'][$key] = $value;
-                return true;
-            } else
-                throw new MyException("Aktualizace se nepodařila");
-        } else
-            throw new MyException("Není co aktualizovat");*/
+    public function updateData ($data, $keyArray, $password) {
+        $hash = $this->hash($password);
+        $arr = array();
+
+        foreach ($data as $key => $value)
+            if (in_array($key, $keyArray))
+                $arr['user_' . $key] = $value;
+
+        $fromDb = $this->database->update('users', $arr, 'WHERE user_id = ? AND user_password = ?', [$_SESSION['user']['id'], $hash]);
+
+        if (!$fromDb)
+            throw new MyException("Údaje se nepodařilo změnit");
+
+        return true;
     }
 
     /**
@@ -203,46 +199,46 @@ class UserManager {
         if ($changeDb)
             $fromDb = $this->database->update('users', ['user_online' => 0], 'WHERE user_id = ?', [$_SESSION['user']['id']]);
         unset($_SESSION['user']);
-        if ($fromDb)
+        if (!$changeDb || $fromDb)
             return true;
+
         throw new MyException("Není koho odhlašovat");
     }
 
     /**
      * Smaže uživatele ze systému
      *
-     * @param $heslo string Potvrzovací heslo
+     * @param $password string Potvrzovací heslo
      * @return bool True, pokud se smazání povedlo, jinak false
      * @throws MyException Pokud se smazání nepodařilo
      */
-    public function delete ($heslo) {
-        $id = $_SESSION['user']['user_id'];
-        $pass = $this->hash($heslo);
+    public function delete ($password) {
+        $id = $_SESSION['user']['id'];
+        $pass = $this->hash($password);
         $emptyUser = array(
             "user_nick" => "Bývalý člen",
             "user_password" => "",
-            "user_mail" => "",
-            "user_role" => "0",
+            "user_role" => "1",
             "user_online" => "0",
             "user_banned" => "0",
             "user_activated" => "0",
             "user_activation_code" => "",
             "user_name" => "",
             "user_age" => "",
-            "user_avatar" => "",
+            "user_avatar" => "empty-image",
             "user_region" => "",
             "user_city" => "",
             "user_motto" => "",
             "user_skill" => "",
 
         );
+
         $fromDb = $this->database->update("users", $emptyUser, "WHERE user_id = ? AND user_password = ?", [$id, $pass]);
-        //$fromDb = $this->database->query("DELETE FROM users WHERE user_id = ? AND user_password = ?", [$id, $pass]);
-        if ($fromDb) {
-            $this->logout(false);
-            return true;
-        }
-        throw new MyException("Špatné heslo");
+
+        if (!$fromDb)
+            throw new MyException("Špatné heslo");
+
+        return true;
     }
 
     /**

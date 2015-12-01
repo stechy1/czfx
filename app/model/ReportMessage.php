@@ -1,7 +1,6 @@
 <?php
 
 namespace app\model;
-use app\model\service\exception\MyException;
 
 /**
  * Class ReportMessage

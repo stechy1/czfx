@@ -4,9 +4,9 @@ namespace app\model\factory;
 
 
 use app\model\database\Database;
+use app\model\service\exception\MyException;
 use app\model\User;
 use app\model\UserRole;
-use app\model\service\exception\MyException;
 
 
 /**

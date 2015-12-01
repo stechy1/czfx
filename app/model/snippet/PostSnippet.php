@@ -3,7 +3,6 @@
 namespace app\model\snippet;
 
 
-
 use app\model\util\DateUtils;
 use app\model\util\StringUtils;
 use stechy1\html\element\AnchorElement;
@@ -21,7 +20,6 @@ class PostSnippet extends ASnippet {
     private $postCategoryURL;
     private $postTopicURL;
     private $postTopicSubject;
-
 
     /**
      * PostSnippet constructor

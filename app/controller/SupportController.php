@@ -7,9 +7,8 @@ use app\model\callback\CallBackMessage;
 use app\model\factory\ReportFactory;
 use app\model\manager\SupportManager;
 use app\model\service\CaptchaService;
-use app\model\service\request\IRequest;
-use app\model\UserRole;
 use app\model\service\exception\MyException;
+use app\model\service\request\IRequest;
 
 /**
  * Class SupportController

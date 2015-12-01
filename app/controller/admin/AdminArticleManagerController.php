@@ -6,9 +6,9 @@ namespace app\controller\admin;
 use app\model\callback\CallBackMessage;
 use app\model\factory\ArticleFactory;
 use app\model\manager\ArticleManager;
+use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 use app\model\util\BootPagination;
-use app\model\service\exception\MyException;
 
 /**
  * Class AdminArticleManagerController

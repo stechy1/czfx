@@ -5,7 +5,6 @@ namespace app\controller\admin;
 
 use app\controller\BaseController;
 use app\model\callback\CallBackMessage;
-use app\model\UserRole;
 use app\model\service\exception\MyException;
 
 class AdminBaseController extends BaseController {

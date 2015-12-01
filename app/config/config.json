@@ -1,1 +1,57 @@
-{"UGLY_URL":{"name":"P\u011bkn\u00e9 url adresy","key":"false","type":"text"},"INDEX_ARTICLE_COUNT":{"name":"Po\u010det \u010dl\u00e1nk\u016f na tituln\u00ed stran\u011b","key":"7","type":"number"},"INDEX_POST_COUNT":{"name":"Po\u010det post\u016f na tituln\u00ed stran\u011b","key":"10","type":"number"},"INDEX_POST_CONTENT_LENGTH":{"name":"D\u00e9lka textu v postu","key":"75","type":"number"},"INDEX_ARTICLE_TITLE_LENGTH":{"name":"D\u00e9lka n\u00e1zvu titulku \u010dl\u00e1nku","key":"150","type":"number"},"INDEX_ARTICLE_DESCRIPTION_LENGTH":{"name":"D\u00e9lka popisu \u010dl\u00e1nku","key":"380","type":"number"},"ARTICLE_MANAGEMENT_ARTICLE_COUNT":{"name":"Po\u010det \u010dl\u00e1nk\u016f v u\u017eivatelsk\u00e9m spr\u00e1vci","key":"10","type":"number"},"ADMIN_ARTICLE_MANAGER_ARTICLE_COUNT":{"name":"Po\u010det \u010dl\u00e1nk\u016f v administra\u010dn\u00ed \u010d\u00e1sti","key":"10","type":"number"},"ADMIN_CATEGORY_MANAGER_CATEGORY_COUNT":{"name":"Po\u010det kategori\u00ed v administra\u010dn\u00ed \u010d\u00e1sti","key":"10","type":"number"},"ADMIN_REPORT_MANAGER_REPORT_COUNT":{"name":"Po\u010det zpr\u00e1v v administra\u010dn\u00ed \u010d\u00e1sti","key":"10","type":"number"},"ADMIN_USER_MANAGER_USER_COUNT":{"name":"Po\u010det u\u017eivatel\u016f v administra\u010dn\u00ed \u010d\u00e1sti","key":"10","type":"number"}}
+{
+  "UGLY_URL": {
+    "name": "P\u011bkn\u00e9 url adresy",
+    "key": "false",
+    "type": "text"
+  },
+  "INDEX_ARTICLE_COUNT": {
+    "name": "Po\u010det \u010dl\u00e1nk\u016f na tituln\u00ed stran\u011b",
+    "key": "7",
+    "type": "number"
+  },
+  "INDEX_POST_COUNT": {
+    "name": "Po\u010det post\u016f na tituln\u00ed stran\u011b",
+    "key": "10",
+    "type": "number"
+  },
+  "INDEX_POST_CONTENT_LENGTH": {
+    "name": "D\u00e9lka textu v postu",
+    "key": "75",
+    "type": "number"
+  },
+  "INDEX_ARTICLE_TITLE_LENGTH": {
+    "name": "D\u00e9lka n\u00e1zvu titulku \u010dl\u00e1nku",
+    "key": "150",
+    "type": "number"
+  },
+  "INDEX_ARTICLE_DESCRIPTION_LENGTH": {
+    "name": "D\u00e9lka popisu \u010dl\u00e1nku",
+    "key": "380",
+    "type": "number"
+  },
+  "ARTICLE_MANAGEMENT_ARTICLE_COUNT": {
+    "name": "Po\u010det \u010dl\u00e1nk\u016f v u\u017eivatelsk\u00e9m spr\u00e1vci",
+    "key": "10",
+    "type": "number"
+  },
+  "ADMIN_ARTICLE_MANAGER_ARTICLE_COUNT": {
+    "name": "Po\u010det \u010dl\u00e1nk\u016f v administra\u010dn\u00ed \u010d\u00e1sti",
+    "key": "10",
+    "type": "number"
+  },
+  "ADMIN_CATEGORY_MANAGER_CATEGORY_COUNT": {
+    "name": "Po\u010det kategori\u00ed v administra\u010dn\u00ed \u010d\u00e1sti",
+    "key": "10",
+    "type": "number"
+  },
+  "ADMIN_REPORT_MANAGER_REPORT_COUNT": {
+    "name": "Po\u010det zpr\u00e1v v administra\u010dn\u00ed \u010d\u00e1sti",
+    "key": "10",
+    "type": "number"
+  },
+  "ADMIN_USER_MANAGER_USER_COUNT": {
+    "name": "Po\u010det u\u017eivatel\u016f v administra\u010dn\u00ed \u010d\u00e1sti",
+    "key": "10",
+    "type": "number"
+  }
+}

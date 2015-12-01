@@ -4,8 +4,8 @@ namespace app\controller;
 
 
 use app\model\factory\CategoryFactory;
-use app\model\service\request\IRequest;
 use app\model\service\exception\MyException;
+use app\model\service\request\IRequest;
 
 /**
  * Class CategoriesController
