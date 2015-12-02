@@ -45,6 +45,8 @@ class CheckCodeController extends BaseController {
      * Provede se před hlavním zpracováním požadavku v kontroleru
      */
     public function onStartup () {
+        parent::onStartup();
+
         try {
             $user = $this->userfactory->getUserFromSession();
             if ($user->isOnline() && $user->isActivated()) $this->redirect('profile');
