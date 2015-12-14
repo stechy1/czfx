@@ -31,6 +31,8 @@ class CategorySnippet extends ASnippet {
         $this->name = $data['category_name'];
         $this->img = $data['category_image'];
         $this->description = $data['category_description'];
+
+        $this->URL = (($this->hasSubcats) ? 'categories' : 'articles') . '/' . $this->URL;
     }
 
     /**
@@ -38,8 +40,23 @@ class CategorySnippet extends ASnippet {
      * @return ISnippet
      */
     public function build() {
-        $tmp = (($this->hasSubcats) ? 'categories' : 'articles') . '/' . $this->URL;
-        $panel = (new DivElement(array(
+
+        $mainDiv = (new DivElement(
+            (new AnchorElement(
+                (new DivElement([
+                    (new ImageElement())
+                        ->setSource("uploads/image/category/$this->img.png")
+                        ->setAlt($this->description)
+                        ->setWidth(100),
+                    (new DivElement([
+                        (new HeadingElement(HeadingElement::H3, $this->name))->addClass("center-block"),
+                        (new ParagraphElement($this->description))
+                    ]))->addClass("caption")
+                ]))->addClass("thumbnail my-thumbnail")
+            ))->addClass("nodecoration")->setLocation($this->URL)
+        ))->addClass("col-sm-6 col-md-4 isotope-grid-item");
+
+        /*$panel = (new DivElement([
             (new DivElement(
                 (new HeadingElement(HeadingElement::H4,
                     (new AnchorElement(
@@ -61,8 +78,9 @@ class CategorySnippet extends ASnippet {
                 (new SpanElement())
                     ->addClass('right')
                     ->addStyle(new StyleValue('margin-top', '-10px'))
-            ))->addClass('panel-footer'))))->addClass(['panel', 'category']);
-        $mainDiv = (new DivElement($panel))->addClass(['col-xs-12', 'col-sm-6', 'col-md-4']);
+            ))->addClass('panel-footer')]
+        ))->addClass(['panel', 'category']);
+        $mainDiv = (new DivElement($panel))->addClass(['col-xs-12', 'col-sm-6', 'col-md-4']);*/
 
         $builder = new HtmlBuilder($mainDiv);
 

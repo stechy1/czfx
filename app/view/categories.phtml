@@ -3,13 +3,14 @@
         <h1 class="page-header">Kategorie</h1>
     </div>
     <div class="panel-body">
-        <? foreach($categories as $category) : ?>
-            <?
-            $snippet = new app\model\snippet\CategorySnippet($category);
-            echo $snippet->render();
-            ?>
-
-        <? endforeach ?>
+        <div class="row categories-container isotope-grid">
+            <? foreach($categories as $category) : ?>
+                <?
+                $snippet = new app\model\snippet\CategorySnippet($category);
+                echo $snippet->render();
+                ?>
+            <? endforeach ?>
+        </div>
     </div>
     <div class="panel-footer"></div>
 </div>

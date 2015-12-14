@@ -1,9 +1,4 @@
 {
-  "UGLY_URL": {
-    "name": "O\u0161kliv\u00e9 url adresy",
-    "key": "false",
-    "type": "text"
-  },
   "INDEX_ARTICLE_COUNT": {
     "name": "Po\u010det \u010dl\u00e1nk\u016f na tituln\u00ed stran\u011b",
     "key": "7",

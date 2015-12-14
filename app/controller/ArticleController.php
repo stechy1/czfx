@@ -61,7 +61,6 @@ class ArticleController extends BaseController {
                 $this->data['previousArticle'] = $previousArticle;
                 $this->data['nextArticle'] = $nextArticle;
                 $this->data['category'] = $this->categoryfactory->getCategoryFromArticle($article)->toArray();
-
                 $this->data['user'] = $this->userfactory->getUserByID($article->getAuthor())->toArray();
             } catch (MyException $ex) {
                 $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));

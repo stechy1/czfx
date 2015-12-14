@@ -79,7 +79,7 @@ pre code {
     height: 150px;
     overflow: hidden;
 }
-.thumbnail.admin:hover, .thumbnail.admin:focus {
+.my-thumbnail:hover, .my-thumbnail:focus {
     background-color: #464545;
     border: 1px solid #222222;
 }

@@ -6,7 +6,6 @@ namespace app\controller\admin;
 use app\model\callback\CallBackMessage;
 use app\model\factory\CategoryFactory;
 use app\model\manager\CategoryManager;
-use app\model\manager\FileManager;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 use app\model\util\BootPagination;
@@ -130,7 +129,7 @@ class AdminCategoryManagerController extends AdminBaseController {
             $this->addMessage(new CallBackMessage("Kategorie byla úspěšně vytvořena"));
             $this->redirect('admin-category-manager');
         } catch (MyException $ex) {
-            $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::WARNING));
+            $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('admin-category-manager/new');
         }
     }
@@ -154,43 +153,4 @@ class AdminCategoryManagerController extends AdminBaseController {
         }
     }
 
-    /*public function uploadAjaxAction (IRequest $request) {
-        if (!$request->hasParams() || !$request->hasFiles()) {
-            $this->callBack->setFail();
-            return;
-        }
-
-        $params = $request->getParams();
-        $id = array_shift($params);
-
-        if (empty($params)) {
-            $this->callBack->setFail();
-            return;
-        }
-
-        array_shift($params);
-
-        if (empty($params)) {
-            $this->callBack->setFail();
-            return;
-        }
-
-        $whatUpload = array_shift($params);
-        switch($whatUpload) {
-            case "category-icon":
-                $file = $request->getFile("file");
-                try {
-                    $category = $this->categoryfactory->getCategoryFromID($id);
-                    // TODO vymyslet lépe implementaci uploadu obrázku kategorie
-                } catch (MyException $ex) {
-                    $this->callBack->setFail();
-                    return;
-                }
-                break;
-
-            default:
-                $this->callBack->setFail();
-                break;
-        }
-    }*/
 }
