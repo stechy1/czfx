@@ -60,7 +60,7 @@ class AdminSettingsController extends AdminBaseController {
     public function setasdefaultPostAjaxAction (IRequest $request) {
         try {
             $this->configmanager->saveDefaultConfig($request->getPost());
-
+            $this->callBack->addMessage(new CallBackMessage("Nastavení bylo úspěšně uloženo"));
         } catch (MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));

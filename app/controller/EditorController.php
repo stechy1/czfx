@@ -10,6 +10,7 @@ use app\model\factory\CategoryFactory;
 use app\model\manager\FileManager;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
+use app\model\util\StringUtils;
 use ParsedownExtra;
 
 /**
@@ -34,30 +35,78 @@ class EditorController extends BaseController {
      */
     private $categoryfactory;
 
+    private function getTempDir($action) {
+        switch ($action) {
+            case "attachments":
+                if (isset($_SESSION['storage']) && isset($_SESSION['storage']['article'])) {
+                    $a = $this->articlefactory->getArticleFromSession();
+                    $c = $this->categoryfactory->getCategoryFromArticle($a);
+
+                    $catDir = $this->filemanager->getDirectory(FileManager::FOLDER_CATEGORY);
+                    return $this->filemanager->getAttachmentsFolder($catDir . $c->getUrl() . "/" . $a->getUrl());
+                }
+                break;
+
+        }
+
+        return $this->filemanager->getTmpDirectory();
+    }
+
     public function uploadAjaxAction (IRequest $request) {
         if (!$request->hasFiles()) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage("Žádný soubor se nepodařilo nahrát", CallBackMessage::DANGER));
         }
 
-        $file = $request->getFile('attachment');
+        $params = $request->getParams();
+        array_shift($params);
+        if (empty($params)) {$this->callBack->setFail(); return;}
+        $action = array_shift($params);
+
+        $file = $request->getFile('file');
         $tmpName = $file['tmp_name'];
         $name = $file['name'];
-        if (isset($_SESSION['storage']) && isset($_SESSION['storage']['article'])) {
-            $a = $this->articlefactory->getArticleFromSession();
-            $c = $this->categoryfactory->getCategoryFromArticle($a);
-
-            $catDir = $this->filemanager->getDirectory(FileManager::FOLDER_CATEGORY);
-            $tmpDir = $this->filemanager->getAttachmentsFolder($catDir . $c->getUrl() . "/" . $a->getUrl());
-        }
-        else
-            $tmpDir = $this->filemanager->getTmpDirectory();
+        $tmpDir = $this->getTempDir($action);
         try {
-            //move_uploaded_file($tmpName, $tmpDir . $name);
             $this->filemanager->moveUploadedFiles($tmpName, $tmpDir . $name);
         } catch(MyException $ex) {
             $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
+        }
+    }
+
+    public function removeAjaxAction (IRequest $request) {
+        if (!$request->hasParams()) {
+            $this->callBack->setFail();
+            return;
+        }
+
+        $params = $request->getParams();
+        array_shift($params);
+        if (empty($params)) {$this->callBack->setFail(); return;}
+        $action = array_shift($params);
+        $tmpDir = $this->getTempDir($action);
+
+        if (empty($params)) {
+            $this->callBack->setFail();
+            return;
+        }
+
+        switch ($action) {
+            case "attachments":
+
+                $attachment = array_shift($params);
+                if (empty($params)) {$this->callBack->setFail(); return;}
+                $extension = array_shift($params);
+                $attachment = StringUtils::removeDangerousLetters($attachment);
+
+                $file = $tmpDir . $attachment . "." . $extension;
+                if (!$this->filemanager->recursiveDelete($file)) {
+                    $this->callBack->setFail();
+                    $this->callBack->addMessage(new CallBackMessage("Soubor se nepodařilo smazat", CallBackMessage::INFO));
+                }
+                break;
+
         }
     }
 
@@ -67,19 +116,12 @@ class EditorController extends BaseController {
             return;
         }
 
-        $tmpDir = "";
-        if (isset($_SESSION['storage'])) {
-            if (isset($_SESSION['storage']['article'])) {
-                $a = $this->articlefactory->getArticleFromSession();
-                $c = $this->categoryfactory->getCategoryFromArticle($a);
+        $params = $request->getParams();
+        array_shift($params);
+        if (empty($params)) {$this->callBack->setFail(); return;}
+        $action = array_shift($params);
 
-                $catDir = $this->filemanager->getDirectory(FileManager::FOLDER_CATEGORY);
-                $tmpDir = $this->filemanager->getAttachmentsFolder($catDir . $c->getUrl() . "/" . $a->getUrl());
-            }
-
-        } else
-            $tmpDir = $this->filemanager->getTmpDirectory();
-
+        $tmpDir = $this->getTempDir($action);
         $files = array_values(FileManager::getFilesFromDirectory($tmpDir));
         if (empty($files)) {
             $this->callBack->setFail();

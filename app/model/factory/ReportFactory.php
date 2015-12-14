@@ -3,7 +3,7 @@
 namespace app\model\factory;
 
 
-use app\model\database\Database;
+use app\model\database\IDatabase;
 use app\model\ReportMessage;
 use app\model\service\exception\MyException;
 
@@ -16,7 +16,7 @@ use app\model\service\exception\MyException;
 class ReportFactory {
 
     /**
-     * @var Database
+     * @var IDatabase
      */
     private $database;
 

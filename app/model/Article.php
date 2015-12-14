@@ -70,6 +70,13 @@ class Article {
     }
 
     /**
+     * @param int|null $id
+     */
+    public function setId ($id) {
+        $this->id = $id;
+    }
+
+    /**
      * Vrátí ID kategorie
      *
      * @return int
@@ -80,6 +87,15 @@ class Article {
     }
 
     /**
+     * @param int|null $categoryID
+     */
+    public function setCategoryID ($categoryID) {
+        $this->categoryID = $categoryID;
+    }
+
+
+
+    /**
      * Vrátí titulek článku
      *
      * @return string
@@ -87,6 +103,13 @@ class Article {
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * @param null|string $title
+     */
+    public function setTitle ($title) {
+        $this->title = $title;
     }
 
     /**
@@ -100,6 +123,13 @@ class Article {
     }
 
     /**
+     * @param null|string $tags
+     */
+    public function setTags ($tags) {
+        $this->tags = $tags;
+    }
+
+    /**
      * Vrátí popis článku
      *
      * @return string
@@ -107,6 +137,13 @@ class Article {
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param null|string $description
+     */
+    public function setDescription ($description) {
+        $this->description = $description;
     }
 
     /**
@@ -120,6 +157,13 @@ class Article {
     }
 
     /**
+     * @param null|string $url
+     */
+    public function setUrl ($url) {
+        $this->url = $url;
+    }
+
+    /**
      * Vrátí název souboru s obsahem článku
      *
      * @return string
@@ -127,6 +171,13 @@ class Article {
     public function getFileName()
     {
         return $this->url;
+    }
+
+    /**
+     * @param int|null $date
+     */
+    public function setDate ($date) {
+        $this->date = $date;
     }
 
     /**
@@ -140,6 +191,13 @@ class Article {
     }
 
     /**
+     * @param int $previousID
+     */
+    public function setPreviousID ($previousID) {
+        $this->previousID = $previousID;
+    }
+
+    /**
      * Vrátí ID následujícího článku nebo null
      *
      * @return int|null
@@ -147,6 +205,13 @@ class Article {
     public function getNextID()
     {
         return $this->nextID;
+    }
+
+    /**
+     * @param int $nextID
+     */
+    public function setNextID ($nextID) {
+        $this->nextID = $nextID;
     }
 
     /**
@@ -159,6 +224,13 @@ class Article {
     }
 
     /**
+     * @param int|null $author
+     */
+    public function setAuthor ($author) {
+        $this->author = $author;
+    }
+
+    /**
      * Vrátí obsah článku
      *
      * @return null|string
@@ -166,6 +238,15 @@ class Article {
     public function getText() {
         return $this->text;
     }
+
+    /**
+     * @param null $text
+     */
+    public function setText ($text) {
+        $this->text = $text;
+    }
+
+
 
     /**
      * Vrátí článek jako pole.

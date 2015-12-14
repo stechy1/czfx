@@ -4,6 +4,7 @@ namespace app\model\snippet\form;
 
 
 use stechy1\html\element\form\AFormFactory;
+use stechy1\html\element\form\control\input\CheckBoxInput;
 use stechy1\html\element\form\control\input\html5\EmailInput;
 use stechy1\html\element\form\control\input\PasswordInput;
 use stechy1\html\element\form\FormElement;
@@ -27,7 +28,8 @@ class LoginForm extends FormElement {
                 ->setPlaceholder('Heslo')
                 ->addClass('form-control')
                 ->hideValue()
-                ->addRule(new RequiredRule())
+                ->addRule(new RequiredRule()),
+            (new CheckBoxInput('remember-me', 'true'))
         ]);
     }
 }

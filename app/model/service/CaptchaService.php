@@ -4,6 +4,7 @@ namespace app\model\service;
 
 
 use app\model\service\exception\MyException;
+use Captcha\Captcha;
 
 /**
  * Class CaptchaService
@@ -24,19 +25,22 @@ class CaptchaService {
      * @throws MyException Pokud se kontrola nepodaří
      */
     public static function verify($text) {
-        /*$captcha = new Captcha();
-        $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
+        if (RECAPTCHA_ACTIVE === "true") {
+            $captcha = new Captcha();
+            $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
 
-        if (!isset($_SERVER['REMOTE_ADDR']))
-            $captcha->setRemoteIp('192.168.1.1');
+            if (!isset($_SERVER['REMOTE_ADDR']))
+                $captcha->setRemoteIp('192.168.1.1');
 
-        $response = $captcha->check($text);
+            $response = $captcha->check($text);
 
-        if (!$response->isValid()) {
-            throw new MyException(self::$errorArray[$response->getError()]);
-        }*/
+            if (!$response->isValid()) {
+                throw new MyException(self::$errorArray[$response->getError()]);
+            }
 
-        return true;
+            return true;
+        } else
+            return true;
     }
 
     /**
@@ -44,14 +48,15 @@ class CaptchaService {
      * @throws \Captcha\Exception
      */
     public static function printCaptcha() {
-        echo '';
-        /*
-        $captcha = new Captcha();
-        $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
-        $captcha->setPublicKey(RECAPTCHA_PUBLIC_KEY);
-        $captcha->setTheme("dark");
+        if (RECAPTCHA_ACTIVE === "true") {
+            $captcha = new Captcha();
+            $captcha->setPrivateKey(RECAPTCHA_PRIVATE_KEY);
+            $captcha->setPublicKey(RECAPTCHA_PUBLIC_KEY);
+            $captcha->setTheme("dark");
 
-        echo $captcha->html();*/
+            echo $captcha->html();
+        } else
+            echo '';
     }
 
 }

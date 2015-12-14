@@ -3,10 +3,12 @@
 namespace app;
 
 
+
 use app\controller\RouterController;
 use app\model\database\IDatabase;
-use app\model\factory\RequestFactory;
 use app\model\service\Container;
+use Twig_Environment;
+use Twig_Loader_Filesystem;
 
 
 /**
@@ -26,6 +28,7 @@ class App {
          * @var IDatabase $database
          */
         $database = $this->container->getInstanceOf('database');
+
         try {
             $database->connect(DATABASE_HOST, DATABASE_LOGIN, DATABASE_PASS, DATABASE_SCHEME);
         } catch (\PDOException $ex) {
@@ -40,6 +43,7 @@ class App {
         $reqFactory = $this->container->getInstanceOf("requestfactory");
 
         $router->defaultAction($reqFactory->createHttpRequest());
+
         $router->renderView();
     }
 }

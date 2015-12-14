@@ -48,7 +48,7 @@ class ArchiveController extends BaseController {
         $page = $request->getParams()[1];
 
         try {
-            $articles = $this->articlefactory->getXArticlesFromAll($page, 3, ArticleFactory::ARTICLE_IS_VALIDATED);
+            $articles = $this->articlefactory->getXArticlesFromAll($page, ARCHIVE_ARTICLE_COUNT, ArticleFactory::ARTICLE_IS_VALIDATED);
             $i = 0;
             foreach ($articles as $article) {
                 $this->callBack->addData(new CallBackData($i++, (new ArticleIndexSnippet($article))->render()), false);

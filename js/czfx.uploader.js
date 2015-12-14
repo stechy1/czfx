@@ -1,13 +1,22 @@
-function canUpload(file) {
+var CZFXuploader = function(settings) {
+    this.settings = settings || {};
+
+    this.settings.url = this.settings.url || "error";
+    this.settings.fileName = this.settings.fileName || "file";
+    this.settings.callback = this.settings.callback || function () {};
+};
+
+CZFXuploader.prototype.canUpload = function (file) {
     var enabled = ["png", "jpg", "jpeg", "gif"];
     var extension = file["name"].substr((file["name"].lastIndexOf('.') + 1));
     return jQuery.inArray(extension, enabled) != -1;
-}
+};
 
-function uploadFile(fd) {
+CZFXuploader.prototype.uploadFile = function (fd) {
+    var self = this;
     jQuery(".dropzone").addClass("uploading");
     jQuery.ajax({
-        url: "profile/upload/avatar",
+        url: self.settings.url,
         type: "POST",
         contentType: false,
         processData: false,
@@ -15,9 +24,9 @@ function uploadFile(fd) {
         data: fd,
         success: function (data) {
             data = JSON.parse(data);
-            if (data.success == 1) {
-
-                jQuery(".profile-image img").attr("src", data.data['imgSrc']);
+            if (data.success) {
+                self.settings.callback(data.data);
+                //jQuery(".profile-image img").attr("src", data.data['imgSrc']);
             } else {
                 jQuery(".dropzone").removeClass("uploading").effect("shake");
                 showUserMessages(data.messages);
@@ -28,22 +37,22 @@ function uploadFile(fd) {
             jQuery(this).removeClass("dragged");
         }
     });
-}
+};
 
-function handleFiles(files) {
-    if (canUpload(files[0])) {
+CZFXuploader.prototype.handleFiles = function (files) {
+    if (this.canUpload(files[0])) {
         var fd = new FormData();
-        fd.append('avatar', files[0]);
-        uploadFile(fd);
+        fd.append(this.settings.fileName, files[0]);
+        this.uploadFile(fd);
     } else {
         jQuery(".dropzone").effect("shake");
         jQuery(this).removeClass("dragged");
     }
-}
+};
 
-jQuery(function () {
+CZFXuploader.prototype.init = function () {
+    var self = this;
     jQuery("body").append('<div class="dropoverride"></div>');
-
     jQuery(".dropzone").on({
         dragenter: function (e) {
             e.preventDefault();
@@ -65,10 +74,9 @@ jQuery(function () {
             e.stopPropagation();
             jQuery(this).removeClass("dragged");
             jQuery("body").removeClass("dragging");
-            handleFiles(e.originalEvent.dataTransfer.files);
+            self.handleFiles(e.originalEvent.dataTransfer.files);
         }
     });
-
     jQuery(document).on({
         dragenter: function (e) {
             e.preventDefault();
@@ -83,14 +91,9 @@ jQuery(function () {
             e.preventDefault();
         }
     });
-
     jQuery(".dropoverride").on({
-        dragleave: function (e) {
+        dragleave: function () {
             jQuery("body").removeClass("dragging");
         }
     });
-
-    jQuery("#avatar-upload").change(function (e) {
-        handleFiles(this.files);
-    })
-});
+};

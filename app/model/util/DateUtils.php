@@ -137,6 +137,8 @@ class DateUtils {
      * @return string Zformátované datum
      */
     public static function prettyDate ($date) {
+        if (!$date)
+            return "unknown";
         return self::getPrettyDate(self::getDateTime($date));
     }
 

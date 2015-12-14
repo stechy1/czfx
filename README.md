@@ -1,8 +1,8 @@
-#Semestrální práce pro předmět KIV/WEB
+# Semestrální práce pro předmět KIV/WEB
 Add a comment to this line
 
-##Realizace
+## Realizace
 - Alternativní zadání
 
-##Popis
+## Popis
 Jedná se o jednoduchý redakční systém pro správu článků, které můžou přidávat registrovaní uživatelé.

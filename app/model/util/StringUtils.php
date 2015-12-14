@@ -198,6 +198,10 @@ class StringUtils
 		return $str . chr(rand(ord($from), ord($to)));
 	}
 
+	public static function generateRandomToken($length) {
+		return openssl_random_pseudo_bytes($length);
+	}
+
 	/**
 	 * Odstraní z textu diakritiku
 	 *

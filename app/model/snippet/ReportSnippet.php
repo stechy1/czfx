@@ -9,7 +9,7 @@ use stechy1\html\element\DivElement;
 use stechy1\html\element\ParagraphElement;
 use stechy1\html\element\SpanElement;
 use stechy1\html\HtmlBuilder;
-use stechy1\html\NameValuePair;
+use stechy1\html\KeyPairValue;
 
 class ReportSnippet extends ASnippet {
 
@@ -46,11 +46,11 @@ class ReportSnippet extends ASnippet {
         $footer = null;
         if (!$this->read)
             $footer = (new DivElement(
-                (new AnchorElement("Označit za přečteno"))->addClass("btn btn-xs btn-primary mark-as-read")->addAttribute(new NameValuePair("data-reportid", $this->id))
+                (new AnchorElement("Označit za přečteno"))->addClass("btn btn-xs btn-primary mark-as-read")->addAttribute(new KeyPairValue("data-reportid", $this->id))
             ))->addClass("panel-footer");
         $panel = (new DivElement([
             (new DivElement([
-                (new SpanElement())->addClass("glyphicon glyphicon-remove report-delete")->addAttribute(new NameValuePair("data-reportid", $this->id)),
+                (new SpanElement())->addClass("glyphicon glyphicon-remove report-delete")->addAttribute(new KeyPairValue("data-reportid", $this->id)),
                 (new SpanElement($this->userNick))
             ]))->addClass("panel-heading"),
             (new DivElement(

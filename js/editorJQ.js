@@ -41,7 +41,7 @@ EditorJQ.prototype.init = function () {
         });
     };
     var createAddAttachmentButton = function () {
-        var elm = $('<a/>', {class: 'editorAttachmentElemetn'/*, style: 'width: 128px; height: 128px;'*/});
+        var elm = $('<a/>', {class: 'editorAttachmentElemetn'});
         var addCnt = $('<span/>', {class: 'btn btn-default editorFileinput'});
         var addBtn = $('<span/>', {class: 'add'});
         var inputFile = $('<input/>', {type: 'file', name: 'files[]'});
@@ -53,7 +53,7 @@ EditorJQ.prototype.init = function () {
             if (length == 0)
                 return;
 
-            self.uploadAttachment(files[0]);
+            self.uploadFile(files[0]);
         });
 
         addCnt.append(addBtn).append(inputFile);
@@ -89,8 +89,8 @@ EditorJQ.prototype.init = function () {
             {text: "Odebrat"}
         ];
         var createContextMenuItem = function (options) {
-            var li = $('<li/>');
-            var a = $('<a/>', {href: "#", text: options.text || "Popisek", tabindex: -1});
+            var li = $('<li/>', {class: "list-group-item"});
+            var a = $('<a/>', {text: options.text || "Popisek", tabindex: -1});
 
             li.append(a);
 
@@ -98,7 +98,7 @@ EditorJQ.prototype.init = function () {
         };
 
         var div = $('<div/>', {class: "context-menu"});
-        var menu = $('<ul/>', {class: "dropdown-menu", role: "menu"});
+        var menu = $('<ul/>', {class: "dropdown-menu list-group", role: "menu"});
 
         for(var i = 0; i < options.length; i++) {
             menu.append(createContextMenuItem(options[i]));
@@ -110,7 +110,7 @@ EditorJQ.prototype.init = function () {
     };
 
 
-    this.textarea = $('<textarea/>', {name: self.settings.areaName || 'content', class: 'editorTextarea', cols: 30, rows: 10, text: self.settings.text || ''});
+    this.textarea = $('<textarea/>', {name: self.settings.areaName || 'content', class: 'editorTextarea', rows: 10, text: self.settings.text || ''});
     this.editorContainer = $('<div/>', {class: 'panel editorContainer'});
     this.editorHeader = $('<div/>', {class: 'panel-heading'});
     this.editorBody = $('<div/>', {class: 'panel-body'});
@@ -190,7 +190,7 @@ EditorJQ.prototype.createAttachment = function (options) {
     var elm = $('<a/>', {class: 'editorAttachmentElemetn', 'data-toggle': 'tooltip context', 'data-placement': 'top', 'data-target': '.context-menu', title: options.name});
     var img = $('<img/>', {src: url});
 
-    elm.click(options.click || function() {
+    var onSelect = function () {
         self.appendContent({
             before: '![text]',
             after: '(' + url + ')',
@@ -198,10 +198,42 @@ EditorJQ.prototype.createAttachment = function (options) {
             selection: 4
         });
         self.showArea();
-    });
+    };
+
+    var onRemove = function () {
+        var extension = options.name.split('.').pop();
+        var name = options.name.replace(/\.[^/.]+$/, "");
+        $.ajax({
+            type: "post",
+            url: 'editor/remove/attachments/' + name + "/" + extension,
+            contentType: false,
+            processData: false,
+            cache: false,
+            success: function (result) {
+                result = JSON.parse(result);
+                if (result.success) {
+                    self.getMyFiles();
+                }
+            }
+        });
+    };
+
+    elm.click(options.click || onSelect);
     jQuery(elm).contextmenu({
-        onItem: function (e) {
+        onItem: function (context, e) {
+            var action = $(e.target).text().toLowerCase();
+            switch (action) {
+                case "vybrat":
+                    onSelect();
+                    break;
+                case "odebrat":
+                    onRemove();
+                    break;
+                default:
+                    break;
+            }
             e.preventDefault();
+            this.closemenu(e);
         }
     });
 
@@ -211,6 +243,7 @@ EditorJQ.prototype.createAttachment = function (options) {
 };
 
 EditorJQ.prototype.showAttachment = function () {
+
     if (this.settings.attachment)
         if (this.attachmentContainer.css('display') == 'none')
             this.attachmentContainer.fadeToggle();
@@ -246,17 +279,15 @@ EditorJQ.prototype.showPreview = function () {
         this.previewContainer.fadeToggle();
 };
 
-EditorJQ.prototype.uploadAttachment = function (file) {
+EditorJQ.prototype.uploadFile = function (file) {
     var self = this;
     var formData = new FormData();
 
-    formData.append("attachment", file);
-    //formData.append("controller", self.settings.controller);
-    //formData.append("action", self.settings.action);
+    formData.append("file", file);
 
     $.ajax({
         type: "post",
-        url: 'editor/upload/attachment',
+        url: 'editor/upload/attachments',
         contentType: false,
         processData: false,
         cache: false,
@@ -290,10 +321,6 @@ EditorJQ.prototype.getMyFiles = function () {
     $.ajax({
         type: 'post',
         url: 'editor/get/attachments',
-        /*data: {
-            controller: 'file-manager',
-            action: 'get'
-        },*/
         success: function (result) {
             result = JSON.parse(result);
             if (result.success) {

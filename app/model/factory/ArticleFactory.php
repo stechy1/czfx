@@ -4,7 +4,7 @@ namespace app\model\factory;
 
 
 use app\model\Article;
-use app\model\database\Database;
+use app\model\database\IDatabase;
 use app\model\manager\FileManager;
 use app\model\service\exception\MyException;
 use app\model\util\StringUtils;
@@ -21,7 +21,7 @@ class ArticleFactory {
         ARTICLE_IS_VALIDATED = true;
 
     /**
-     * @var Database
+     * @var IDatabase
      */
     private $database;
 
@@ -119,11 +119,10 @@ class ArticleFactory {
      * @throws MyException Pokud není v session žádný článek
      */
     public function getArticleFromSession() {
-        $artURL = $_SESSION['storage']['article'];
-        if ($artURL)
-            return self::getArticleFromURL($artURL);
+        if (!isset($_SESSION['storage']['article']))
+            throw new MyException("Žádný článek nebyl uložen");
 
-        throw new MyException("Žádný článek nebyl uložen");
+        return self::getArticleFromURL($_SESSION['storage']['article']);
     }
 
     /**
@@ -184,7 +183,7 @@ class ArticleFactory {
         $fromDb = $this->database->queryAll("SELECT articles.article_id, articles.article_title, articles.article_validated, articles.article_url
                                                 FROM articles
                                                 WHERE articles.article_author = ?
-                                                ORDER BY articles.article_validated, articles.article_date DESC LIMIT ?, ?", [$_SESSION['user']['id'], ($page - 1) * $recordsOnPage, $recordsOnPage]);
+                                                ORDER BY articles.article_validated, articles.article_id DESC LIMIT ?, ?", [$_SESSION['user']['id'], ($page - 1) * $recordsOnPage, $recordsOnPage]);
 
         if (!$fromDb)
             throw new MyException("Zatím nemáte žádné články");
@@ -221,15 +220,18 @@ class ArticleFactory {
      * Vrátí seznam všech článků v dané kategorii
      *
      * @param $catID int ID kategorie
+     * @param null $without array Pole ID článků, který se mají vynechat
      * @return array Pole všech článků
      * @throws MyException Pokud se v zadané kategorii žádné články nenacházeji
      */
-    public function getArticlesFromCategoryID($catID) {
-        $fromDb = $this->database->queryAll("SELECT article_id, article_title
-                                                FROM articles
-                                                WHERE article_category = ?
-                                                ORDER BY articles.article_date DESC",
-            [$catID]);
+    public function getArticlesFromCategoryID($catID, $without = null) {
+        $query = "SELECT article_id, article_title
+                  FROM articles
+                  WHERE article_category = ?";
+        if ($without)
+            $query .= " AND article_id NOT IN (" . join(", ", $without) . ")";
+        $query .= " ORDER BY articles.article_date DESC";
+        $fromDb = $this->database->queryAll($query, [$catID]);
 
         if (!$fromDb)
             throw new MyException("V zadané kategorii nejsou žádné články");

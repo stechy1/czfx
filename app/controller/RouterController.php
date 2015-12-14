@@ -63,7 +63,7 @@ class RouterController extends BaseController {
         } catch (\Exception $ex) {
             $l = \Logger::getLogger("RouterController");
             $l->fatal($ex->getMessage());
-            $l->debug($ex->getTrace());
+            $l->debug($ex->getTraceAsString());
             $this->redirect("error");
         }
 

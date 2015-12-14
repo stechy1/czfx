@@ -11,6 +11,7 @@ class Category {
     private $description;
     private $parent;
     private $hasSubCat;
+    private $image;
 
     /**
      * Category constructor.
@@ -20,8 +21,9 @@ class Category {
      * @param $description string Ikonka kategorie.
      * @param int $parent ID rodičovské kategorie. -1, pokud nemá žádné rodiče.
      * @param int $hasSubCat 0, pokud nemá žádné potomky, jinak 1.
+     * @param string $image Obrázek kategorie
      */
-    public function __construct($id = -1, $name = null, $url = null, $description = null, $parent = -1, $hasSubCat = 0)
+    public function __construct($id = -1, $name = null, $url = null, $description = null, $parent = -1, $hasSubCat = 0, $image = "category")
     {
         $this->id = $id;
         $this->name = $name;
@@ -29,6 +31,7 @@ class Category {
         $this->description = $description;
         $this->parent = $parent;
         $this->hasSubCat = $hasSubCat;
+        $this->image = $image;
 
         settype($this->id, "integer");
         settype($this->parent, "integer");
@@ -148,13 +151,30 @@ class Category {
         $this->hasSubCat = $hasSubCat;
     }
 
+    /**
+     * @return string
+     */
+    public function getImage () {
+        return $this->image;
+    }
+
+    /**
+     * @param string $image
+     */
+    public function setImage ($image) {
+        $this->image = $image;
+    }
+
+
+
     public function toArray() {
         return array(
             'category_name' => $this->name,
             'category_url' => $this->url,
             'category_description' => $this->description,
             'category_parent' => $this->parent,
-            'category_has_subcats' => $this->hasSubCat
+            'category_has_subcats' => $this->hasSubCat,
+            'category_image' => $this->image
         );
     }
 }

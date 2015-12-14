@@ -6,6 +6,7 @@ namespace app\controller;
 use app\model\callback\AjaxCallBack;
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
+use app\model\manager\UserManager;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 
@@ -13,6 +14,7 @@ use app\model\service\request\IRequest;
 /**
  * Class BaseController
  * @Inject UserFactory
+ * @Inject UserManager
  * @package app\controller
  */
 abstract class BaseController {
@@ -24,6 +26,10 @@ abstract class BaseController {
      * @var UserFactory
      */
     private $userfactory;
+    /**
+     * @var UserManager
+     */
+    private $usermanager;
     /**
      * @property $data array  Pole, jehož indexy jsou poté viditelné v šabloně jako běžné proměnné
      */
@@ -122,8 +128,6 @@ abstract class BaseController {
      * @param $url string Dané url
      */
     public function redirect ($url) {
-        if (defined("UGLY_URL") && UGLY_URL == "true")
-            $url = 'index.php?c=' . $url;
         header("Location: /$url");
         header("Connection: close");
         exit;
@@ -165,6 +169,7 @@ abstract class BaseController {
      * Provede se před hlavním zpracováním požadavku v kontroleru
      */
     public function onStartup () {
+        $this->usermanager->loginFromCookie();
     }
 
     /**

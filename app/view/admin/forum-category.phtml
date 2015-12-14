@@ -1,0 +1,55 @@
+<ol class="breadcrumb">
+    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li><a href="admin-forum-manager">Správce fora</a></li>
+    <li class="active"><?= !empty($category['category_name']) ? $category['category_name'] : "Nová kategorie ve foru" ?></li>
+</ol>
+
+<form method="post">
+    <?= $form[0] ?>
+    <div class="panel">
+        <div class="panel-heading">
+            <h1 class="page-header"><?= (!empty($category['category_name']) ? "Upravit kategorii" : "Nová kategorie ve foru") ?></h1>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="form-group col-md-12">
+                    <div class="input-group">
+                        <?= $form['name'] ?>
+                        <label for="name" class="input-group-addon glyphicon glyphicon-book"></label>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12">
+                    <div class="input-group">
+                        <?= $form['url'] ?>
+                        <label for="url" class="input-group-addon glyphicon glyphicon-book"></label>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12">
+                    <div class="input-group">
+                        <?= $form['description'] ?>
+                        <label for="description"
+                               class="input-group-addon glyphicon glyphicon-briefcase"></label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-footer">
+            <input type="submit" class="btn btn-xs btn-primary" value="<?= ($action == "new")? "Vytvořit" : "Upravit" ?>">
+            <a href="admin-forum-manager" class="btn btn-xs btn-warning right">Zrušit</a>
+        </div>
+    </div>
+</form>
+
+<script>
+    jQuery(document).ready(function () {
+
+        jQuery('#name').keyup(function () {
+            var nameBox = jQuery('#name');
+            var urlBox = jQuery('#url');
+            urlBox.val(prettyURL(nameBox.val()));
+        });
+    });
+</script>

@@ -86,7 +86,7 @@ class Request implements IRequest {
      * @return array|null
      */
     function getFile ($key) {
-        return isset($this->files[$key]) ? $this->files[$key] : NULL;
+        return isset($this->files[$key]) ? $this->files[$key] : null;
     }
 
     /**

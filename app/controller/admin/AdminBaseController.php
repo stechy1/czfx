@@ -17,6 +17,8 @@ class AdminBaseController extends BaseController {
     }
 
     public function onStartup () {
+        parent::onStartup();
+
         try {
             $this->validateUser();
         } catch (MyException $ex) {

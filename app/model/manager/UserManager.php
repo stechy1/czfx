@@ -18,7 +18,8 @@ use PDOException;
 class UserManager {
 
     const
-        AVATAR_SIZE = 140;
+        AVATAR_SIZE = 140,
+        REMEMBER_COOKIE = "auth_token";
 
     /**
      * @var Database
@@ -40,8 +41,7 @@ class UserManager {
      * @return string Hash osoleného hesla
      */
     public function hash ($heslo) {
-        $sul = PASSWORD_SALT;
-        return hash('sha512', $heslo . $sul);
+        return hash('sha512', $heslo . PASSWORD_SALT);
     }
 
     /**
@@ -55,8 +55,6 @@ class UserManager {
      * @throws MyException Pokud se registrace nezdaří
      */
     public function register ($data) {
-
-
         if ($data['password'] != $data['password2'])
             throw new MyException('Hesla nesouhlasí.');
         $pass = $this->hash($data['password']);
@@ -72,34 +70,96 @@ class UserManager {
         );
         try {
             $this->database->insert('users', $user);
-
-
         } catch (PDOException $chyba) {
             throw new MyException('Uživatel s touto e-mailovou adresou je již zaregistrovaný.');
         }
     }
 
     /**
-     * Prihlásí uživatele do systému
+     * Přihlásí uživatele do systému
      *
      * @param $data array Přihlašovací údaje
-     *         email      E-mail
-     *         password   Heslo
+     *         email         E-mail
+     *         password      Heslo
+     *         remember-me   True, pokud se má přihlášení zapamatovat na delší dobu, jinak false
      * @throws MyException Pokud se přihlášení nezdaří
+     * @internal param bool $rememberMe True, pokud se má přihlášení zapamatovat
      */
     public function login ($data) {
         $email = $data['email'];
         $password = $data['password'];
+        $rememberMe = isset($data['remember-me']);
+
         $fromDb = $this->database->queryOne('
-                        SELECT user_id
+                        SELECT user_id, auth_tokens_selector AS selector
                         FROM users
+                        LEFT JOIN auth_tokens ON auth_tokens_id = user_id
                         WHERE user_mail = ? AND user_password = ? AND user_role >= ?
                 ', [$email, $this->hash($password), USER_ROLE_MEMBER]);
         if (!$fromDb)
             throw new MyException('Špatné jméno nebo heslo.');
 
         $this->database->update('users', ['user_online' => 1, 'user_last_login' => time()], 'WHERE user_id = ?', [$fromDb['user_id']]);
-        $_SESSION['user']['id'] = $fromDb['user_id'];
+        $userID = $fromDb['user_id'];
+
+        $_SESSION['user']['id'] = $userID;
+
+        if ($rememberMe === true) {
+            $this->setRememberCookie($userID, $fromDb['selector']);
+        }
+    }
+
+    /**
+     * Pokusí se přihlásit uživatele podle cookie
+     *
+     * @return bool True, pokud je přihlášení úspěšné, jinak false
+     */
+    public function loginFromCookie() {
+        if (!empty($_SESSION['user']['id']) || empty($_COOKIE[self::REMEMBER_COOKIE]))
+            return false;
+
+        list($selector, $authenticator) = explode(':', $_COOKIE[self::REMEMBER_COOKIE]);
+        $query = "SELECT
+                    auth_tokens_user_id AS user_id,
+                    auth_tokens_token AS token
+                  FROM auth_tokens
+                  WHERE auth_tokens_selector = ?";
+
+        $fromDb = $this->database->queryOne($query, [$selector]);
+        if (!$fromDb)
+            return false;
+
+        $token = $fromDb['token'];
+        if (!hash_equals($token, hash('sha256', base64_decode($authenticator))))
+            return false;
+
+        $userId = $fromDb['user_id'];
+        $_SESSION['user']['id'] = $userId;
+        $this->database->update('users', ['user_online' => 1, 'user_last_login' => time()], 'WHERE user_id = ?', [$userId]);
+        $this->setRememberCookie($userId, $selector);
+
+        return true;
+    }
+
+    private function setRememberCookie($userID, $selector = null) {
+        $selectorIsEmpty = $selector == null;
+        $selector = (!$selectorIsEmpty) ? $selector : base64_encode(openssl_random_pseudo_bytes(9));
+        $authenticator = openssl_random_pseudo_bytes(33);
+        $time = time() + 864000;
+        setcookie(self::REMEMBER_COOKIE, $selector . ':' . base64_encode($authenticator), $time, '/');
+
+        $data = [
+            'auth_tokens_token' => hash('sha256', $authenticator),
+            'auth_tokens_user_id' => $userID,
+            'auth_tokens_expires' => $time
+        ];
+
+        if ($selectorIsEmpty) {
+            $data['auth_tokens_selector'] = $selector;
+            $this->database->insert('auth_tokens', $data);
+        } else {
+            $this->database->update('auth_tokens', $data, "WHERE auth_tokens_selector = ?", [$selector]);
+        }
     }
 
     /**
@@ -133,6 +193,8 @@ class UserManager {
 
         if (!$fromDb)
             throw new MyException("Heslo se nepodařilo změnit");
+
+        $this->database->delete('auth_tokens', "WHERE auth_tokens_user_id = ?", [$_SESSION['user']['id']]);
 
         return true;
     }
@@ -199,6 +261,8 @@ class UserManager {
         if ($changeDb)
             $fromDb = $this->database->update('users', ['user_online' => 0], 'WHERE user_id = ?', [$_SESSION['user']['id']]);
         unset($_SESSION['user']);
+        unset($_COOKIE[self::REMEMBER_COOKIE]);
+        setcookie(self::REMEMBER_COOKIE, '', -1, '/');
         if (!$changeDb || $fromDb)
             return true;
 
@@ -216,7 +280,6 @@ class UserManager {
         $id = $_SESSION['user']['id'];
         $pass = $this->hash($password);
         $emptyUser = array(
-            "user_nick" => "Bývalý člen",
             "user_password" => "",
             "user_role" => "1",
             "user_online" => "0",

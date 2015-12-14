@@ -19,9 +19,11 @@
                         <tr>
                             <td><?= $article['article_id'] ?></td>
                             <td><?= $article['article_title'] ?></td>
-                            <td><input type="checkbox" <?= ($article['article_validated']) ? 'checked' : '' ?>/></td>
+                            <td><span
+                                    class="label label-<?= ($article['article_validated']) ? "success" : "danger" ?>"><?= ($article['article_validated']) ? "ano" : "ne" ?></span>
+                            </td>
                             <td><a class="btn btn-xs btn-default"
-                                   href="article-manager/edit/<?= $article['article_url'] ?>">Upravit</a></td>
+                                   href="article-manager/edit/<?= $article['article_id'] ?>">Upravit</a></td>
                         </tr>
                     <? endforeach ?>
                     </tbody>
@@ -39,7 +41,7 @@
         <? endif ?>
     </div>
     <div class="panel-footer">
-        <a class="btn btn-sm btn-primary" href="article-manager/new">Nový článek</a>
+        <a class="btn btn-xs btn-primary" href="article-manager/new">Nový článek</a>
     </div>
 </div>
 <script>

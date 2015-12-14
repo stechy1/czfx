@@ -1,6 +1,6 @@
 {
   "UGLY_URL": {
-    "name": "P\u011bkn\u00e9 url adresy",
+    "name": "O\u0161kliv\u00e9 url adresy",
     "key": "false",
     "type": "text"
   },
@@ -28,6 +28,16 @@
     "name": "D\u00e9lka popisu \u010dl\u00e1nku",
     "key": "380",
     "type": "number"
+  },
+  "ARCHIVE_ARTICLE_COUNT" : {
+    "name": "Počet načtených článků v archivu",
+    "key": "3",
+    "type": "number"
+  },
+  "RECAPTCHA_ACTIVE" : {
+    "name": "Zapnout reCaptchu",
+    "key": "true",
+    "type": "text"
   },
   "ARTICLE_MANAGEMENT_ARTICLE_COUNT": {
     "name": "Po\u010det \u010dl\u00e1nk\u016f v u\u017eivatelsk\u00e9m spr\u00e1vci",

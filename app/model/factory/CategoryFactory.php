@@ -5,7 +5,7 @@ namespace app\model\factory;
 
 use app\model\Article;
 use app\model\Category;
-use app\model\database\Database;
+use app\model\database\IDatabase;
 use app\model\service\exception\MyException;
 
 /**
@@ -16,7 +16,7 @@ use app\model\service\exception\MyException;
 class CategoryFactory {
 
     /**
-     * @var Database
+     * @var IDatabase
      */
     private $database;
 
@@ -29,7 +29,7 @@ class CategoryFactory {
      */
     public function getCategoryFromID($id) {
         $fromDb = $this->database->queryOne("SELECT category_id, category_name, category_url, category_description,
-                                         category_parent, category_has_subcats
+                                         category_parent, category_has_subcats, category_image
                                   FROM categories p1
                                   WHERE p1.category_id = ?", [$id]);
 
@@ -42,7 +42,8 @@ class CategoryFactory {
             $fromDb['category_url'],
             $fromDb['category_description'],
             $fromDb['category_parent'],
-            $fromDb['category_has_subcats']
+            $fromDb['category_has_subcats'],
+            $fromDb['category_image']
         );
     }
 
@@ -65,13 +66,13 @@ class CategoryFactory {
      */
     public function getAll($showAll = false) {
 
-        if ($showAll)
-            return $this->database->queryAll("SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats
-                                     FROM categories");
+        $query = "SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats, category_image
+                                     FROM categories";
 
-        return $this->database->queryAll("SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats
-                                 FROM categories
-                                 WHERE category_parent = ?", [-1]);
+        if ($showAll)
+            return $this->database->queryAll($query);
+
+        return $this->database->queryAll("$query WHERE category_parent = ?", [-1]);
     }
 
     /**
@@ -83,7 +84,7 @@ class CategoryFactory {
      */
     public function getSubcats($subCat)
     {
-        $fromDb = $this->database->queryAll("SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats
+        $fromDb = $this->database->queryAll("SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats, category_image
                                     FROM categories
                                     WHERE category_parent = (
                                        SELECT category_id
@@ -106,11 +107,13 @@ class CategoryFactory {
     public function getWithout($categoryID, $showAll = false) {
         if ($showAll)
             return $this->database->queryAll("SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats
-                                     FROM categories WHERE category_id != ?", [$categoryID]);
+                                     FROM categories
+                                     WHERE category_id != ?", [$categoryID]);
 
         return $this->database->queryAll("SELECT category_id, category_name, category_url, category_description, category_parent, category_has_subcats
                                  FROM categories
-                                 WHERE category_parent = ? AND category_id != ?", [-1, $categoryID]);
+                                 WHERE category_parent = ?
+                                   AND category_id != ?", [-1, $categoryID]);
     }
 
     /**
@@ -142,12 +145,14 @@ class CategoryFactory {
     public function getFromRawData($data) {
         unset($data['category-id']);
         $data['category-has-subcats'] = (isset($data['category-has-subcats'])) ? 1 : 0;
+        $data['category-image'] = (isset($data['category-image'])) ? $data['category-image'] : 'category';
         $arr = array(
             "category-parent",
             "category-has-subcats",
             "category-name",
             "category-url",
-            "category-description"
+            "category-description",
+            "category-image"
         );
         $count = 0;
 

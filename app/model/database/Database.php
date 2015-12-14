@@ -153,7 +153,7 @@ class Database implements IDatabase {
     function delete ($table, $condition = null, $parameters = array()) {
         $query = "DELETE FROM $table";
         if ($condition)
-            $query .= $condition;
+            $query .= ' ' . $condition;
 
         return $this->query($query, array_values($parameters));
     }

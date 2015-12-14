@@ -178,7 +178,6 @@ class User {
         return $this->skill;
     }
 
-
     public function toArray() {
         return array(
             'user_id' => $this->id,

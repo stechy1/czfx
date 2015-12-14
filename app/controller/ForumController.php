@@ -52,35 +52,37 @@ class ForumController extends BaseController {
     }
 
     public function showTopicsAction (IRequest $request) {
-        if (!$request->hasParams()) {
-            $this->addMessage(new CallBackMessage("Nebyla zadána žádná kategorie", CallBackMessage::INFO));
-            $this->redirect('forum');
+        $category = (isset($request->getParams()[1]))? $request->getParams()[1] : "-1";
+        $this->view = 'forum-topics';
+
+        try {
+            $user = $this->userfactory->getUserFromSession();
+            $user->getRole()->valid(USER_ROLE_ADMIN);
+            $this->data['isAdmin'] = true;
+        } catch (MyException $ex) {
+            $this->data['isAdmin'] = false;
         }
 
-        $category = (isset($request->getParams()[1]))? $request->getParams()[1] : "-1";
         try {
-            $this->view = 'forum-topics';
-
-            try {
-                $user = $this->userfactory->getUserFromSession();
-                $user->getRole()->valid(USER_ROLE_ADMIN);
-                $this->data['isAdmin'] = true;
-            } catch (MyException $ex) {
-                $this->data['isAdmin'] = false;
-            }
-
             $category = $this->forummanager->getCategory($category);
-            $this->header['title'] = "Forum / " . $category['category_name'];
-            $this->data['categoryName'] = $category['category_name'];
-            $this->data['categoryUrl'] = $category['category_url'];
-
-            $topics = $this->forummanager->getTopics($category['category_url']);
-            $this->data['topics'] = $topics;
-
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('forum');
         }
+
+        $this->header['title'] = "Forum / " . $category['category_name'];
+        $this->data['categoryName'] = $category['category_name'];
+        $this->data['categoryUrl'] = $category['category_url'];
+
+        try {
+            $topics = $this->forummanager->getTopics($category['category_url']);
+        } catch (MyException $ex) {
+            $topics = null;
+        }
+
+
+        $this->data['topics'] = $topics;
+
     }
 
     public function deleteTopicAjaxAction (IRequest $request) {

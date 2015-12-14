@@ -24,9 +24,12 @@
                                        href="forum/show-topics/<?= $category['category_url']; ?>"><?= $category['category_name']; ?></a>
                                 </h4>
                             </td>
-                            <td class="text-center"><?= $category['category_topics_count']; ?></td>
+                            <td class="text-center"><?= ($category['category_topics_count']) ? $category['category_topics_count'] : "0"; ?></td>
                             <td class="text-center"><?= ($category['topic_posts_count']) ? $category['topic_posts_count'] : 0; ?></td>
-                            <td class="text-center"><?= ($category['nick']) ?: "Nikdo"; ?><br><?= app\model\util\DateUtils::formatDateTime($category['post_date']); ?></td>
+                            <td class="text-center"><?= ($category['nick']) ?: "Nikdo"; ?>
+                                <br><?= ($category['post_date']) ? app\model\util\DateUtils::formatDateTime($category['post_date']) : ""; ?>
+                            </td>
+
                         </tr>
                     <? endforeach ?>
                 <? else : ?>

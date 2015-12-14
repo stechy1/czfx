@@ -3,7 +3,7 @@
 namespace app\model\factory;
 
 
-use app\model\database\Database;
+use app\model\database\IDatabase;
 use app\model\service\exception\MyException;
 use app\model\User;
 use app\model\UserRole;
@@ -18,7 +18,7 @@ class UserFactory {
 
 
     /**
-     * @var Database
+     * @var IDatabase
      */
     private $database;
     

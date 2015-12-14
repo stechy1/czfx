@@ -34,3 +34,18 @@
         <? endif ?>
     </div>
 </div>
+
+<script>
+    var uploader = new CZFXuploader({
+        "url": "profile/upload/avatar",
+        "fileName": "avatar",
+        "callback": function (data) {
+            jQuery(".profile-image img").attr("src", data['imgSrc']);
+        }
+    });
+    uploader.init();
+
+    jQuery("#avatar-upload").change(function () {
+        uploader.handleFiles(this.files);
+    });
+</script>

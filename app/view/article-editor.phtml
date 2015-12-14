@@ -53,6 +53,14 @@
                             <? else : ?>
                                 <option value="-1">Vyberte...</option>
                             <? endif ?>
+                            <? if (isset($articles)) : ?>
+                                <? foreach ($articles as $art) : ?>
+                                    <option value="<?= $art['article_id'] ?>"><?= $art['article_title'] ?></option>
+                                <? endforeach ?>
+                            <? endif ?>
+                            <? if (isset($articlePrev)) : ?>
+                                <option value="-1">Vyberte...</option>
+                            <? endif ?>
                         </select>
                     </div>
                 </div>
@@ -63,6 +71,14 @@
                             <? if (isset($articleNext)) : ?>
                                 <option value="<?= $articleNext->getID() ?>"><?= $articleNext->getTitle() ?></option>
                             <? else : ?>
+                                <option value="-1">Vyberte...</option>
+                            <? endif ?>
+                            <? if (isset($articles)) : ?>
+                                <? foreach ($articles as $art) : ?>
+                                    <option value="<?= $art['article_id'] ?>"><?= $art['article_title'] ?></option>
+                                <? endforeach ?>
+                            <? endif ?>
+                            <? if (isset($articleNext)) : ?>
                                 <option value="-1">Vyberte...</option>
                             <? endif ?>
                         </select>
@@ -88,6 +104,8 @@
                 select = $(select);
                 select.empty();
 
+                var emptyOption = $('<option/>', {value: -1, html: "Vyberte..."});
+                select.append(emptyOption);
                 for (var i = 0; i < articles.length; i++) {
                     var article = articles[i];
                     var option = $('<option/>', {value: article['article_id'], html: article['article_title']});

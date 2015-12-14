@@ -4,6 +4,7 @@ namespace app\model\manager;
 
 
 use app\model\database\Database;
+use app\model\ForumCategory;
 use app\model\service\exception\MyException;
 use app\model\util\StringUtils;
 
@@ -20,29 +21,51 @@ class ForumManager {
     private $database;
 
     /**
+     * Přidá novou kategorii do fora
+     *
+     * @param ForumCategory $category
+     * @return bool True, pokud se podařilo kategorii vložit do fora
+     * @throws MyException Pokud se nepodařilo vložit kategorii do fora
+     */
+    public function addCategory (ForumCategory $category) {
+        $fromDb = $this->database->insert("forum_categories", $category->toArray());
+
+        if (!$fromDb)
+            throw new MyException("Nepodařilo se vložit kategorii do fora");
+
+        return true;
+    }
+
+    /**
      * Vrátí seznam všech kategorií na fóru
      *
      * @return array Pole kategorií
      * @throws MyException Pokud není nalezena žádná kategorie
      */
     public function getCategories () {
-        $query = "SELECT
-                      forum_categories.category_id,
-                      forum_categories.category_name,
-                      forum_categories.category_url,
-                      forum_categories.category_description,
-                      (SELECT COUNT(topic_id)
-                       FROM forum_topics
-                       WHERE topic_cat = category_id
-                       GROUP BY category_id)           AS category_topics_count,
-                      (SELECT COUNT(post_id)
-                       FROM forum_topics
-                       WHERE post_topic = topic_id) AS topic_posts_count,
-                      MAX(forum_posts.post_date)    AS post_date,
-                      users.user_nick               AS nick
-                    FROM forum_categories, forum_topics, forum_posts, users
-                    WHERE topic_cat = category_id AND topic_id = post_topic AND users.user_id = post_by
-                    GROUP BY forum_categories.category_id";
+        $query = "
+            SELECT
+              forum_categories.category_id,
+              forum_categories.category_name,
+              forum_categories.category_url,
+              forum_categories.category_description,
+              (SELECT COUNT(topic_id)
+               FROM forum_topics
+               WHERE topic_cat = category_id
+               GROUP BY category_id)        AS category_topics_count,
+              (SELECT COUNT(post_id)
+               FROM forum_topics
+               WHERE post_topic = topic_id) AS topic_posts_count,
+              MAX(forum_posts.post_date)    AS post_date,
+              users.user_nick               AS nick
+            FROM forum_categories
+              LEFT JOIN (
+                  forum_topics
+                  LEFT JOIN (forum_posts
+                  LEFT JOIN users ON users.user_id = forum_posts.post_by
+                  ) ON forum_topics.topic_id = forum_posts.post_topic
+                ) ON forum_topics.topic_cat = forum_categories.category_id
+            GROUP BY forum_categories.category_id";
         $fromDb = $this->database->queryAll($query);
 
         if (!$fromDb)
@@ -72,6 +95,22 @@ class ForumManager {
 
         $_SESSION['forum']['category_id'] = $fromDb['category_id'];
         return $fromDb;
+    }
+
+    /**
+     * Aktualizuje kategorii
+     *
+     * @param ForumCategory $category
+     * @return bool True, pokud se aktualizace povedla
+     * @throws MyException Pokud aktualizace selhala
+     */
+    public function updateCategory (ForumCategory $category) {
+        $fromDb = $this->database->update("forum_categories", $category->toArray(), "WHERE category_id = ?", [$category->getId()]);
+
+        if (!$fromDb)
+            throw new MyException("Nepovedlo se aktualizovat kategorii");
+
+        return true;
     }
 
     /**
@@ -297,4 +336,6 @@ class ForumManager {
         if (!$fromDb)
             throw new MyException("Nepodařilo se odstranit příspěvek číslo: " . $postID);
     }
+
+
 }

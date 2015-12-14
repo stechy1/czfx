@@ -43,14 +43,16 @@ class ArticleIndexSnippet extends ASnippet {
             ))->addClass("panel-heading"),
             (new DivElement([
                 (new ImageElement())->setSource("img/article-64.png")->setAlt("Article")->addClass("left"),
-                (new ParagraphElement($this->description))
+                (new ParagraphElement($this->description))->addClass("small")
             ]))->addClass("panel-body"),
             (new DivElement(
                 (new SpanElement($this->date))->addClass("right")->addStyle(new StyleValue("margin-top", "-10px"))
             ))->addClass("panel-footer")
         ]))->addClass("panel article");
 
-        $container = (new DivElement($panel))->addClass("col-xs-12 col-sm-6 col-md-4 col-lg-3 isotope-grid-item");
+            $container = (new DivElement($panel))
+                ->addClass("col-xs-12 col-sm-6 col-md-4 col-lg-3 isotope-grid-item")
+                ->addStyle(new StyleValue("height", "180px"));
 
         $builder = new HtmlBuilder($container);
         $this->html = $builder->render();

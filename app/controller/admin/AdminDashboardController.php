@@ -29,7 +29,7 @@ class AdminDashboardController extends AdminBaseController {
                 "img"    => "role-manager",
                 "img-alt"=> "Správce uživatelských rolí"
             ],
-        "forum"          =>
+        "forum-manager"  =>
             [
                 "header" => "Správce fora",
                 "descr"  => "Zobřazí správce fora",

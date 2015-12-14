@@ -1,13 +1,13 @@
 <ol class="breadcrumb">
     <li><a href="admin-dashboard">Rozcestník</a></li>
-    <li><a href="admin-article-manager">Správce kategorií</a></li>
+    <li><a href="admin-category-manager">Správce kategorií</a></li>
     <li class="active"><?= !empty($category['category_name'])? $category['category_name'] :"Nová kategorie" ?></li>
 </ol>
 
-<form id="form-category-create" method="post">
+<form id="form-category-create" method="post" enctype="multipart/form-data">
     <div class="panel">
         <div class="panel-heading">
-            <h1 class="page-header">Upravit kategorii</h1>
+            <h1 class="page-header"><?= (!empty($category['category_name']) ? "Upravit kategorii" : "Nová kategorie") ?></h1>
         </div>
         <div class="panel-body">
             <div class="col-xs-12 col-sm-6 col-md-4">
@@ -64,6 +64,16 @@
                               required=""><?= $category['category_description'] ?></textarea>
                 </div>
             </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label for="">Obrázek kategorie</label>
+                    <div>
+                        <span id="category-image-button" class="btn btn-default fileinput-button">Vybrat...</span>
+                        <input type="file" id="category-icon-input" name="category-image" style="display: none;">
+                        <img id="category-image" src="uploads/image/category/<?= ($category['category_image']) ?>.png" alt="Ikona kategorie" width="100px">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="panel-footer">
             <input type="submit" class="btn btn-xs btn-primary" value="<?= ($action == "new")? "Vytvořit" : "Upravit" ?>">
@@ -75,6 +85,23 @@
 <script type="text/javascript" src="js/categoryManager.js"></script>
 <script type="text/javascript">
 
+    function readURL(input) {
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $("#category-image").attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#imgInp").change(function(){
+        readURL(this);
+    });
+
     var category = new CategoryManager();
 
     jQuery(document).ready(function () {
@@ -83,6 +110,12 @@
             var nameBox = jQuery('#category-name');
             var urlBox = jQuery('#category-url');
             urlBox.val(prettyURL(nameBox.val()));
+        });
+
+        jQuery("#category-icon-input").change(function () {
+            var file = this.files[0];
+            jQuery("#category-image-button").html((file.name));
+            readURL(this);
         });
     });
 

@@ -182,7 +182,7 @@ class FileManager {
      * @param $text string Obsah souboru
      */
     public function writeFile($path, $text) {
-        $file = fopen($path, "a+");
+        $file = fopen($path, "w");
         fwrite($file, $text);
         fclose($file);
     }

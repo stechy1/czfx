@@ -72,7 +72,7 @@ class SupportManager {
      * @throws MyException Pokud se nepodaři zprávu odstranit
      */
     public function delete ($repID) {
-        $fromDb = $this->database->delete("reports", " WHERE report_id = ?", [$repID]);
+        $fromDb = $this->database->delete("reports", "WHERE report_id = ?", [$repID]);
 
         if (!$fromDb)
             throw new MyException("Nepodařilo se zprávu odstranit");

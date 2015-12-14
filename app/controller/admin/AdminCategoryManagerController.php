@@ -6,6 +6,7 @@ namespace app\controller\admin;
 use app\model\callback\CallBackMessage;
 use app\model\factory\CategoryFactory;
 use app\model\manager\CategoryManager;
+use app\model\manager\FileManager;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
 use app\model\util\BootPagination;
@@ -93,7 +94,7 @@ class AdminCategoryManagerController extends AdminBaseController {
         try {
             $category = $this->categoryfactory->getFromRawData($request->getPost());
             $category->setId($catID);
-            $this->categorymanager->update($category);
+            $this->categorymanager->update($category, $request->getFile("category-image"));
             $this->addMessage(new CallBackMessage("Kategorie byla úspěšně aktualizována"));
             $this->redirect('admin-category-manager');
         } catch (MyException $ex) {
@@ -109,7 +110,8 @@ class AdminCategoryManagerController extends AdminBaseController {
             "category_name" => $request->getPost('category-name', ""),
             "category_has_subcats" => $request->getPost('category-has-subcats', ""),
             "category_parent" => $request->getPost('category-parent', -1),
-            "category_description" => $request->getPost('category-description', "")
+            "category_description" => $request->getPost('category-description', ""),
+            "category_image" =>$request->getPost('category-image', "category")
         );
 
         $this->data['action'] = "new";
@@ -124,7 +126,7 @@ class AdminCategoryManagerController extends AdminBaseController {
     public function newPostAction (IRequest $request) {
         try {
             $category = $this->categoryfactory->getFromRawData($request->getPost());
-            $this->categorymanager->add($category);
+            $this->categorymanager->add($category, $request->getFile("category-image"));
             $this->addMessage(new CallBackMessage("Kategorie byla úspěšně vytvořena"));
             $this->redirect('admin-category-manager');
         } catch (MyException $ex) {
@@ -151,4 +153,44 @@ class AdminCategoryManagerController extends AdminBaseController {
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
     }
+
+    /*public function uploadAjaxAction (IRequest $request) {
+        if (!$request->hasParams() || !$request->hasFiles()) {
+            $this->callBack->setFail();
+            return;
+        }
+
+        $params = $request->getParams();
+        $id = array_shift($params);
+
+        if (empty($params)) {
+            $this->callBack->setFail();
+            return;
+        }
+
+        array_shift($params);
+
+        if (empty($params)) {
+            $this->callBack->setFail();
+            return;
+        }
+
+        $whatUpload = array_shift($params);
+        switch($whatUpload) {
+            case "category-icon":
+                $file = $request->getFile("file");
+                try {
+                    $category = $this->categoryfactory->getCategoryFromID($id);
+                    // TODO vymyslet lépe implementaci uploadu obrázku kategorie
+                } catch (MyException $ex) {
+                    $this->callBack->setFail();
+                    return;
+                }
+                break;
+
+            default:
+                $this->callBack->setFail();
+                break;
+        }
+    }*/
 }

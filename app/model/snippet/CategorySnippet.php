@@ -29,7 +29,7 @@ class CategorySnippet extends ASnippet {
         $this->hasSubcats = $data['category_has_subcats'];
         $this->URL = $data['category_url'];
         $this->name = $data['category_name'];
-        //$this->img = $data['category_image'];
+        $this->img = $data['category_image'];
         $this->description = $data['category_description'];
     }
 
@@ -47,13 +47,20 @@ class CategorySnippet extends ASnippet {
                     ))->setLocation('/' . $tmp)
                 ))
             ))->addClass('panel-heading'),
-            (new DivElement(array(
-                (new ImageElement())->setWidth(100)->setSource('img/design_patterns.png')->addClass('left')->addStyle(new StyleValue('margin-right', '5px')),
+            (new DivElement([
+                (new ImageElement())
+                    ->setWidth(100)
+                    ->setSource("uploads/image/category/$this->img.png")
+                    ->addClass('left img-rounded')
+                    ->addStyle(new StyleValue('margin-right', '5px')),
                 (new ParagraphElement(
-                    $this->description
-                )))))->addClass('panel-body'),
+                    $this->description))
+                ]
+            ))->addClass('panel-body'),
             (new DivElement(
-                (new SpanElement())->addClass('right')->addStyle(new StyleValue('margin-top', '-10px'))
+                (new SpanElement())
+                    ->addClass('right')
+                    ->addStyle(new StyleValue('margin-top', '-10px'))
             ))->addClass('panel-footer'))))->addClass(['panel', 'category']);
         $mainDiv = (new DivElement($panel))->addClass(['col-xs-12', 'col-sm-6', 'col-md-4']);
 

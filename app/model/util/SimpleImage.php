@@ -19,7 +19,7 @@
 
 namespace app\model\util;
 
-use Exception;
+use app\model\service\exception\MyException;
 
 class SimpleImage {
 
@@ -29,7 +29,7 @@ class SimpleImage {
     /**
      * Konstruktor třídy SimpleImage
      * @param string|null $filename Cesta k souboru s obrázkem
-     * @throws Exception Pokud obrázek nelze načíst
+     * @throws MyException Pokud obrázek nelze načíst
      */
     public function __construct ($filename = null) {
         if (!empty($filename)) {
@@ -41,7 +41,7 @@ class SimpleImage {
      * Načte obrázek
      *
      * @param $filename string Cesta k souboru s obrázkem
-     * @throws Exception Pokud obrázek nelze načíst
+     * @throws MyException Pokud obrázek nelze načíst
      */
     public function load ($filename) {
         $image_info = getimagesize($filename);
@@ -54,7 +54,7 @@ class SimpleImage {
         } elseif ($this->image_info[2] == IMAGETYPE_PNG) {
             $this->image = imagecreatefrompng($filename);
         } else {
-            throw new Exception("Soubor, který se pokoušíte otevřít, není podporovaný");
+            throw new MyException("Soubor, který se pokoušíte otevřít, není podporovaný");
         }
     }
 

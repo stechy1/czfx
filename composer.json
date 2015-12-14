@@ -13,8 +13,7 @@
     "apache/log4php": "2.3.0",
     "erusev/parsedown-extra": "0.7.0",
     "recaptcha/php5": "v2.0.0",
-    "facebook/php-sdk-v4" : "~5.0",
-    "google/apiclient": "1.0.*@beta",
-    "stechy1/html": "v1.0"
+    "stechy1/html": "*",
+    "twig/twig": "^1.23"
   }
 }

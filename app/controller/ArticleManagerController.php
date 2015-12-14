@@ -44,11 +44,7 @@ class ArticleManagerController extends BaseController {
      */
     private $filemanager;
 
-    private $blankArticle = [
-        "article_title" => "",
-        "article_description" => "",
-        "article_tags" => "",
-        "article_text" => "Toto je obsah editoru"];
+    private $blankArticle = ["article_title" => "", "article_description" => "", "article_tags" => "", "article_text" => "Toto je obsah editoru"];
 
     /**
      * Provede se před hlavním zpracováním požadavku v kontroleru
@@ -119,8 +115,10 @@ class ArticleManagerController extends BaseController {
         $this->view = 'article-editor';
         $this->data['artAction'] = 'edit';
         $article = null;
+        $restrictArray = array();
         try {
-            $article = $this->articlefactory->getArticleFromURL($request->getParams()[1]);
+            $article = $this->articlefactory->getArticleFromID($request->getParams()[1]);
+            $restrictArray[] = $article->getId();
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect(self::CONTROLLER);
@@ -130,9 +128,22 @@ class ArticleManagerController extends BaseController {
         $articleCategory = $this->categoryfactory->getCategoryFromArticle($article);
         try {
             $articlePrev = $this->articlefactory->getArticleFromID($article->getPreviousID());
-            $articleNext = $this->articlefactory->getArticleFromID($article->getNextID());
+            $restrictArray[] = $articlePrev->getId();
         } catch (MyException $ex) {
-            $articlePrev = $articleNext = null;
+            $articlePrev = null;
+        }
+        try {
+            $articleNext = $this->articlefactory->getArticleFromID($article->getNextID());
+            $restrictArray[] = $articleNext->getId();
+        } catch (MyException $ex) {
+            $articleNext = null;
+        }
+
+
+        try {
+            $articles = $this->articlefactory->getArticlesFromCategoryID($articleCategory->getId(), array_unique($restrictArray));
+        } catch (MyException $ex) {
+            $articles = null;
         }
 
         $this->data['article'] = $article->toArray();
@@ -140,13 +151,19 @@ class ArticleManagerController extends BaseController {
         $this->data['articlePrev'] = $articlePrev;
         $this->data['articleNext'] = $articleNext;
         $this->data['categories'] = $this->categoryfactory->getWithout($articleCategory->getId(), true);
+        $this->data['articles'] = $articles;
 
         $this->header['title'] = "úprava článku - " . $article->getTitle();
     }
 
     public function editPostAction (IRequest $request) {
+        if (!isset($request->getParams()[1])) {
+            $this->addMessage(new CallBackMessage("Nebyl vybrán žádný článek"));
+            $this->redirect(self::CONTROLLER);
+        }
         try {
             $article = $this->articlefactory->getArticleFromPost($request->getPost());
+            $article->setId($request->getParams()[1]);
             $this->articlemanager->update($article);
             $this->redirect(self::CONTROLLER);
         } catch (MyException $ex) {
@@ -169,7 +186,7 @@ class ArticleManagerController extends BaseController {
                     $this->callBack->addData(new CallBackData('article', $article->getText()));
                 } catch (MyException $ex) {
                     $this->callBack->setFail();
-                    $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
+                    //$this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::INFO));
                 }
                 break;
             case 'articles':

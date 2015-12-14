@@ -27,7 +27,7 @@ SettingsManager.prototype.setAsDefault = function (data, callback) {
         success: function (result) {
             result = JSON.parse(result);
             if (result.success)
-                callback();
+                if (callback) callback();
 
             showUserMessages(result.messages);
         }

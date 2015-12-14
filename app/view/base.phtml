@@ -15,6 +15,7 @@
      <link rel="stylesheet" href="css/highlight.min.css">
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/czfx.uploader.js"></script>
     <style>
         .xdebug-error {
             position: absolute;
@@ -37,7 +38,7 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-left ">
-                <li class="hovered<?= ($_page == 'categories')?' active':'' ?>"><a href="categories">Kategorie</a></li>
+                <li class="<?= ($_page == 'categories')?'active':'' ?>"><a href="categories">Kategorie</a></li>
                 <li <?= ($_page == 'forum')?'class="active"':'' ?>><a href="forum">Forum</a></li>
                 <li <?= ($_page == 'support')?'class="active"':'' ?>><a href="support">Podpora</a></li>
                 <li <?= ($_page == 'about')?'class="active"':'' ?>><a href="about">O projektu</a> </li>
@@ -48,7 +49,7 @@
                     <li <?= ($_page == 'registration')?'class="active"':'' ?>><a href="registration">Zaregistrovat</a></li>
                 <? else : ?>
                     <li><a href="profile/logout">Odhlásit</a></li>
-                    <li <?= ($_page == 'profil')?'class="active"':'' ?>><a href="profile">Profil</a></li>
+                    <li <?= ($_page == 'profile')?'class="active"':'' ?>><a href="profile">Profil</a></li>
                 <? endif ?>
             </ul>
         </div>
@@ -76,8 +77,8 @@
 <script type="text/javascript" src="js/highlight.min.js"></script>
 <script type="text/javascript" src="js/string.min.js"></script>
 <script type="text/javascript" src="js/czfx.js"></script>
-<script type="text/javascript" src="js/czfx.uploader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.2/isotope.pkgd.min.js"></script>
-<script src='https://www.google.com/recaptcha/api.js'></script>
+
+<script src="js/isotope.pkgd.min.js"></script>
+<script src='js/recaptcha.js'></script>
 </body>
 </html>
