@@ -280,4 +280,30 @@ class ArticleFactory {
 
         return $fromDb;
     }
+
+    /**
+     * Vrátí posledních X oblíbených článků přihlášeného uživatele
+     *
+     * @param $page int Aktuální stránka
+     * @param $recordsOnPage int Počet článků, které se mají zobrazit
+     * @return mixed Pole obsahující oblíbené články
+     * @throws MyException Pokud není nalezen žádný článek
+     */
+    public function getXFavoritesArticles($page, $recordsOnPage) {
+        $fromDb = $this->database->queryAll("SELECT articles.article_id, articles.article_title, articles.article_url,
+                                                    categories.category_url, categories.category_name,
+                                                    users.user_id, users.user_nick
+                                             FROM favorite_articles
+                                             LEFT JOIN articles ON articles.article_id = favorite_article_id
+                                             LEFT JOIN categories ON categories.category_id = articles.article_category
+                                             LEFT JOIN users ON users.user_id = articles.article_author
+                                             WHERE favorite_article_user_id = ?
+                                             ORDER BY articles.article_validated, articles.article_id DESC LIMIT ?, ?",
+            [$_SESSION['user']['id'], ($page - 1) * $recordsOnPage, $recordsOnPage]);
+
+        if (!$fromDb)
+            throw new MyException("Nemáte žádné oblíbené články");
+
+        return $fromDb;
+    }
 }

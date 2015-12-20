@@ -1,50 +1,44 @@
-<? use app\model\util\DateUtils;
-
-?>
+<? use app\model\util\DateUtils; ?>
 <div class="row">
-<div class="col-md-12">
-    <article class="panel">
-        <div class="panel-heading"><h1><?= $article['article_title'] ?></h1></div>
-        <div class="panel-body">
-            <?= \app\model\util\MyParsedown::instance()->text($_text) ?>
-        </div>
-        <div class="panel-footer">
-            <span class="small right">Publikováno: <?= DateUtils::prettyDate($article['article_date']); ?></span>
-            <!--<div class="visity-card">
-                <h4>Autor: <small><?/*= $user['user_nick']; */?></small></h4>
-                <div class="row">
-                    <img class="img-responsive img-circle col-sm-2 pull-left user-image"
-                         src="uploads/image/avatar/<?/*= $user['user_avatar']; */?>.png"
-                         alt="<?/*= $user['user_nick']; */?>">
-                    <p class="col-sm-10">
-                        <?/* if ($user['user_motto']) : */?>
-                            <?/*= $user['user_motto'] */?>
-                        <?/* else : */?>
-                            <?/*= "Žádný popis není k dispozici." */?>
-                        <?/* endif */?>
-                    </p>
-                </div>
-            </div>-->
-            <div class="media">
-                <div class="media-left">
-                    <a href="profile/1">
-                        <img class="media-object img-rounded" src="uploads/image/avatar/<?= $user['user_avatar']; ?>.png" alt="<?= $user['user_nick']; ?>" style="width: 64px;">
-                    </a>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading">
-                        Autor: <small><?= $user['user_nick']; ?></small>
-                    </h4>
-                    <? if ($user['user_motto']) : ?>
-                        <?= $user['user_motto'] ?>
-                    <? else : ?>
-                        <?= "Žádný popis není k dispozici." ?>
-                    <? endif ?>
+    <div class="col-md-12">
+        <article class="panel">
+            <div class="panel-heading"><h1><?= $article['article_title'] ?></h1></div>
+            <div class="panel-body">
+                <?= \app\model\util\MyParsedown::instance()->text($_text) ?>
+            </div>
+            <div class="panel-footer">
+                <span class="small right">Publikováno: <?= DateUtils::prettyDate($article['article_date']); ?></span>
+                <div class="media">
+                    <div class="media-left">
+                        <a href="profile/<?= $user['user_id'] ?>">
+                            <img class="media-object img-rounded"
+                                 src="uploads/image/avatar/<?= $user['user_avatar']; ?>.png"
+                                 alt="<?= $user['user_nick']; ?>" style="width: 64px;">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">
+                            Autor:
+                            <small><?= $user['user_nick']; ?></small>
+                        </h3>
+                        <p>
+                            <? if ($user['user_motto']) : ?>
+                                <?= $user['user_motto'] ?>
+                            <? else : ?>
+                                <span>Žádný popis není k dispozici.</span>
+                            <? endif ?>
+                        </p>
+                        <a href="article/add-to-favorite/<?= $article['article_url'] ?>" id="add-to-favorite"
+                           data-articleid="<?= $article['article_url'] ?>" class="btn btn-primary btn-xs <?= ($isFavorite) ? 'hidden' : '' ?>"><span
+                                class="glyphicon glyphicon-star"></span> Přidat do oblíbených</a>
+                        <a href="article/delete-from-favorite/<?= $article['article_url'] ?>" id="delete-from-favorite"
+                           data-articleid="<?= $article['article_url'] ?>" class="btn btn-danger btn-xs <?= (!$isFavorite) ? 'hidden' : '' ?>"><span
+                                class="glyphicon glyphicon-star-empty"></span> Odebrat z oblíbených</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </article>
-</div>
+        </article>
+    </div>
 </div>
 <div class="row">
     <hr style="width: 100%;">
@@ -63,5 +57,40 @@
             <p><a href="article/<?= $nextArticle['article_url'] ?>"><?= $nextArticle['article_title'] ?></a></p>
         <? endif ?>
     </div>
-
 </div>
+
+<script src="js/articleManager.js"></script>
+<script>
+    var articlaManager = new ArticleManager();
+
+    function toggleFavorite() {
+        jQuery("#add-to-favorite").toggleClass("hidden");
+        jQuery("#delete-from-favorite").toggleClass("hidden");
+    }
+
+    jQuery(function() {
+        jQuery("#add-to-favorite").click(function (e) {
+            var url = jQuery(e.target).data("articleid");
+
+            articlaManager.addToFavorite(url, function() {
+                showUserMessage({content: "Článek byl přidán do oblíbených", type: "success"});
+                toggleFavorite();
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        jQuery("#delete-from-favorite").click(function (e) {
+            var url = jQuery(e.target).data("articleid");
+
+            articlaManager.deleteFromFavorite(url, function() {
+                showUserMessage({content: "Článek byl odebrán z oblíbených", type: "info"});
+                toggleFavorite();
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+</script>

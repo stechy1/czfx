@@ -49,6 +49,7 @@ class ForumManager {
               forum_categories.category_name,
               forum_categories.category_url,
               forum_categories.category_description,
+              forum_topics.topic_url,
               (SELECT COUNT(topic_id)
                FROM forum_topics
                WHERE topic_cat = category_id
@@ -61,15 +62,16 @@ class ForumManager {
             FROM forum_categories
               LEFT JOIN (
                   forum_topics
-                  LEFT JOIN (forum_posts
-                  LEFT JOIN users ON users.user_id = forum_posts.post_by
+                  LEFT JOIN (
+                    forum_posts
+                    LEFT JOIN users ON users.user_id = forum_posts.post_by
                   ) ON forum_topics.topic_id = forum_posts.post_topic
                 ) ON forum_topics.topic_cat = forum_categories.category_id
-            GROUP BY forum_categories.category_id";
+            GROUP BY forum_categories.category_id, forum_categories.category_name, forum_categories.category_url, forum_categories.category_description";
         $fromDb = $this->database->queryAll($query);
 
         if (!$fromDb)
-            throw new MyException("Nenalezeny zádné kategorie");
+            throw new MyException("Nenalezeny žádné kategorie");
 
         return $fromDb;
     }
@@ -225,7 +227,7 @@ class ForumManager {
                                            WHERE topic_url = ?", [$topicURL]);
 
         if (!$fromDb || !isset($fromDb[0]['post_content']))
-            throw new MyException("Žádné posty nenalezeny");
+            throw new MyException("Žádné příspěvky nenalezeny");
 
         return $fromDb;
     }

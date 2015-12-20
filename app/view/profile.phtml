@@ -19,17 +19,18 @@
     </div>
     <div class="panel-footer">
         <? if ($isLoged) : ?>
-            <span class="btn btn-sm btn-success fileinput-button">
+            <span class="btn btn-xs btn-success fileinput-button">
                 <i class="glyphicon glyphicon-upload"></i>
                 <span>Nahrát obrázek...</span>
             </span>
-            <input id="avatar-upload" type="file" name="avatar-image" style="display: none;">
+            <input id="avatar-upload" type="file" name="avatar-image">
             <? if ($user['user_role']->valid(USER_ROLE_REDACTOR, false)) : ?>
-                <a href="article-manager"><span class="btn btn-sm btn-info">Správce článků</span></a>
+                <a href="article-manager"><span class="btn btn-xs btn-info">Správce článků</span></a>
             <? endif ?>
-            <a href="settings"><span class="btn btn-sm btn-warning">Nastavení</span></a>
+            <a href="settings"><span class="btn btn-xs btn-warning">Nastavení</span></a>
+            <a href="favorite-articles" class="btn btn-xs btn-info">Oblíbené články</a>
             <? if ($user['user_role']->valid(USER_ROLE_ADMIN, false)) : ?>
-                <a href="admin"><span class="btn btn-sm btn-danger right">Administrace</span></a>
+                <a href="admin"><span class="btn btn-xs btn-danger right">Administrace</span></a>
             <? endif ?>
         <? endif ?>
     </div>
@@ -37,9 +38,9 @@
 
 <script>
     var uploader = new CZFXuploader({
-        "url": "profile/upload/avatar",
-        "fileName": "avatar",
-        "callback": function (data) {
+        url: "profile/upload/avatar",
+        fileName: "avatar",
+        callback: function (data) {
             jQuery(".profile-image img").attr("src", data['imgSrc']);
         }
     });

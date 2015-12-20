@@ -35,8 +35,8 @@ class AdminBaseController extends BaseController {
      * @return bool True, pokud má uživatel dostatečné oprávnění, jinak false.
      * @throws MyException Pokud uživatel nemá dostatečná oprávnění.
      */
-    public function validateUser ($role = null, $mustBeActivated = true) {
-        parent::validateUser(USER_ROLE_ADMIN);
+    public function validateUser ($role = USER_ROLE_ADMIN, $mustBeActivated = true) {
+        parent::validateUser($role, $mustBeActivated);
     }
 
 

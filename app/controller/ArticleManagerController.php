@@ -165,6 +165,7 @@ class ArticleManagerController extends BaseController {
             $article = $this->articlefactory->getArticleFromPost($request->getPost());
             $article->setId($request->getParams()[1]);
             $this->articlemanager->update($article);
+            $this->addMessage(new CallBackMessage("Článek byl úspěšně aktualizován"));
             $this->redirect(self::CONTROLLER);
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
@@ -205,4 +206,5 @@ class ArticleManagerController extends BaseController {
                 break;
         }
     }
+
 }

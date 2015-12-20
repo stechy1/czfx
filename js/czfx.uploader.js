@@ -26,7 +26,6 @@ CZFXuploader.prototype.uploadFile = function (fd) {
             data = JSON.parse(data);
             if (data.success) {
                 self.settings.callback(data.data);
-                //jQuery(".profile-image img").attr("src", data.data['imgSrc']);
             } else {
                 jQuery(".dropzone").removeClass("uploading").effect("shake");
                 showUserMessages(data.messages);

@@ -13,7 +13,6 @@
     "apache/log4php": "2.3.0",
     "erusev/parsedown-extra": "0.7.0",
     "recaptcha/php5": "v2.0.0",
-    "stechy1/html": "*",
-    "twig/twig": "^1.23"
+    "stechy1/html": "*"
   }
 }

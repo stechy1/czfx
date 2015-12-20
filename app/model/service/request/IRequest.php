@@ -68,9 +68,10 @@ interface IRequest {
     /**
      * Zkontroluje, zda-li požadavek obsahuje nějaké parametry
      *
-     * @return boolean True, pokud request obsahuje parametry, jinak false
+     * @param int $minCount Minimální počet požadavků
+     * @return bool True, pokud request obsahuje parametry, jinak false
      */
-    function hasParams();
+    function hasParams($minCount = 0);
 
     /**
      * Zkontroluje, zda-li požadavek obsahuje data v POSTu

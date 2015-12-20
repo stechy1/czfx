@@ -46,7 +46,30 @@ class Container {
      * @param $folder
      */
     public function registerFolder ($folder) {
-        $this->folderIterator($folder);
+        //$this->folderIterator($folder);
+        $this->loadMap($folder);
+    }
+
+    private function loadMap($folder) {
+        $cacheFile = "app\\cache\\map.php";
+        if (file_exists($cacheFile)) {
+            /** @noinspection PhpIncludeInspection */
+            $this->clasess = require $cacheFile;
+        } else {
+            $string = "<?php " . PHP_EOL . "return array(" . PHP_EOL;
+            foreach (new FileFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder))) as $fileInfo) {
+                $pathName = $fileInfo->getPathname();
+                $root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']) . '\\';
+                $filePath = str_replace($root, '', $pathName);
+
+                $file = strtolower($fileInfo->getBasename('.php'));
+                $filePath = str_replace('.php', '', $filePath);
+                $this->clasess[$file] = $filePath;
+                $string .= "\t'$file' => '$filePath'," . PHP_EOL;
+            }
+            $string .= ");";
+            file_put_contents($cacheFile, $string);
+        }
     }
 
     /**

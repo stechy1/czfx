@@ -7,6 +7,7 @@ use app\model\Article;
 use app\model\database\Database;
 use app\model\factory\CategoryFactory;
 use app\model\service\exception\MyException;
+use app\model\User;
 
 /**
  * Class ArticleManager - Správce článků
@@ -67,6 +68,27 @@ class ArticleManager {
     }
 
     /**
+     * Přidá článek do oblíbených
+     *
+     * @param Article $article Článek, který chce uživatel přidat
+     * @param User $user Uživatel, který chce přidat článek
+     * @throws MyException Pokud se nepodaří článek přidat do oblíbených
+     */
+    public function addArticleToFavorite(Article $article, User $user) {
+        if ($this->isArticleFavourite($article, $user))
+            throw new MyException("Článek již je v oblíbených");
+
+        $favArray = array(
+            'favorite_article_user_id' => $user->getId(),
+            'favorite_article_id' => $article->getId()
+        );
+        $fromDb = $this->database->insert("favorite_articles", $favArray);
+
+        if (!$fromDb)
+            throw new MyException("Článek se nepodařilo přidat do oblíbených");
+    }
+
+    /**
      * Aktualizuje článek
      *
      * @param Article $article
@@ -111,6 +133,23 @@ class ArticleManager {
     }
 
     /**
+     * Odebere článek z oblíbených
+     *
+     * @param Article $article Článek, který má být odebrán z oblíbených
+     * @param User $user Uřivatel, který článek odebírá
+     * @throws MyException Pokud se nepodaří odebrat článek z oblíbených
+     */
+    public function deleteFavoriteArticle(Article $article, User $user) {
+        $fromDb = $this->database->delete(
+            "favorite_articles",
+            "WHERE favorite_article_user_id = ? AND favorite_article_id = ?",
+            [$user->getId(), $article->getId()]);
+
+        if (!$fromDb)
+            throw new MyException("Nepodařilo se odebrat článek z oblíbených");
+    }
+
+    /**
      * Změní validaci článku
      *
      * @param $id int ID validovaného článku
@@ -144,5 +183,30 @@ class ArticleManager {
      */
     public function getArticleCountFromAll() {
         return $this->database->queryItself("SELECT COUNT(article_id) FROM articles");
+    }
+
+    /**
+     * Vrátí počet oblíbených článků přihlášeného uživatele
+     *
+     * @return int Počet oblíbených článků
+     */
+    public function getFavoriteArticleCount() {
+        return $this->database->queryItself("SELECT COUNT(favorite_article_user_id) FROM favorite_articles WHERE favorite_article_user_id = ?", [$_SESSION['user']['id']]);
+    }
+
+    /**
+     * Zjistí, zda-li je článek v kolekci oblíbených článků vybraného uživatele
+     *
+     * @param Article $article Článek, který má být oblíbený
+     * @param User $user Uživatel, který má oblíbený článek
+     * @return bool True, pokud je článek v oblíbených, jinak false
+     */
+    public function isArticleFavourite(Article $article, User $user) {
+        $fromDb = $this->database->queryItself("SELECT COUNT(favorite_article_id)
+                                                FROM favorite_articles
+                                                WHERE favorite_article_user_id = ? AND favorite_article_id = ?",
+            [$user->getId(), $article->getId()]);
+
+        return ($fromDb) ? true : false;
     }
 }

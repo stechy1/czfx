@@ -54,6 +54,8 @@ function getUserMessages() {
 /**
  * Zobrazí jednu zprávu uživateli.
  * @param m Zpráva
+ *        m.content - Obsah zprávy
+ *        m.type    - Typ zprávy (success, error, warning, info)
  */
 function showUserMessage(m) {
     jQuery.notify({

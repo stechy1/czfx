@@ -127,7 +127,7 @@
             });
         };
 
-        jQuery('#article-category').change(function (e) {
+        jQuery('#article-category').change(function () {
             var opt = jQuery('#article-category').find('option:selected').val();
             if (opt > 0)
                 getArticles(opt);

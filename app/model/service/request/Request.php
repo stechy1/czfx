@@ -110,10 +110,11 @@ class Request implements IRequest {
     /**
      * Zkontroluje, zda-li požadavek obsahuje nějaké parametry
      *
-     * @return boolean True, pokud request obsahuje parametry, jinak false
+     * @param int $minCount Minimální počet požadavků
+     * @return bool True, pokud request obsahuje parametry, jinak false
      */
-    function hasParams () {
-        return sizeof($this->params) - 1 >= 0;
+    function hasParams ($minCount = 0) {
+        return sizeof($this->params) - 1 >= $minCount;
     }
 
     /**

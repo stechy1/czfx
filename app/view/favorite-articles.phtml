@@ -1,0 +1,73 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Oblíbené články</h1>
+    </div>
+    <div class="panel-body">
+        <? if ($hasArticles) : ?>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Titulek</th>
+                        <th>Kategorie článku</th>
+                        <th>Autor</th>
+                        <th>Akce</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <? foreach ($articles as $article) : ?>
+                        <tr id="article_<?= $article['article_id'] ?>">
+                            <td><?= $article['article_title'] ?></td>
+                            <td>
+                                <a href="categories/<?= $article['category_url'] ?>"><?= $article['category_name'] ?></a>
+                            </td>
+                            <td><a href="profile/<?= $article['user_id'] ?>"><?= $article['user_nick'] ?></a></td>
+                            <td>
+                                <a href="article/<?= $article['article_url'] ?>"
+                                   class="btn btn-xs btn-primary">Zobrazit</a>
+                                <a href="favorite-articles/delete/<?= $article['article_url'] ?>"
+                                   class="btn btn-xs btn-danger delete-favorite"
+                                   data-articleurl="<?= $article['article_url'] ?>" data-articleid="<?= $article['article_id'] ?>">Odebrat</a>
+                            </td>
+                        </tr>
+                    <? endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-8 col-sm-6 col-xs-offset-3 col-sm-offset-4">
+                <nav class="center-block">
+                    <ul class="pagination">
+                        <?= $paginator->process() ?>
+                    </ul>
+                </nav>
+            </div>
+        <? else : ?>
+            <div class="alert alert-danger" role="alert">Nemáte žádné oblíbené články</div>
+        <? endif ?>
+
+    </div>
+    <div class="panel-footer">
+        <a href="profile" class="btn btn-xs btn-primary">Profil</a>
+    </div>
+</div>
+
+<script src="js/articleManager.js"></script>
+<script>
+    var articleManager = new ArticleManager();
+
+    jQuery(function () {
+        jQuery(".delete-favorite").click(function (e) {
+
+            var id = jQuery(e.target).data("articleid");
+            var url= jQuery(e.target).data("articleurl");
+
+            articleManager.deleteFromFavorite(url, function (data) {
+                jQuery("#article_" + id).fadeOut().remove();
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+
+        });
+    });
+</script>

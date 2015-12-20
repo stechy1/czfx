@@ -43,7 +43,7 @@ EditorJQ.prototype.init = function () {
     var createAddAttachmentButton = function () {
         var elm = $('<a/>', {class: 'editorAttachmentElemetn'});
         var addCnt = $('<span/>', {class: 'btn btn-default editorFileinput'});
-        var addBtn = $('<span/>', {class: 'add'});
+        var addBtn = $('<span/>', {class: 'add fileinput-button'});
         var inputFile = $('<input/>', {type: 'file', name: 'files[]'});
 
         inputFile.change(function () {

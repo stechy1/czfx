@@ -4,7 +4,7 @@
     </div>
     <div class="panel-body">
         <div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="table table-hover table-striped table-bordered">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -18,16 +18,18 @@
                 <? if ($forumCategories) : ?>
                     <? foreach ($forumCategories as $category) : ?>
                         <tr>
-                            <td class="text-center"><span class="glyphicon glyphicon-home" aria-hidden="true"</td>
-                            <td class="forum-item">
-                                <h4><a class=""
-                                       href="forum/show-topics/<?= $category['category_url']; ?>"><?= $category['category_name']; ?></a>
-                                </h4>
-                            </td>
+                            <td class="text-center"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></td>
+                            <td class="forum-item"><h4><a href="forum/show-topics/<?= $category['category_url']; ?>"><?= $category['category_name']; ?></a></h4></td>
                             <td class="text-center"><?= ($category['category_topics_count']) ? $category['category_topics_count'] : "0"; ?></td>
                             <td class="text-center"><?= ($category['topic_posts_count']) ? $category['topic_posts_count'] : 0; ?></td>
-                            <td class="text-center"><?= ($category['nick']) ?: "Nikdo"; ?>
-                                <br><?= ($category['post_date']) ? app\model\util\DateUtils::formatDateTime($category['post_date']) : ""; ?>
+                            <td class="text-center">
+                                <div class="vcenter">
+                                    <a href="forum/show-posts/<?= $category['category_url'] ?>/<?= $category['topic_url'] ?>">Nefunkční</a>
+                                </div>
+                                <div class="vcenter">
+                                    <div class="span12"><?= ($category['nick']) ?: "Nikdo"; ?></div>
+                                    <div class="span12"><?= ($category['post_date']) ? app\model\util\DateUtils::formatDateTime($category['post_date']) : ""; ?></div>
+                                </div>
                             </td>
 
                         </tr>

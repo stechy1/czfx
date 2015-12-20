@@ -14,7 +14,7 @@ class FileFilterIterator extends \FilterIterator {
      */
     public function accept () {
         $current = $this->getInnerIterator()->current();
-        if (strpos($current, '\.'))
+        if (strpos($current, '\.') || !strpos($current, '.php'))
             return false;
 
         return true;
