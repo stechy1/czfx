@@ -3,12 +3,14 @@
 namespace app\controller;
 
 
+use app\model\callback\CallBackData;
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
 use app\model\manager\ForumManager;
 use app\model\service\CaptchaService;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
+use app\model\snippet\ForumPostSnippet;
 
 /**
  * Class ForumController
@@ -149,6 +151,20 @@ class ForumController extends BaseController {
         }
 
         $this->showPostsAction($request);
+    }
+
+    public function showPostsPostAjaxAction (IRequest $request) {
+        try {
+            $this->validateUser(USER_ROLE_MEMBER);
+            CaptchaService::verify($request->getPost("g-recaptcha-response", null));
+            $this->forummanager->addPost($request->getPost('post_content'));
+            $lastPostData = $this->forummanager->getLastInsertedPost();
+            $this->callBack->addMessage(new CallBackMessage("Zpráva byla úspěšně odeslána"));
+            $post = new ForumPostSnippet($lastPostData);
+            $this->callBack->addData(new CallBackData("post-data", $post->render()));
+        } catch (MyException $ex) {
+            $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
+        }
     }
 
     public function deletePostAjaxAction (IRequest $request) {

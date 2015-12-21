@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
      <link rel="stylesheet" href="css/highlight.min.css">
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/socket.io.js"></script>
     <script type="text/javascript" src="js/czfx.uploader.js"></script>
     <style>
         .xdebug-error {
@@ -56,6 +56,9 @@
     </div>
 </header>
 <div class="main">
+    <script>
+        var socket = io.connect('czfx.lh:8080');
+    </script>
     <div class="container">
         <? $this->controller->renderView(); ?>
     </div>
@@ -76,8 +79,7 @@
 <script type="text/javascript" src="js/highlight.min.js"></script>
 <script type="text/javascript" src="js/string.min.js"></script>
 <script type="text/javascript" src="js/czfx.js"></script>
-
-<script src="js/isotope.pkgd.min.js"></script>
-<script src='js/recaptcha.js'></script>
+<script type="text/javascript" src="js/isotope.pkgd.min.js"></script>
+<script type="text/javascript" src='js/recaptcha.js'></script>
 </body>
 </html>

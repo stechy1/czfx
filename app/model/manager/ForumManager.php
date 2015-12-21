@@ -308,6 +308,32 @@ class ForumManager {
     }
 
     /**
+     * Vrátí záznam o posledním vloženém příspěvku
+     *
+     * @return array|null
+     */
+    public function getLastInsertedPost () {
+        $lastId = $this->database->getLastId();
+
+        $fromDb = $this->database->queryOne("SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date,
+                                        forum_topics.topic_subject, forum_topics.topic_url,
+                                        forum_categories.category_url,
+                                        users.user_nick, users.user_id, users.user_avatar
+                                 FROM forum_posts
+                                 LEFT JOIN (users, forum_topics, forum_categories)
+                                 ON (
+                                     users.user_id = forum_posts.post_by AND
+                                     forum_topics.topic_id = forum_posts.post_topic AND
+                                     forum_categories.category_id = forum_topics.topic_cat)
+                                 WHERE forum_posts.post_id = ?", [$lastId]);
+
+        if (!$fromDb)
+            return null;
+
+        return $fromDb;
+    }
+
+    /**
      * Přidá post do topicu
      *
      * @param $content string Obsah komentáře
@@ -322,8 +348,10 @@ class ForumManager {
             "post_topic" => $_SESSION['forum']['topic_id'],
             "post_by" => $_SESSION['user']['id']];
 
-        $this->database->insert("forum_posts", $post);
+        $fromDb = $this->database->insert("forum_posts", $post);
 
+        if (!$fromDb)
+            throw new MyException("Přispěvek se nepodařilo odeslat");
     }
 
     /**

@@ -15,6 +15,7 @@ class Container {
 
     private $map;
     private $clasess = array();
+    private $rootFolder;
 
     /**
      * Container constructor.
@@ -46,13 +47,16 @@ class Container {
      * @param $folder
      */
     public function registerFolder ($folder) {
-        //$this->folderIterator($folder);
+        if (empty($this->rootFolder))
+            $this->rootFolder = $folder;
+
         $this->loadMap($folder);
     }
 
-    private function loadMap($folder) {
+    private function loadMap($folder, $loadAnyway = false) {
         $cacheFile = "app\\cache\\map.php";
-        if (file_exists($cacheFile)) {
+        $this->clasess = array();
+        if (file_exists($cacheFile) && !$loadAnyway) {
             /** @noinspection PhpIncludeInspection */
             $this->clasess = require $cacheFile;
         } else {
@@ -195,8 +199,11 @@ class Container {
     public function getInstanceOf ($className, $arguments = null) {
         $className = strtolower($className);
 
-        if (!array_key_exists($className, $this->clasess))
-            return null;
+        if (!array_key_exists($className, $this->clasess)) {
+            $this->loadMap($this->rootFolder, true);
+            if (!array_key_exists($className, $this->clasess))
+                return null;
+        }
 
         $reflection = new ReflectionClass($this->clasess[$className]);
 
