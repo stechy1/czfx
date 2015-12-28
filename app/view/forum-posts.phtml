@@ -10,7 +10,7 @@ use app\model\util\MyParsedown; ?>
 <div class="col-md-12 posts">
     <? if ($_posts) : ?>
         <? $parseDown = new MyParsedown(); ?>
-        <? foreach ($_posts as $post) : ?>
+        <? foreach ($_posts as $key => $post) : ?>
             <div class="row forum-post" id="post-<?= $post['post_id'] ?>">
                 <? if ($isAdmin) : ?>
                 <span class="btn btn-xs btn-danger remove-post" data-postid="<?= $post['post_id'] ?>" style=" position: absolute; right: 10px; z-index: 2;">Smazat</span>
@@ -22,7 +22,7 @@ use app\model\util\MyParsedown; ?>
                     </a>
                 </div>
                 <div class="col-xs-9 col-md-10 col-lg-11" style="min-height: 70px;">
-                    <?= $parseDown->text($post['post_content']); ?>
+                    <?= $parseDown->text($posts[$key]['post_content']); ?>
                 </div>
                 <span class="small right"><?= DateUtils::prettyDateTime($post['post_date']); ?></span>
             </div>
@@ -49,67 +49,14 @@ use app\model\util\MyParsedown; ?>
     </div>
 </div>
 </form>
+
 <script src="js/editorJQ.js"></script>
-<script src="js/forumManager.js"></script>
+<script src="js/manager/forumManager.js"></script>
 <script>
-    var forumManager = new ForumManager();
+    var socket = io('localhost:8080/forum-posts');
 
-    jQuery(document).ready(function () {
-
-        jQuery(".remove-post").click(function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            var postID = $(this).data("postid");
-
-            forumManager.deletePost(postID, function () {
-                $("#post-" + postID).remove();
-            });
-        });
-
-        jQuery("#submitForm").submit(function (e) {
-            console.log(e);
-
-            jQuery.ajax({
-                method: "post",
-                data: jQuery(this).serialize(),
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if (result.success) {
-                        socket.emit('post-add', {content: result.data});
-                    }
-
-                    showUserMessages(result.messages);
-                }
-            });
-
-            e.preventDefault();
-            e.stopPropagation();
-        });
-
-        socket.on("render-forum-post", function (data) {
-            var content = JSON.parse(data.content["post-data"]);
-
-            jQuery(".posts").append(content);
-        });
-
-        var buttons = [
-            {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
-            {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
-            {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
-            {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
-            {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
-            {class: 'quotes', before: '> ', tooltip: 'Citace'},
-            {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
-            {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
-            {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
-        ];
-        var editor = new EditorJQ(
-            '#mainEditorContainer',
-            {
-                buttons: buttons,
-                areaName: 'post_content'
-            });
-        editor.init();
+    socket.on('connect', function () {
+        socket.emit('join-room', "<?= $topicHash ?>");
     });
 </script>
+<script src="js/view/forum-posts.js"></script>

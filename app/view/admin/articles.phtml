@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li><a href="admin">Rozcestník</a></li>
     <li class="active">Správce článků</li>
 </ol>
 
@@ -52,31 +52,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="js/articleManager.js"></script>
-<script type="text/javascript">
-
-    var m = new ArticleManager();
-
-    jQuery(document).ready(function () {
-        jQuery('.cat-remove').click(function () {
-            if (confirm("Opravdu si přejete smazat článek?")) {
-                var id = $(this).data("articleid");
-
-                m.delete(id, function() {
-                    jQuery('#article_' + id).remove();
-                });
-            }
-        });
-
-        jQuery('.boot-switch').on('switchChange.bootstrapSwitch', function(event, state) {
-
-            var data = {
-                id: $(this).data("articleid"),
-                validated: state
-            };
-
-            m.validate(data);
-        });
-
-    });
-</script>
+<script src="js/manager/articleManager.js"></script>
+<script src="js/view/admin/articles.js"></script>

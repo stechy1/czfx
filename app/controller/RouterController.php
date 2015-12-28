@@ -76,6 +76,7 @@ class RouterController extends BaseController {
             $this->data['key_words'] = $this->controller->header['key_words'];
             $this->data['title'] = $this->controller->header['title'];
             $this->data['page'] = $request->getController();
+            $this->data['isLoged'] = isset($_SESSION['user']['id']);
 
             // Nastavení hlavní šablony
             $this->view = 'base';

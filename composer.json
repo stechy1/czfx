@@ -13,6 +13,8 @@
     "apache/log4php": "2.3.0",
     "erusev/parsedown-extra": "0.7.0",
     "recaptcha/php5": "v2.0.0",
-    "stechy1/html": "*"
+    "stechy1/html": "*",
+    "phpseclib/phpseclib": "^2.0",
+    "wisembly/elephant.io": "~3.0"
   }
 }

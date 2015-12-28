@@ -1,0 +1,129 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Přátelé</h1>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-info">Seznam pozvaných přátel</div>
+        <div class="row">
+            <? if ($myPendings) : ?>
+                <? foreach ($myPendings as $pending) : ?>
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <div class="media bordered">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 64px; height: 64px;"
+                                     src="uploads/image/avatar/<?= $pending['friend_avatar'] ?>.png"
+                                     alt="<?= $pending['friend_nick'] ?>">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading"><a
+                                        href="profile/<?= $pending['friend_id'] ?>"><?= $pending['friend_nick'] ?></a>
+                                </h4>
+                                <span class="btn btn-xs btn-warning cancel-friend-request"
+                                      data-friendid="<?= $pending['friend_id'] ?>">Zrušit</span>
+                                <span class="btn btn-xs btn-danger block-friend"
+                                      data-friendid="<?= $pending['friend_id'] ?>">Blokovat</span>
+                            </div>
+                        </div>
+                    </div>
+                <? endforeach ?>
+            <? else : ?>
+                <div class="col-md-12">
+                    <span>Nemáte žádné pozvané přátele</span>
+                </div>
+            <? endif ?>
+        </div>
+        <hr>
+        <div class="alert alert-info">Seznam pozvánek</div>
+        <div class="row">
+            <? if ($pendings) : ?>
+                <? foreach ($pendings as $pending) : ?>
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <div class="media bordered">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 64px; height: 64px;"
+                                     src="uploads/image/avatar/<?= $pending['friend_avatar'] ?>.png"
+                                     alt="<?= $pending['friend_nick'] ?>">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading"><a
+                                        href="profile/<?= $pending['friend_id'] ?>"><?= $pending['friend_nick'] ?></a>
+                                </h4>
+                                <span class="btn btn-xs btn-success accept-friend-request"
+                                      data-friendid="<?= $pending['friend_id'] ?>">Přijmout</span>
+                                <span class="btn btn-xs btn-warning decline-friend-request"
+                                      data-friendid="<?= $pending['friend_id'] ?>">Zamítnout</span>
+                                <span class="btn btn-xs btn-danger block-friend"
+                                      data-friendid="<?= $pending['friend_id'] ?>">Blokovat</span>
+                            </div>
+                        </div>
+                    </div>
+                <? endforeach ?>
+            <? else : ?>
+                <div class="col-md-12">
+                    <span>Nemáte žádné pozvánky od přátel</span>
+                </div>
+            <? endif ?>
+        </div>
+        <hr>
+        <div class="alert alert-success">Seznam přátel</div>
+        <div class="row">
+            <? if ($friends) : ?>
+                <? foreach ($friends as $friend) : ?>
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <div class="media bordered">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 64px; height: 64px;"
+                                     src="uploads/image/avatar/<?= $friend['friend_avatar'] ?>.png"
+                                     alt="<?= $friend['friend_nick'] ?>">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading"><a
+                                        href="profile/<?= $friend['friend_id'] ?>"><?= $friend['friend_nick'] ?></a>
+                                </h4>
+                                <span class="btn btn-xs btn-danger remove-friend"
+                                      data-friendid="<?= $friend['friend_id'] ?>">Odebrat</span>
+                                <span class="btn btn-xs btn-danger block-friend"
+                                      data-friendid="<?= $friend['friend_id'] ?>">Blokovat</span>
+                            </div>
+                        </div>
+                    </div>
+                <? endforeach ?>
+            <? else : ?>
+                <div class="col-md-12">
+                    <span>Nemáte žádné přátele</span>
+                </div>
+            <? endif ?>
+        </div>
+        <hr>
+        <div class="alert alert-danger">Seznam blokovaných užitevalů</div>
+        <div class="row">
+            <? if ($blockeds) : ?>
+                <? foreach ($blockeds as $blocked) : ?>
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <div class="media bordered">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 64px; height: 64px;"
+                                     src="uploads/image/avatar/<?= $blocked['friend_avatar'] ?>.png"
+                                     alt="<?= $blocked['friend_nick'] ?>">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading"><a
+                                        href="profile/<?= $blocked['friend_id'] ?>"><?= $blocked['friend_nick'] ?></a>
+                                </h4>
+                                <span class="btn btn-xs btn-info unblock-friend"
+                                      data-friendid="<?= $blocked['friend_id'] ?>">Odblokovat</span>
+                            </div>
+                        </div>
+                    </div>
+                <? endforeach ?>
+            <? else : ?>
+                <div class="col-md-12">
+                    <span>Nemáte žádné blokované přátele</span>
+                </div>
+            <? endif ?>
+        </div>
+    </div>
+</div>
+
+<script src="js/manager/relationshipsManager.js"></script>
+<script src="js/view/friends.js"></script>

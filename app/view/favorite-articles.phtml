@@ -51,23 +51,5 @@
     </div>
 </div>
 
-<script src="js/articleManager.js"></script>
-<script>
-    var articleManager = new ArticleManager();
-
-    jQuery(function () {
-        jQuery(".delete-favorite").click(function (e) {
-
-            var id = jQuery(e.target).data("articleid");
-            var url= jQuery(e.target).data("articleurl");
-
-            articleManager.deleteFromFavorite(url, function (data) {
-                jQuery("#article_" + id).fadeOut().remove();
-            });
-
-            e.preventDefault();
-            e.stopPropagation();
-
-        });
-    });
-</script>
+<script src="js/manager/articleManager.js"></script>
+<script src="js/view/favorite-articles.js"></script>

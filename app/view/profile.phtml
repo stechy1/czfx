@@ -18,35 +18,39 @@
             <?= $user['user_motto'] ?></p>
     </div>
     <div class="panel-footer">
-        <? if ($isLoged) : ?>
-            <span class="btn btn-xs btn-success fileinput-button">
-                <i class="glyphicon glyphicon-upload"></i>
-                <span>Nahrát obrázek...</span>
-            </span>
-            <input id="avatar-upload" type="file" name="avatar-image">
-            <? if ($user['user_role']->valid(USER_ROLE_REDACTOR, false)) : ?>
-                <a href="article-manager"><span class="btn btn-xs btn-info">Správce článků</span></a>
-            <? endif ?>
-            <a href="settings"><span class="btn btn-xs btn-warning">Nastavení</span></a>
-            <a href="favorite-articles" class="btn btn-xs btn-info">Oblíbené články</a>
-            <? if ($user['user_role']->valid(USER_ROLE_ADMIN, false)) : ?>
-                <a href="admin"><span class="btn btn-xs btn-danger right">Administrace</span></a>
-            <? endif ?>
-        <? endif ?>
+        <div class="row">
+            <div class="col-md-12">
+                <? if ($isLoged) : ?>
+                    <? if ($showFriendButton) : ?>
+                        <span id="cancel-friend-request" class="btn btn-xs btn-warning <?= (!$isPending) ? 'hidden' : '' ?>"
+                              data-friendid="<?= $user['user_id'] ?>"><span
+                                class="glyphicon glyphicon-remove-circle"></span> Zrušit žádost</span>
+                        <span id="add-to-friend" class="btn btn-xs btn-info <?= ($isFriend) ? 'hidden' : '' ?>"
+                              data-friendid="<?= $user['user_id'] ?>"><span
+                                class="glyphicon glyphicon-plus"></span> Přidat do přátel</span>
+                        <span id="remove-from-friend"
+                              class="btn btn-xs btn-danger <?= (!$isFriend) ? 'hidden' : '' ?>"
+                              data-friendid="<?= $user['user_id'] ?>"><span
+                                class="glyphicon glyphicon-minus"></span> Odebrat z přátel</span>
+                    <? endif ?>
+                    <span class="btn btn-xs btn-success fileinput-button">
+                        <i class="glyphicon glyphicon-upload"></i>
+                        <span>Nahrát obrázek...</span>
+                        </span>
+                    <input id="avatar-upload" type="file" name="avatar-image">
+                    <? if ($user['user_role']->valid(USER_ROLE_REDACTOR, false)) : ?>
+                        <a href="article-manager"><span class="btn btn-xs btn-info">Správce článků</span></a>
+                    <? endif ?>
+                    <a href="settings"><span class="btn btn-xs btn-warning">Nastavení</span></a>
+                    <a href="favorite-articles" class="btn btn-xs btn-info">Oblíbené články</a>
+                    <? if ($user['user_role']->valid(USER_ROLE_ADMIN, false)) : ?>
+                        <a href="admin"><span class="btn btn-xs btn-danger right">Administrace</span></a>
+                    <? endif ?>
+                <? endif ?>
+            </div>
+        </div>
     </div>
 </div>
 
-<script>
-    var uploader = new CZFXuploader({
-        url: "profile/upload/avatar",
-        fileName: "avatar",
-        callback: function (data) {
-            jQuery(".profile-image img").attr("src", data['imgSrc']);
-        }
-    });
-    uploader.init();
-
-    jQuery("#avatar-upload").change(function () {
-        uploader.handleFiles(this.files);
-    });
-</script>
+<script src="js/manager/relationshipsManager.js"></script>
+<script src="js/view/profile.js"></script>

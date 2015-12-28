@@ -5,6 +5,10 @@ namespace app\model\manager;
 
 use app\model\service\exception\MyException;
 
+/**
+ * Class ConfigManager - Správce nastavení webové aplikace
+ * @package app\model\manager
+ */
 class ConfigManager {
 
     private $configPHPfile;

@@ -28,5 +28,4 @@ class ApiBaseController extends BaseController {
     public function defaultPostAction (IRequest $request) {
         $this->redirect('error');
     }
-
 }

@@ -53,6 +53,11 @@ class ForumController extends BaseController {
         }
     }
 
+    /**
+     * Zobrazí jednotlivá témata v zadané kategorii
+     *
+     * @param IRequest $request
+     */
     public function showTopicsAction (IRequest $request) {
         $category = (isset($request->getParams()[1]))? $request->getParams()[1] : "-1";
         $this->view = 'forum-topics';
@@ -87,6 +92,11 @@ class ForumController extends BaseController {
 
     }
 
+    /**
+     * Vymaže vybrené téma z kategorie
+     *
+     * @param IRequest $request
+     */
     public function deleteTopicAjaxAction (IRequest $request) {
         if (!$request->hasParams() && empty($request->getParams()[1])) {
             $this->callBack->setFail();
@@ -106,17 +116,26 @@ class ForumController extends BaseController {
         }
     }
 
+    /**
+     * Zobrazí příspěvky v kategorii
+     *
+     * @param IRequest $request
+     */
     public function showPostsAction (IRequest $request) {
-        if (!$request->hasParams()) {
-            $this->addMessage(new CallBackMessage("Nebyla zadána žádná kategorie", CallBackMessage::INFO));
+        if (!$request->hasParams(2)) {
+            $this->addMessage(new CallBackMessage("Nedostatečný počet parametrů", CallBackMessage::INFO));
             $this->redirect('forum');
         }
 
-        $category = (isset($request->getParams()[1]))? $request->getParams()[1] : "-1";
-        $topic = (isset($request->getParams()[2]))? $request->getParams()[2] : "-1";
+        $params = $request->getParams();
+        array_shift($params);
+
+        $category = array_shift($params);
+        $topic = array_shift($params);
 
         try {
             $this->data['posts'] = $this->forummanager->getPosts($topic);
+            $this->data['topicHash'] = $this->forummanager->getTopicHash($topic);
             try {
                 $user = $this->userfactory->getUserFromSession();
                 $user->getRole()->valid(USER_ROLE_ADMIN);
@@ -140,6 +159,11 @@ class ForumController extends BaseController {
         }
     }
 
+    /**
+     * Přidá příspěvek pomocí odeslaného formuláře bez ajaxu
+     *
+     * @param IRequest $request
+     */
     public function showPostsPostAction (IRequest $request) {
         try {
             $this->validateUser(USER_ROLE_MEMBER);
@@ -153,20 +177,31 @@ class ForumController extends BaseController {
         $this->showPostsAction($request);
     }
 
+    /**
+     * Přidá příspěvek pomocí odeslaného formuláře přes ajax a pošle update ostatním klientům
+     *
+     * @param IRequest $request
+     */
     public function showPostsPostAjaxAction (IRequest $request) {
         try {
-            $this->validateUser(USER_ROLE_MEMBER);
+            $user = $this->userfactory->getUserFromSession();
+            $user->getRole()->valid(USER_ROLE_MEMBER);
             CaptchaService::verify($request->getPost("g-recaptcha-response", null));
             $this->forummanager->addPost($request->getPost('post_content'));
-            $lastPostData = $this->forummanager->getLastInsertedPost();
+            $postHash = $this->forummanager->getLastInsertedPostHash();
             $this->callBack->addMessage(new CallBackMessage("Zpráva byla úspěšně odeslána"));
-            $post = new ForumPostSnippet($lastPostData);
-            $this->callBack->addData(new CallBackData("post-data", $post->render()));
+            $this->callBack->addData(new CallBackData("post", $postHash));
         } catch (MyException $ex) {
+            $this->callBack->setFail();
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
     }
 
+    /**
+     * Odstraní vybraný příspěvek
+     *
+     * @param IRequest $request
+     */
     public function deletePostAjaxAction (IRequest $request) {
         if (!$request->hasParams() && empty($request->getParams()[1])) {
             $this->callBack->setFail();
@@ -186,11 +221,21 @@ class ForumController extends BaseController {
         }
     }
 
+    /**
+     * Zobrazí stránku se založením nového tématu
+     *
+     * @param IRequest $request
+     */
     public function newTopicAction (IRequest $request) {
         $this->header['title'] = "Forum / Nové vlákno";
         $this->view = 'forum-new-topic';
     }
 
+    /**
+     * Založí nové téma
+     *
+     * @param IRequest $request
+     */
     public function newTopicPostAction (IRequest $request) {
         try {
             $this->validateUser(USER_ROLE_MEMBER);

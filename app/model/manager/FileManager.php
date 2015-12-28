@@ -5,6 +5,10 @@ namespace app\model\manager;
 
 use app\model\service\exception\MyException;
 
+/**
+ * Class FileManager - Správce souborového systému
+ * @package app\model\manager
+ */
 class FileManager {
 
     const

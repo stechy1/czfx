@@ -84,7 +84,7 @@ class Database implements IDatabase {
      *
      * @param $query string Dotaz
      * @param array $parameters Parametry dotazu
-     * @return int Počet ovlivněných řádek
+     * @return mixed|null Vrátí první buňku z prvního sloupečku dotazu, nebo null, pokud dotazu nevyhověl žádný záznam
      */
     public function queryItself($query, $parameters = array())
     {
@@ -93,7 +93,7 @@ class Database implements IDatabase {
             $vysledek = array_values($vysledek);
             return $vysledek[0];
         }
-        return 0;
+        return null;
     }
 
     /**

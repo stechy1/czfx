@@ -9,7 +9,7 @@ use app\model\service\exception\MyException;
 use app\model\util\StringUtils;
 
 /**
- * Class ForumManager
+ * Class ForumManager - Správce fóra
  * @Inject Database
  * @package app\model\manager
  */
@@ -19,6 +19,16 @@ class ForumManager {
      * @var Database
      */
     private $database;
+
+    /**
+     * Vrátí hash textu
+     *
+     * @param $text string
+     * @return string
+     */
+    private static function generateHash($text) {
+        return substr(str_shuffle(hash("sha512", $text)), FORUM_START_POSITION_HASH, FORUM_HASH_LENGTH);
+    }
 
     /**
      * Přidá novou kategorii do fora
@@ -48,7 +58,6 @@ class ForumManager {
               forum_categories.category_id,
               forum_categories.category_name,
               forum_categories.category_url,
-              forum_categories.category_description,
               forum_topics.topic_url,
               (SELECT COUNT(topic_id)
                FROM forum_topics
@@ -67,7 +76,7 @@ class ForumManager {
                     LEFT JOIN users ON users.user_id = forum_posts.post_by
                   ) ON forum_topics.topic_id = forum_posts.post_topic
                 ) ON forum_topics.topic_cat = forum_categories.category_id
-            GROUP BY forum_categories.category_id, forum_categories.category_name, forum_categories.category_url, forum_categories.category_description";
+            GROUP BY forum_categories.category_id, forum_categories.category_name, forum_categories.category_url";
         $fromDb = $this->database->queryAll($query);
 
         if (!$fromDb)
@@ -122,6 +131,16 @@ class ForumManager {
      */
     public function getActualCategory () {
         return $_SESSION['forum']['categoryURL'] ?: null;
+    }
+
+    /**
+     * Vrátí ID poslední vložené kategorie.
+     * Funkce musí být zavolána bezprostředně po přidání nové kategorie, jindy nemá smysl
+     *
+     * @return int
+     */
+    public function getLastInsertedCategory () {
+        return $this->database->getLastId();
     }
 
     /**
@@ -204,30 +223,26 @@ class ForumManager {
     }
 
     /**
-     * Vrátí všechny příspevky v daném topicu
+     * Vrátí ID posledního vloženého tématu.
+     * Funkce musí být zavolána bezprostředně po vložení tématu, jindy nemá smysl
+     *
+     * @return int
+     */
+    public function getLastInsertedTopic () {
+        return $this->database->getLastId();
+    }
+
+    /**
+     * Vrátí otisk vybraného tématu
      *
      * @param $topicURL string
-     * @return array
-     * @throws MyException Pokud se v topicu nenacházejí žádné příspěvky
+     * @return int|null
      */
-    public function getPosts ($topicURL = null) {
-        if ($topicURL == null)
-            $topicURL = $_SESSION['forum']['topicURL'];
-        else
-            $_SESSION['forum']['topicURL'] = $topicURL;
+    public function getTopicHash ($topicURL) {
+        $fromDb = $this->database->queryItself("SELECT topic_hash FROM forum_topics WHERE topic_url = ?", [$topicURL]);
 
-        $fromDb = $this->database->queryAll("SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date, forum_posts.post_by,
-                                           users.user_nick, users.user_avatar
-                                           FROM forum_topics
-                                           LEFT JOIN (forum_posts, users)
-                                           ON (
-                                             forum_posts.post_topic = topic_id AND
-                                             users.user_id = forum_posts.post_by
-                                           )
-                                           WHERE topic_url = ?", [$topicURL]);
-
-        if (!$fromDb || !isset($fromDb[0]['post_content']))
-            throw new MyException("Žádné příspěvky nenalezeny");
+        if (!$fromDb)
+            return null;
 
         return $fromDb;
     }
@@ -246,13 +261,14 @@ class ForumManager {
         if (!$message)
             throw new MyException("Není vyplněna zpráva");
         $date = time();
-        $topicUrl = StringUtils::hyphenize($subject);
+        $topicUrl = StringUtils::hyphenize($subject) . "-" . StringUtils::generatePassword();
         $topic = [
             "topic_subject" => $subject,
             "topic_url" => $topicUrl,
             "topic_date" => $date,
             "topic_cat" => $_SESSION['forum']['category_id'],
-            "topic_by" => $_SESSION['user']['id']];
+            "topic_by" => $_SESSION['user']['id'],
+            "topic_hash" => self::generateHash($date)];
 
         $this->database->insert("forum_topics", $topic);
 
@@ -261,10 +277,40 @@ class ForumManager {
             "post_content" => $message,
             "post_date" => $date,
             "post_topic" => $topicId,
-            "post_by" => $_SESSION['user']['id']];
+            "post_by" => $_SESSION['user']['id'],
+            "post_hash" => self::generateHash($date)];
         $this->database->insert("forum_posts", $post);
 
         return $topicUrl;
+    }
+
+    /**
+     * Vrátí všechny příspevky v daném topicu
+     *
+     * @param $topicURL string
+     * @return array
+     * @throws MyException Pokud se v topicu nenacházejí žádné příspěvky
+     */
+    public function getPosts ($topicURL = null) {
+        if ($topicURL == null)
+            $topicURL = $_SESSION['forum']['topicURL'];
+        else
+            $_SESSION['forum']['topicURL'] = $topicURL;
+
+        $fromDb = $this->database->queryAll("SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date, forum_posts.post_by,
+                                           users.user_nick, users.user_avatar
+                                           FROM forum_topics
+                                           LEFT JOIN (forum_posts, users)
+                                           ON (
+                                             forum_posts.post_topic = forum_topics.topic_id AND
+                                             users.user_id = forum_posts.post_by
+                                           )
+                                           WHERE topic_url = ?", [$topicURL]);
+
+        if (!$fromDb || !isset($fromDb[0]['post_content']))
+            throw new MyException("Žádné příspěvky nenalezeny");
+
+        return $fromDb;
     }
 
     /**
@@ -278,16 +324,15 @@ class ForumManager {
     public function getLastPosts ($count, $resetCounter = true) {
         $params = array();
         $query = "SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date,
-                                        forum_topics.topic_subject, forum_topics.topic_url,
-                                        forum_categories.category_url,
-                                        users.user_nick, users.user_id
-                                 FROM forum_posts
-                                 LEFT JOIN (users, forum_topics, forum_categories)
-                                 ON (
-                                     users.user_id = forum_posts.post_by AND
-                                     forum_topics.topic_id = forum_posts.post_topic AND
-                                     forum_categories.category_id = forum_topics.topic_cat
-                                 )";
+                        forum_topics.topic_subject, forum_topics.topic_url,
+                        forum_categories.category_url,
+                        users.user_nick, users.user_id
+                 FROM forum_posts
+                 LEFT JOIN (users, forum_topics, forum_categories)
+                 ON (
+                     users.user_id = forum_posts.post_by AND
+                     forum_topics.topic_id = forum_posts.post_topic AND
+                     forum_categories.category_id = forum_topics.topic_cat)";
         if (!$resetCounter) {
             $query .= " WHERE forum_posts.post_id < ?";
             $params[] = $_SESSION['index']['lastArtID'];
@@ -308,27 +353,27 @@ class ForumManager {
     }
 
     /**
-     * Vrátí záznam o posledním vloženém příspěvku
+     * Vrítí příspěvek podle zadaného otisku
      *
+     * @param $hash string
      * @return array|null
+     * @throws MyException Pokud se nenajde žádný příspěvek odpovídající otisku
      */
-    public function getLastInsertedPost () {
-        $lastId = $this->database->getLastId();
-
+    public function getPostByHash ($hash) {
         $fromDb = $this->database->queryOne("SELECT forum_posts.post_id, forum_posts.post_content, forum_posts.post_date,
-                                        forum_topics.topic_subject, forum_topics.topic_url,
-                                        forum_categories.category_url,
-                                        users.user_nick, users.user_id, users.user_avatar
-                                 FROM forum_posts
-                                 LEFT JOIN (users, forum_topics, forum_categories)
-                                 ON (
-                                     users.user_id = forum_posts.post_by AND
-                                     forum_topics.topic_id = forum_posts.post_topic AND
-                                     forum_categories.category_id = forum_topics.topic_cat)
-                                 WHERE forum_posts.post_id = ?", [$lastId]);
+                                                    forum_topics.topic_subject, forum_topics.topic_url,
+                                                    forum_categories.category_url,
+                                                    users.user_nick, users.user_id, users.user_avatar
+                                             FROM forum_posts
+                                             LEFT JOIN (users, forum_topics, forum_categories)
+                                             ON (
+                                                 users.user_id = forum_posts.post_by AND
+                                                 forum_topics.topic_id = forum_posts.post_topic AND
+                                                 forum_categories.category_id = forum_topics.topic_cat)
+                                             WHERE forum_posts.post_hash = ?", [$hash]);
 
         if (!$fromDb)
-            return null;
+            throw new MyException("Odpovídající příspěvek nebyl nalezen");
 
         return $fromDb;
     }
@@ -342,11 +387,13 @@ class ForumManager {
     public function addPost ($content) {
         if (!$content)
             throw new MyException("Musíte vyplnit zprávu");
+        $date = time();
         $post = [
             "post_content" => $content,
-            "post_date" => time(),
+            "post_date" => $date,
             "post_topic" => $_SESSION['forum']['topic_id'],
-            "post_by" => $_SESSION['user']['id']];
+            "post_by" => $_SESSION['user']['id'],
+            "post_hash" => self::generateHash($date)];
 
         $fromDb = $this->database->insert("forum_posts", $post);
 
@@ -365,6 +412,22 @@ class ForumManager {
 
         if (!$fromDb)
             throw new MyException("Nepodařilo se odstranit příspěvek číslo: " . $postID);
+    }
+
+    /**
+     * Vrátí ID posledního vloženého příspěvku
+     * Funkce musí být zavolána bezprostředně po vložení tématu, jindy nemá smysl
+     *
+     * @return string
+     */
+    public function getLastInsertedPostHash () {
+        $id = $this->database->getLastId();
+
+        $hash = $this->database->queryItself("SELECT post_hash
+                                              FROM forum_posts
+                                              WHERE post_id = ?", [$id]);
+
+        return $hash;
     }
 
 

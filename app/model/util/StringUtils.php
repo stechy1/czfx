@@ -167,14 +167,14 @@ class StringUtils
     /**
      * Vygeneruje náhodné heslo
 	 *
-     * @param bool $addSpecialChar
+     * @param bool $addSpecialChar True, pokud chcete zahrnout i speciální znaky
      * @return string Náhodné heslo
      */
 	public static function generatePassword($addSpecialChar = false)
 	{
-		$numbers = self::randomString('0', '9', 2);
-		$lowerCase = self::randomString('a', 'z', 2);
-		$upperCase = self::randomString('A', 'Z', 2);
+		$numbers = self::randomString('0', '9', 4);
+		$lowerCase = self::randomString('a', 'z', 5);
+		$upperCase = self::randomString('A', 'Z', 3);
 		$specialChars = array('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '.', ',');
 		$password = $numbers . $lowerCase . $upperCase;
 		if ($addSpecialChar)

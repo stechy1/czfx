@@ -1,7 +1,6 @@
 <? use app\model\snippet\PostSnippet;
 use app\model\util\DateUtils;
 use app\model\util\StringUtils;
-
 ?>
 <section class="row">
     <div class="col-md-12">
@@ -39,7 +38,7 @@ use app\model\util\StringUtils;
                 <? endif ?>
             </div>
             <div class="panel-footer">
-                <a href="archive" class="btn btn-sm btn-primary">Archiv článků</a>
+                <a href="archive" class="btn btn-xs btn-primary">Archiv článků</a>
             </div>
         </div>
     </div>
@@ -66,29 +65,5 @@ use app\model\util\StringUtils;
     </div>
 </section>
 
-<script type="text/javascript" src="js/forumManager.js"></script>
-<script type="text/javascript">
-    var downloading = false;
-    var forumManager = new ForumManager();
-
-    jQuery(function() {
-
-        jQuery(".feeds-container").scroll(function(e) {
-            var target = e.target;
-            var cHeight = target.clientHeight;
-            var scrollHeight = target.scrollHeight;
-            var scrollPos = target.scrollTop;
-
-            if(scrollPos >= scrollHeight - cHeight - 100) {
-                forumManager.getNext(function (data) {
-                    var postsGroup = jQuery(".feeds");
-                    for (var i = 0; i < data.length; i++) {
-                        //postsGroup.append(data[i]);
-                        postsGroup.isotope("insert", $(data[i]));
-                    }
-                });
-            }
-        });
-    });
-
-</script>
+<script src="js/manager/forumManager.js"></script>
+<script src="js/view/index.js"></script>

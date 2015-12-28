@@ -4,13 +4,24 @@
     </div>
     <div class="panel-body">
         <div class="row categories-container isotope-grid">
-            <? foreach($categories as $category) : ?>
+            <? foreach ($categories as $category) : ?>
                 <?
                 $snippet = new app\model\snippet\CategorySnippet($category);
                 echo $snippet->render();
                 ?>
             <? endforeach ?>
         </div>
+        <? if (!empty($articles)) : ?>
+            <hr>
+            <ul class="list-group">
+                <? foreach ($articles as $article) : ?>
+                    <li class="list-group-item">
+                        <a href="/article/<?= $article['article_url'] ?>"><?= $article['article_title'] ?></a>
+                        <p style="text-indent: 10px;"><?= $article['article_description'] ?></p>
+                    </li>
+                <? endforeach ?>
+            </ul>
+        <? endif ?>
     </div>
     <div class="panel-footer"></div>
 </div>

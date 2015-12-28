@@ -54,33 +54,7 @@ class CategorySnippet extends ASnippet {
                     ]))->addClass("caption")
                 ]))->addClass("thumbnail my-thumbnail")
             ))->addClass("nodecoration")->setLocation($this->URL)
-        ))->addClass("col-sm-6 col-md-4 isotope-grid-item");
-
-        /*$panel = (new DivElement([
-            (new DivElement(
-                (new HeadingElement(HeadingElement::H4,
-                    (new AnchorElement(
-                        $this->name
-                    ))->setLocation('/' . $tmp)
-                ))
-            ))->addClass('panel-heading'),
-            (new DivElement([
-                (new ImageElement())
-                    ->setWidth(100)
-                    ->setSource("uploads/image/category/$this->img.png")
-                    ->addClass('left img-rounded')
-                    ->addStyle(new StyleValue('margin-right', '5px')),
-                (new ParagraphElement(
-                    $this->description))
-                ]
-            ))->addClass('panel-body'),
-            (new DivElement(
-                (new SpanElement())
-                    ->addClass('right')
-                    ->addStyle(new StyleValue('margin-top', '-10px'))
-            ))->addClass('panel-footer')]
-        ))->addClass(['panel', 'category']);
-        $mainDiv = (new DivElement($panel))->addClass(['col-xs-12', 'col-sm-6', 'col-md-4']);*/
+        ))->addClass("col-xs-12 col-sm-6 col-md-4 isotope-grid-item");
 
         $builder = new HtmlBuilder($mainDiv);
 

@@ -18,3 +18,7 @@ define("USER_ROLE_OLD_MEMBER", 1);
 define("USER_ROLE_MEMBER", 2);
 define("USER_ROLE_REDACTOR", 3);
 define("USER_ROLE_ADMIN", 10);
+
+define("AES_PRIVATE_KEY", "XrR45Kg286R2s2S5");
+define("FORUM_START_POSITION_HASH", 1);
+define("FORUM_HASH_LENGTH", 10);

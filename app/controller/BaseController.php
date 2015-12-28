@@ -78,7 +78,7 @@ abstract class BaseController {
         if ($this->view) {
             extract($this->check($this->data));
             extract($this->data, EXTR_PREFIX_ALL, "");
-            require($this->pathToView . $this->view . ".phtml");
+            include($this->pathToView . $this->view . ".phtml");
         }
     }
 

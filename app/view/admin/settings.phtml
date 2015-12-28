@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li><a href="admin">Rozcestník</a></li>
     <li class="active">Nastavení</li>
 </ol>
 
@@ -21,31 +21,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="js/settingsManager.js"></script>
-<script type="text/javascript">
-
-    var m = new SettingsManager();
-
-    jQuery(document).ready(function () {
-        jQuery(".form-control").keyup(function (e) {
-            if (e.keyCode == 13) {
-                var name = $(this).attr("name");
-                var val  = $(this).val();
-
-                m.update(name, val);
-            }
-        });
-
-        jQuery(".set-as-default").click(function () {
-            var formData = new FormData();
-            jQuery(".config-item").each(function () {
-                var self = $(this);
-                var key = self.attr("name");
-                var val = self.val();
-                formData.append(key, val);
-            });
-
-            m.setAsDefault(formData);
-        });
-    });
-</script>
+<script src="js/manager/settingsManager.js"></script>
+<script src="js/view/admin/settings.js"></script>

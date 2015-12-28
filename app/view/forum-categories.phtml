@@ -52,19 +52,6 @@
     </div>
 </div>
 <? if ($isAdmin) : ?>
-    <script src="js/forumManager.js"></script>
-    <script>
-        var forumManager = new ForumManager();
-
-        jQuery(".delete-category").click(function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            var categoryID = $(this).data("categoryid");
-
-            forumManager.deleteCategory(categoryID, function () {
-                $("#category-" + categoryID).remove();
-            });
-        });
-    </script>
+    <script src="js/manager/forumManager.js"></script>
+    <script src="js/view/forum-categories.js"></script>
 <? endif ?>

@@ -22,7 +22,7 @@ class ForumPostSnippet extends ASnippet {
     private $postDate;
 
     /**
-     * ForumPostSnippet constructor.
+     * ForumPostSnippet constructor
      * @param $data
      */
     public function __construct ($data) {

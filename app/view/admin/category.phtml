@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-    <li><a href="admin-dashboard">Rozcestník</a></li>
+    <li><a href="admin">Rozcestník</a></li>
     <li><a href="admin-category-manager">Správce kategorií</a></li>
     <li class="active"><?= !empty($category['category_name'])? $category['category_name'] :"Nová kategorie" ?></li>
 </ol>
@@ -51,7 +51,7 @@
             </div>
             <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="form-group">
-                    <label class="control-label" for="category-has-subcats">Obsahuje subkategorie:</label>
+                    <label class="control-label" for="category-has-subcats">Obsahuje podkategorie:</label>
                     <input id="category-has-subcats" type="checkbox" name="category-has-subcats"
                            class="form-control input-md boot-switch"
                            <?= ($category['category_has_subcats']) ? 'checked' : '' ?>/>
@@ -82,41 +82,5 @@
     </div>
 </form>
 
-<script type="text/javascript" src="js/categoryManager.js"></script>
-<script type="text/javascript">
-
-    function readURL(input) {
-
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                $("#category-image").attr('src', e.target.result);
-            };
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    $("#imgInp").change(function(){
-        readURL(this);
-    });
-
-    var category = new CategoryManager();
-
-    jQuery(document).ready(function () {
-
-        jQuery('#category-name').keyup(function () {
-            var nameBox = jQuery('#category-name');
-            var urlBox = jQuery('#category-url');
-            urlBox.val(prettyURL(nameBox.val()));
-        });
-
-        jQuery("#category-icon-input").change(function () {
-            var file = this.files[0];
-            jQuery("#category-image-button").html((file.name));
-            readURL(this);
-        });
-    });
-
-</script>
+<script src="js/manager/categoryManager.js"></script>
+<script src="js/view/admin/category.js"></script>

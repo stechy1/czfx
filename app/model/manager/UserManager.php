@@ -9,7 +9,7 @@ use app\model\util\SimpleImage;
 use PDOException;
 
 /**
- * Class UserManager
+ * Class UserManager - Správce jednotlivých uživatelů
  * @Inject Database
  * @Inject UserFactory
  * @Inject FileManager
@@ -141,6 +141,12 @@ class UserManager {
         return true;
     }
 
+    /**
+     * Vytvoří cookie, pro zapamatování příhlášení
+     *
+     * @param $userID int
+     * @param string|null $selector
+     */
     private function setRememberCookie($userID, $selector = null) {
         $selectorIsEmpty = $selector == null;
         $selector = (!$selectorIsEmpty) ? $selector : base64_encode(openssl_random_pseudo_bytes(9));

@@ -8,7 +8,7 @@ use app\model\ReportMessage;
 use app\model\service\exception\MyException;
 
 /**
- * Class SupportManager
+ * Class SupportManager - Správce podpory pro uživatele
  * @Inject Database
  * @package app\model\manager
  */
