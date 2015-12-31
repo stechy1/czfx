@@ -20,7 +20,7 @@ class AdminBaseController extends BaseController {
         parent::onStartup();
 
         try {
-            $this->validateUser(USER_ROLE_ADMIN, true);
+            $this->validateUser(USER_ROLE_ADMIN);
         } catch (MyException $ex) {
             $this->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
             $this->redirect('login');

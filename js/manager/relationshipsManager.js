@@ -1,4 +1,4 @@
-var RelationshipsManager = function () {};
+var RelationshipManager = function () {};
 
 /*
 Relationships.prototype.addFriend = function (friendID, callback) {
@@ -36,7 +36,7 @@ Relationships.prototype.removeFriend = function (friendID, callback) {
 };
 */
 
-RelationshipsManager.prototype.request = function (url, callback) {
+RelationshipManager.prototype.request = function (url, callback) {
     callback = callback || function () {};
 
     jQuery.ajax({
@@ -53,14 +53,14 @@ RelationshipsManager.prototype.request = function (url, callback) {
     });
 };
 
-RelationshipsManager.prototype.addFriend = function (friendID, callback) {
+RelationshipManager.prototype.addFriend = function (friendID, callback) {
     var url = "add/" + friendID;
     this.request(url, function (data) {
         callback(data);
     });
 };
 
-RelationshipsManager.prototype.acceptFriendRequest = function (friendID, callback) {
+RelationshipManager.prototype.acceptFriendRequest = function (friendID, callback) {
     var url = "accept/" + friendID;
     this.request(url, function (data) {
         callback(data);
@@ -68,7 +68,7 @@ RelationshipsManager.prototype.acceptFriendRequest = function (friendID, callbac
 
 };
 
-RelationshipsManager.prototype.declineFriendRequest = function (friendID, callback) {
+RelationshipManager.prototype.declineFriendRequest = function (friendID, callback) {
     var url = "decline/" + friendID;
     this.request(url, function (data) {
         callback(data);
@@ -76,7 +76,7 @@ RelationshipsManager.prototype.declineFriendRequest = function (friendID, callba
 
 };
 
-RelationshipsManager.prototype.cancelFriendRequest = function (friendID, callback) {
+RelationshipManager.prototype.cancelFriendRequest = function (friendID, callback) {
     var url = "cancel/" + friendID;
     this.request(url, function (data) {
         callback(data);
@@ -84,7 +84,7 @@ RelationshipsManager.prototype.cancelFriendRequest = function (friendID, callbac
 
 };
 
-RelationshipsManager.prototype.unfriend = function (friendID, callback) {
+RelationshipManager.prototype.unfriend = function (friendID, callback) {
     var url = "unfriend/" + friendID;
     this.request(url, function (data) {
         callback(data);
@@ -92,7 +92,7 @@ RelationshipsManager.prototype.unfriend = function (friendID, callback) {
 
 };
 
-RelationshipsManager.prototype.blockFriend = function (friendID, callback) {
+RelationshipManager.prototype.blockFriend = function (friendID, callback) {
     var url = "block/" + friendID;
     this.request(url, function (data) {
         callback(data);
@@ -100,7 +100,7 @@ RelationshipsManager.prototype.blockFriend = function (friendID, callback) {
 
 };
 
-RelationshipsManager.prototype.unblock = function (friendID, callback) {
+RelationshipManager.prototype.unblock = function (friendID, callback) {
     var url = "unblock/" + friendID;
     this.request(url, function (data) {
         callback(data);

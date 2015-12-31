@@ -44,4 +44,15 @@
         <a class="btn btn-xs btn-primary" href="article-manager/new">Nový článek</a>
     </div>
 </div>
-<script src="js/view/article-manager.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        jQuery("[type='checkbox']").bootstrapSwitch({
+            size: 'mini',
+            onText: 'ANO',
+            offText: 'NE',
+            onColor: 'success',
+            offColor: 'danger',
+            disabled: true
+        });
+    });
+</script>

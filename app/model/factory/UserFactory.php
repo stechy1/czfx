@@ -16,7 +16,6 @@ use app\model\UserRole;
  */
 class UserFactory {
 
-
     /**
      * @var IDatabase
      */
@@ -43,7 +42,7 @@ class UserFactory {
      * @throws MyException Pokud uživatelské ID neodpovídá žádnému záznamu.
      */
     public function getUserByID ($userID) {
-        $fromDb = $this->database->queryOne("SELECT user_id, user_nick, user_mail, user_role, user_online, user_first_login,
+        $fromDb = $this->database->queryOne("SELECT user_id, user_hash, user_nick, user_mail, user_role, user_online, user_first_login,
                       user_last_login, user_banned, user_activated,
                       user_name, user_avatar, user_region, user_city,
                       user_motto, user_skill, user_age
@@ -56,6 +55,7 @@ class UserFactory {
 
         return new User(
             $fromDb['user_id'],
+            $fromDb['user_hash'],
             $fromDb['user_nick'],
             $fromDb['user_mail'],
             new UserRole($fromDb['user_role']),

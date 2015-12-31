@@ -44,7 +44,6 @@ class CaptchaService {
     }
 
     /**
-     *
      * @throws \Captcha\Exception
      */
     public static function printCaptcha() {

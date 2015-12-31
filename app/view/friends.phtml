@@ -80,10 +80,12 @@
                                 <h4 class="media-heading"><a
                                         href="profile/<?= $friend['friend_id'] ?>"><?= $friend['friend_nick'] ?></a>
                                 </h4>
+                                <a href="messages/conversation/<?= $friend['friend_id'] ?>" class="btn btn-xs btn-success">Poslat
+                                    zprávu</a>
                                 <span class="btn btn-xs btn-danger remove-friend"
-                                      data-friendid="<?= $friend['friend_id'] ?>">Odebrat</span>
+                                data-friendid="<?= $friend['friend_id'] ?>">Odebrat</span>
                                 <span class="btn btn-xs btn-danger block-friend"
-                                      data-friendid="<?= $friend['friend_id'] ?>">Blokovat</span>
+                                data-friendid="<?= $friend['friend_id'] ?>">Blokovat</span>
                             </div>
                         </div>
                     </div>
@@ -126,4 +128,55 @@
 </div>
 
 <script src="js/manager/relationshipsManager.js"></script>
-<script src="js/view/friends.js"></script>
+<script>
+    var relationships = new RelationshipManager();
+    jQuery(document).ready(function () {
+        jQuery(".accept-friend-request").click(function () {
+            var friendID = jQuery(this).data("friendid");
+
+            relationships.acceptFriendRequest(friendID, function () {
+                location.reload(true);
+            });
+        });
+
+        jQuery(".cancel-friend-request").click(function () {
+            var friendID = jQuery(this).data("friendid");
+
+            relationships.cancelFriendRequest(friendID, function () {
+                location.reload(true);
+            });
+        });
+
+        jQuery(".decline-friend-request").click(function () {
+            var friendID = jQuery(this).data("friendid");
+
+            relationships.declineFriendRequest(friendID, function () {
+                location.reload(true);
+            });
+        });
+
+        jQuery(".remove-friend").click(function () {
+            var friendID = jQuery(this).data("friendid");
+
+            relationships.unfriend(friendID, function () {
+                location.reload(true);
+            });
+        });
+
+        jQuery(".block-friend").click(function () {
+            var friendID = jQuery(this).data("friendid");
+
+            relationships.blockFriend(friendID, function () {
+                location.reload(true);
+            });
+        });
+
+        jQuery(".unblock-friend").click(function () {
+            var friendID = jQuery(this).data("friendid");
+
+            relationships.unblock(friendID, function () {
+                location.reload(true);
+            });
+        });
+    });
+</script>

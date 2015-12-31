@@ -6,11 +6,11 @@ namespace app\controller;
 use app\model\callback\CallBackData;
 use app\model\callback\CallBackMessage;
 use app\model\factory\UserFactory;
+use app\model\manager\RelationshipManager;
 use app\model\manager\UserManager;
 use app\model\Relationship;
 use app\model\service\exception\MyException;
 use app\model\service\request\IRequest;
-use app\model\manager\RelationshipManager;
 
 /**
  * Class ProfileController
@@ -41,7 +41,9 @@ class ProfileController extends BaseController {
     public function defaultAction (IRequest $request) {
         if ($request->hasParams()) {
             try {
-                $user = $this->userfactory->getUserByID(intval($request->getParams()[0]));
+                $params = $request->getParams();
+                $userID = array_shift($params);
+                $user = $this->userfactory->getUserByID($userID);
                 $this->data['user'] = $user->toArray();
                 $this->data['showFriendButton'] = true;
                 $rel = $this->relationshipmanager->getFriendRelationship($user);
@@ -88,48 +90,4 @@ class ProfileController extends BaseController {
             $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
         }
     }
-
-    /*public function addtofriendAjaxAction (IRequest $request) {
-        if ($request->hasParams()) {
-            $params = $request->getParams();
-            array_shift($params);
-            $friendID = array_shift($params);
-
-            try {
-                $user = $this->userfactory->getUserFromSession();
-                $user->getRole()->valid(USER_ROLE_MEMBER);
-
-                $friend = $this->userfactory->getUserByID($friendID);
-                $this->relationshipmanager->addFriend($friend);
-
-            } catch (MyException $ex) {
-                $this->callBack->setFail();
-                $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-            }
-        } else {
-            $this->callBack->setFail();
-        }
-    }
-
-    public function removefromfriendAjaxAction (IRequest $request) {
-        if ($request->hasParams(1)) {
-            $params = $request->getParams();
-            array_shift($params);
-            $friendID = array_shift($params);
-
-            try {
-                $user = $this->userfactory->getUserFromSession();
-                $user->getRole()->valid(USER_ROLE_MEMBER);
-
-                $friend = $this->userfactory->getUserByID($friendID);
-                $this->relationshipmanager->unfriend($friend);
-
-            } catch (MyException $ex) {
-                $this->callBack->setFail();
-                $this->callBack->addMessage(new CallBackMessage($ex->getMessage(), CallBackMessage::DANGER));
-            }
-        } else {
-            $this->callBack->setFail();
-        }
-    }*/
 }

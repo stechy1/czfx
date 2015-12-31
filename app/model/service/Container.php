@@ -116,7 +116,7 @@ class Container {
                         $key = strtolower($key);
 
                         if (array_key_exists($key, $this->clasess) && !isset($this->map->$key))
-                            $this->mapClass($key, $key);
+                            $this->getInstanceOf($key);
 
                         if (isset($this->map->$key)) {
                             $property = $reflection->getProperty($key);
@@ -204,6 +204,9 @@ class Container {
             if (!array_key_exists($className, $this->clasess))
                 return null;
         }
+
+        if (isset($this->map->$className))
+            return $this->map->$className->value;
 
         $reflection = new ReflectionClass($this->clasess[$className]);
 

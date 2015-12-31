@@ -9,6 +9,7 @@ class User {
         AVATAR_SIZE = 140;
 
     private $id;
+    private $hash;
     private $nick;
     private $mail;
     private $role;
@@ -29,6 +30,7 @@ class User {
     /**
      * User constructor.
      * @param $id int ID uživatele.
+     * @param $hash string Unikátní hash uživatele
      * @param $nick string Přezdívka uživatele.
      * @param $mail string E-mail uživatele.
      * @param $role UserRole Role uživatele.
@@ -45,8 +47,9 @@ class User {
      * @param $motto string Motto
      * @param $skill string Skil
      */
-    public function __construct ($id, $nick, $mail, $role, $online, $lastLogin, $firstLogin, $banned, $activated, $name, $age, $avatar, $region, $city, $motto, $skill) {
+    public function __construct ($id, $hash, $nick, $mail, $role, $online, $lastLogin, $firstLogin, $banned, $activated, $name, $age, $avatar, $region, $city, $motto, $skill) {
         $this->id = $id;
+        $this->hash = $hash;
         $this->nick = $nick;
         $this->mail = $mail;
         $this->role = $role;
@@ -65,12 +68,32 @@ class User {
         $this->skill = $skill;
     }
 
-
     /**
      * @return int
      */
     public function getId () {
         return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId ($id) {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash () {
+        return $this->hash;
+    }
+
+    /**
+     * @param string $hash
+     */
+    public function setHash ($hash) {
+        $this->hash = $hash;
     }
 
     /**
@@ -81,10 +104,24 @@ class User {
     }
 
     /**
+     * @param string $nick
+     */
+    public function setNick ($nick) {
+        $this->nick = $nick;
+    }
+
+    /**
      * @return string
      */
     public function getMail () {
         return $this->mail;
+    }
+
+    /**
+     * @param string $mail
+     */
+    public function setMail ($mail) {
+        $this->mail = $mail;
     }
 
     /**
@@ -95,10 +132,24 @@ class User {
     }
 
     /**
+     * @param UserRole $role
+     */
+    public function setRole ($role) {
+        $this->role = $role;
+    }
+
+    /**
      * @return boolean
      */
     public function isOnline () {
         return $this->online;
+    }
+
+    /**
+     * @param boolean $online
+     */
+    public function setOnline ($online) {
+        $this->online = $online;
     }
 
     /**
@@ -109,10 +160,24 @@ class User {
     }
 
     /**
+     * @param int $lastLogin
+     */
+    public function setLastLogin ($lastLogin) {
+        $this->lastLogin = $lastLogin;
+    }
+
+    /**
      * @return int
      */
     public function getFirstLogin () {
         return $this->firstLogin;
+    }
+
+    /**
+     * @param int $firstLogin
+     */
+    public function setFirstLogin ($firstLogin) {
+        $this->firstLogin = $firstLogin;
     }
 
     /**
@@ -123,10 +188,24 @@ class User {
     }
 
     /**
+     * @param boolean $banned
+     */
+    public function setBanned ($banned) {
+        $this->banned = $banned;
+    }
+
+    /**
      * @return boolean
      */
     public function isActivated () {
         return $this->activated;
+    }
+
+    /**
+     * @param boolean $activated
+     */
+    public function setActivated ($activated) {
+        $this->activated = $activated;
     }
 
     /**
@@ -137,10 +216,24 @@ class User {
     }
 
     /**
+     * @param string $name
+     */
+    public function setName ($name) {
+        $this->name = $name;
+    }
+
+    /**
      * @return int
      */
     public function getAge () {
         return $this->age;
+    }
+
+    /**
+     * @param int $age
+     */
+    public function setAge ($age) {
+        $this->age = $age;
     }
 
     /**
@@ -151,10 +244,24 @@ class User {
     }
 
     /**
+     * @param string $avatar
+     */
+    public function setAvatar ($avatar) {
+        $this->avatar = $avatar;
+    }
+
+    /**
      * @return string
      */
     public function getRegion () {
         return $this->region;
+    }
+
+    /**
+     * @param string $region
+     */
+    public function setRegion ($region) {
+        $this->region = $region;
     }
 
     /**
@@ -165,6 +272,13 @@ class User {
     }
 
     /**
+     * @param string $city
+     */
+    public function setCity ($city) {
+        $this->city = $city;
+    }
+
+    /**
      * @return string
      */
     public function getMotto () {
@@ -172,10 +286,24 @@ class User {
     }
 
     /**
+     * @param string $motto
+     */
+    public function setMotto ($motto) {
+        $this->motto = $motto;
+    }
+
+    /**
      * @return string
      */
     public function getSkill () {
         return $this->skill;
+    }
+
+    /**
+     * @param string $skill
+     */
+    public function setSkill ($skill) {
+        $this->skill = $skill;
     }
 
     public function toArray() {

@@ -9,9 +9,7 @@ use stechy1\html\element\DivElement;
 use stechy1\html\element\HeadingElement;
 use stechy1\html\element\ImageElement;
 use stechy1\html\element\ParagraphElement;
-use stechy1\html\element\SpanElement;
 use stechy1\html\HtmlBuilder;
-use stechy1\html\StyleValue;
 
 class CategorySnippet extends ASnippet {
 

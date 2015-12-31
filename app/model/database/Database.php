@@ -11,7 +11,8 @@ use PDO;
  * @package app\model\database
  */
 class Database implements IDatabase {
-    
+
+
     /**
      * Databázové spojení
      * @var PDO

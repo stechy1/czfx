@@ -1,0 +1,28 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Zprávy</h1>
+    </div>
+    <div class="panel-body">
+        <? if ($conversations) : ?>
+            <? $parsedown = new \app\model\util\MyParsedown() ?>
+            <div class="messages">
+                <? foreach ($conversations as $key => $conversation) : ?>
+                    <div class="row list-item">
+                        <div class="col-xs-3 col-sm-2 col-md-1 author">
+                            <a href="profile/<?= $conversation['user_id'] ?>">
+                                <img class="img-responsive img-circle center-block user-image" src="uploads/image/avatar/<?= $conversation['user_avatar'] ?>.png" alt="<?= $conversation['user_nick'] ?>"/>
+                                <p class="nodecoration"><?= $conversation['user_nick'] ?></p>
+                            </a>
+                        </div>
+                        <div class="col-xs-9 col-md-10 col-lg-11" style="min-height: 70px;">
+                            <a href="messages/conversation/<?= $conversation['conversation_room_hash'] ?>">
+                                <?= $parsedown->text($_conversations[$key]['message_content']) ?>
+                            </a>
+                        </div>
+                        <span class="small right"><?= \app\model\util\DateUtils::prettyDateTime($conversation['message_time']); ?></span>
+                    </div>
+                <? endforeach ?>
+            </div>
+        <? endif ?>
+    </div>
+</div>

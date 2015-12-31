@@ -1,0 +1,54 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h1 class="page-header">Konverzace</h1>
+    </div>
+    <div class="panel-body">
+        <? if($messages) : ?>
+            <ul class="media-list messages">
+                <? foreach($messages as $message) : ?>
+                    <?= (new \app\model\snippet\ConversationMessageSnippet($message)) ?>
+                <? endforeach ?>
+            </ul>
+        <? endif ?>
+        <div id="mainEditorContainer" class="voffset2"></div>
+    </div>
+    <div class="panel-footer">
+        <span id="send-message" class="btn btn-xs btn-primary">Odeslat</span>
+    </div>
+</div>
+
+<script src="js/editorJQ.js"></script>
+<script src="js/manager/messageManager.js"></script>
+<script>
+    var messageManager = new MessageManager("<?= $roomHash ?>");
+    var buttons = [
+        {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
+        {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
+        {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
+        {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
+        {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
+        {class: 'quotes', before: '> ', tooltip: 'Citace'},
+        {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
+        {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
+        {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
+    ];
+    var editor = new EditorJQ(
+        '#mainEditorContainer',
+        {
+            buttons: buttons,
+            areaName: 'message_content'
+        });
+    editor.init();
+
+    jQuery(document).ready(function () {
+        jQuery("#send-message").click(function () {
+            var ta = jQuery("[name='message_content']");
+            var content = ta.val();
+
+            messageManager.send(content, function (data) {
+                jQuery(".messages").append(content);
+                ta.empty();
+            });
+        });
+    });
+</script>

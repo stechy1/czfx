@@ -5,7 +5,7 @@ define("DATABASE_LOGIN", "root");
 define("DATABASE_PASS", "");
 define("DATABASE_SCHEME", "czfx");
 
-define("PASSWORD_SALT", "~e_;*G=_;G4T%;n;4V*D#$%");
+define("SALT", "~e_;*G=_;G4T%;n;4V*D#$%");
 
 define("RECAPTCHA_PUBLIC_KEY", "6LcN3g0TAAAAAO-4iq4hSU-m24HFNUJBy-n07Xck");
 define("RECAPTCHA_PRIVATE_KEY", "6LcN3g0TAAAAAOG0HlLshherLzw8HD2nOUWlwNjc");
@@ -22,3 +22,6 @@ define("USER_ROLE_ADMIN", 10);
 define("AES_PRIVATE_KEY", "XrR45Kg286R2s2S5");
 define("FORUM_START_POSITION_HASH", 1);
 define("FORUM_HASH_LENGTH", 10);
+
+define("NODE_SERVER_IP", "127.0.0.1");
+define("NODE_SERVER_PORT", "8080");

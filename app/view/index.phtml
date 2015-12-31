@@ -1,6 +1,7 @@
 <? use app\model\snippet\PostSnippet;
 use app\model\util\DateUtils;
 use app\model\util\StringUtils;
+
 ?>
 <section class="row">
     <div class="col-md-12">
@@ -66,4 +67,35 @@ use app\model\util\StringUtils;
 </section>
 
 <script src="js/manager/forumManager.js"></script>
-<script src="js/view/index.js"></script>
+<script>
+    var socket = io('<?= NODE_SERVER_IP ?>:<?= NODE_SERVER_PORT ?>/index');
+
+    var downloading = false;
+    var forumManager = new ForumManager();
+
+    jQuery(document).ready(function () {
+
+        jQuery(".feeds-container").scroll(function(e) {
+            var target = e.target;
+            var cHeight = target.clientHeight;
+            var scrollHeight = target.scrollHeight;
+            var scrollPos = target.scrollTop;
+
+            if(scrollPos >= scrollHeight - cHeight - 100) {
+                forumManager.getNext(function (data) {
+                    var postsGroup = jQuery(".feeds");
+                    for (var i = 0; i < data.length; i++) {
+                        postsGroup.isotope("insert", $(data[i]));
+                    }
+                });
+            }
+        });
+
+        socket.on('render-index-post', function (data) {
+            var container = jQuery(".feeds");
+            data = jQuery(data);
+            container.prepend(data)
+                .isotope('prepended', data);
+        })
+    });
+</script>

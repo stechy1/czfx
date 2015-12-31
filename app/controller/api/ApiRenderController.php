@@ -3,12 +3,10 @@
 namespace app\controller\api;
 
 
-use app\controller\api\ApiBaseController;
 use app\model\manager\ForumManager;
 use app\model\service\request\IRequest;
 use app\model\snippet\ForumPostSnippet;
 use app\model\snippet\PostSnippet;
-use model\factory\RenderFactory;
 
 /**
  * Class ApiRenderController

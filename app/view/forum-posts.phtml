@@ -1,5 +1,7 @@
 <? use app\model\util\DateUtils;
-use app\model\util\MyParsedown; ?>
+use app\model\util\MyParsedown;
+
+?>
 
 <ol class="breadcrumb">
     <li><a href="forum">Forum</a></li>
@@ -11,7 +13,7 @@ use app\model\util\MyParsedown; ?>
     <? if ($_posts) : ?>
         <? $parseDown = new MyParsedown(); ?>
         <? foreach ($_posts as $key => $post) : ?>
-            <div class="row forum-post" id="post-<?= $post['post_id'] ?>">
+            <div class="row list-item" id="post-<?= $post['post_id'] ?>">
                 <? if ($isAdmin) : ?>
                 <span class="btn btn-xs btn-danger remove-post" data-postid="<?= $post['post_id'] ?>" style=" position: absolute; right: 10px; z-index: 2;">Smazat</span>
                 <? endif ?>
@@ -41,11 +43,11 @@ use app\model\util\MyParsedown; ?>
         <h2>Odpověď</h2>
     </div>
     <div class="panel-body">
-            <div id="mainEditorContainer"></div>
-            <div class="g-recaptcha" data-theme="dark" data-sitekey="6LcN3g0TAAAAAO-4iq4hSU-m24HFNUJBy-n07Xck"></div>
+        <div id="mainEditorContainer"></div>
+        <? \app\model\service\CaptchaService::printCaptcha() ?>
     </div>
     <div class="panel-footer">
-        <input type="submit" id="send-post" class="btn btn-sm btn-primary">
+        <input type="submit" id="send-post" class="btn btn-xs btn-primary">
     </div>
 </div>
 </form>
@@ -53,10 +55,66 @@ use app\model\util\MyParsedown; ?>
 <script src="js/editorJQ.js"></script>
 <script src="js/manager/forumManager.js"></script>
 <script>
-    var socket = io('localhost:8080/forum-posts');
+    var socket = io('<?= NODE_SERVER_IP ?>:<?= NODE_SERVER_PORT ?>/forum-posts');
 
     socket.on('connect', function () {
         socket.emit('join-room', "<?= $topicHash ?>");
     });
+
+    var forumManager = new ForumManager();
+
+    jQuery(document).ready(function () {
+
+        jQuery(".remove-post").click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var postID = $(this).data("postid");
+
+            forumManager.deletePost(postID, function () {
+                $("#post-" + postID).remove();
+            });
+        });
+
+        jQuery("#submitForm").submit(function (e) {
+            jQuery.ajax({
+                method: "post",
+                data: jQuery(this).serialize(),
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if (result.success) {
+                        socket.emit('post-add', result.data);
+                    }
+
+                    showUserMessages(result.messages);
+                }
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        socket.on('render-forum-post', function (content) {
+            jQuery(".posts").append(content);
+        });
+
+        var buttons = [
+            {class: 'bold', before: '**', after: '**', tooltip: 'Tučný'},
+            {class: 'italic', before: '*', after: '*', tooltip: 'Kurzíva'},
+            {class: 'strikethrough', before: '~~', after: '~~', tooltip: 'Přeškrtnutý'},
+            {class: 'code', before: '```\n', after: '\n```', tooltip: 'Vložit kód'},
+            {class: 'inline-code', before: '`', after: '`', tooltip: 'Vložit kód do řádku'},
+            {class: 'quotes', before: '> ', tooltip: 'Citace'},
+            {class: 'ordered-list', before: '1. \n2. \n3. ', after: '', space: -8, tooltip: 'Uspořádaný seznam'},
+            {class: 'unordered-list', before: '- \n- \n- ', after: '', space: -6, tooltip: 'Neuspořádaný seznam'},
+            {class: 'link', before: '[text]', after: '(odkaz)', space: -5, tooltip: 'Odkaz'}
+        ];
+        var editor = new EditorJQ(
+            '#mainEditorContainer',
+            {
+                buttons: buttons,
+                areaName: 'post_content'
+            });
+        editor.init();
+    });
 </script>
-<script src="js/view/forum-posts.js"></script>

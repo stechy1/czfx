@@ -6,6 +6,7 @@ use app\model\database\Database;
 use app\model\factory\UserFactory;
 use app\model\service\exception\MyException;
 use app\model\util\SimpleImage;
+use app\model\util\StringUtils;
 use PDOException;
 
 /**
@@ -34,15 +35,6 @@ class UserManager {
      */
     private $filemanager;
 
-    /**
-     * Vrátí otisk hesla
-     *
-     * @param $heslo string Čisté heslo
-     * @return string Hash osoleného hesla
-     */
-    public function hash ($heslo) {
-        return hash('sha512', $heslo . PASSWORD_SALT);
-    }
 
     /**
      * Zaregistruje nového uživatele
@@ -57,11 +49,13 @@ class UserManager {
     public function register ($data) {
         if ($data['password'] != $data['password2'])
             throw new MyException('Hesla nesouhlasí.');
-        $pass = $this->hash($data['password']);
-        $checkCode = str_shuffle($this->hash($pass));
+        $pass = StringUtils::createHash($data['password']);
+        $hash = StringUtils::randomString(10);
+        $checkCode = str_shuffle(StringUtils::createHash($pass));
         $time = time();
         $user = array(
             'user_nick' => $data['username'],
+            'user_hash' => $hash,
             'user_password' => $pass,
             'user_mail' => $data['email'],
             'user_first_login' => $time,
@@ -95,7 +89,7 @@ class UserManager {
                         FROM users
                         LEFT JOIN auth_tokens ON auth_tokens_id = user_id
                         WHERE user_mail = ? AND user_password = ? AND user_role >= ?
-                ', [$email, $this->hash($password), USER_ROLE_MEMBER]);
+                ', [$email, StringUtils::createHash($password), USER_ROLE_MEMBER]);
         if (!$fromDb)
             throw new MyException('Špatné jméno nebo heslo.');
 
@@ -192,8 +186,8 @@ class UserManager {
         if ($newPassword != $newPassword2)
             throw new MyException("Nové heslo se neshoduje s kontrolním");
 
-        $oldHash = $this->hash($oldPassword);
-        $hash = $this->hash($newPassword);
+        $oldHash = StringUtils::createHash($oldPassword);
+        $hash = StringUtils::createHash($newPassword);
 
         $fromDb = $this->database->update('users', ['user_password' => $hash], 'WHERE user_id = ? AND user_password = ?', [$_SESSION['user']['id'], $oldHash]);
 
@@ -215,7 +209,7 @@ class UserManager {
      * @throws MyException Pokud se nepovedlo údaje aktualizovat
      */
     public function updateData ($data, $keyArray, $password) {
-        $hash = $this->hash($password);
+        $hash = StringUtils::createHash($password);
         $arr = array();
 
         foreach ($data as $key => $value)
@@ -284,7 +278,7 @@ class UserManager {
      */
     public function delete ($password) {
         $id = $_SESSION['user']['id'];
-        $pass = $this->hash($password);
+        $pass = StringUtils::createHash($password);
         $emptyUser = array(
             "user_password" => "",
             "user_role" => "1",

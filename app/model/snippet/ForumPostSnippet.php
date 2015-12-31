@@ -58,7 +58,7 @@ class ForumPostSnippet extends ASnippet {
             (new SpanElement(DateUtils::prettyDateTime($this->postDate)))
                 ->addClass("small right")
         ]))->setID("post-$this->postId")
-           ->addClass("row forum-post");
+           ->addClass("row list-item");
 
         $this->html = $row->render();
     }
