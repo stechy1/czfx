@@ -3,6 +3,7 @@
 namespace app\controller\api;
 
 
+use app\model\factory\MessageFactory;
 use app\model\manager\ForumManager;
 use app\model\service\request\IRequest;
 use app\model\snippet\ForumPostSnippet;
@@ -11,6 +12,7 @@ use app\model\snippet\PostSnippet;
 /**
  * Class ApiRenderController
  * @Inject ForumManager
+ * @Inject MessageFactory
  * @package controller\api
  */
 class ApiRenderController extends ApiBaseController {
@@ -19,9 +21,15 @@ class ApiRenderController extends ApiBaseController {
      * @var ForumManager
      */
     private $forummanager;
+    /**
+     * @var MessageFactory
+     */
+    private $messagefactory;
 
     public function defaultAction (IRequest $request) {
-        header('Content-Type:text/plain');
+        echo "Bad request";
+        exit;
+        /*header('Content-Type:text/plain');
         if (!$request->hasParams(1)) {
             echo "Nebyly nalezeny žádné parametry...";
             exit;
@@ -48,16 +56,15 @@ class ApiRenderController extends ApiBaseController {
             default:
                 echo "Renderovací komponenta nebyla nalezena";
                 break;
-        };
-
+        };*/
     }
 
     public function forumpostAction (IRequest $request) {
-        header('Content-Type:application/json');
         if (!$request->hasParams(1)) {
             echo "Nebyly nalezeny žádné parametry...";
             exit;
         }
+        header('Content-Type:application/json');
         $params = $request->getParams();
         array_shift($params);
 
@@ -74,5 +81,8 @@ class ApiRenderController extends ApiBaseController {
         exit;
     }
 
+    public function messageAction (IRequest $request) {
+
+    }
 
 }

@@ -35,8 +35,8 @@ class App {
         /**
          * @var $router RouterController
          */
-        $router = $this->container->getInstanceOf("routercontroller");
-        $reqFactory = $this->container->getInstanceOf("requestfactory");
+        $router = $this->container->getInstanceOf("RouterController");
+        $reqFactory = $this->container->getInstanceOf("RequestFactory");
 
         $router->defaultAction($reqFactory->createHttpRequest());
         $router->renderView();

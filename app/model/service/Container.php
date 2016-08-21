@@ -61,9 +61,10 @@ class Container {
             $this->clasess = require $cacheFile;
         } else {
             $string = "<?php " . PHP_EOL . "return array(" . PHP_EOL;
+            $root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
             foreach (new FileFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder))) as $fileInfo) {
                 $pathName = $fileInfo->getPathname();
-                $root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']) . '\\';
+
                 $filePath = str_replace($root, '', $pathName);
 
                 $file = strtolower($fileInfo->getBasename('.php'));
@@ -73,26 +74,6 @@ class Container {
             }
             $string .= ");";
             file_put_contents($cacheFile, $string);
-        }
-    }
-
-    /**
-     * Projede rekurzivně zadanou složku a uloží si její soubory do paměti
-     *
-     * @param $folder string Složka, která se má prohledat
-     */
-    private function folderIterator ($folder) {
-        /**
-         * @var $fileInfo SplFileInfo
-         */
-        foreach (new FileFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder))) as $fileInfo) {
-            $pathName = $fileInfo->getPathname();
-            $root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']) . '\\';
-            $filePath = str_replace($root, '', $pathName);
-
-            $file = strtolower($fileInfo->getBasename('.php'));
-            $filePath = str_replace('.php', '', $filePath);
-            $this->clasess[$file] = $filePath;
         }
     }
 

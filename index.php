@@ -7,8 +7,9 @@ session_start();
 
 define("__HOME__", $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 
-require "vendor/autoload.php";
-require "app/global_functions.php";
+$loader = require "vendor/autoload.php";
+
+//require "app/global_functions.php";
 
 Logger::configure("app/config/log4php.xml");
 

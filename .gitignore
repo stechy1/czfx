@@ -55,3 +55,8 @@ crashlytics-build.properties
 
 .htaccess
 uploads/
+app/cache/
+app/template/
+composer.lock
+js/jquery/socket.io.js
+loging.log

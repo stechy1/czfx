@@ -16,5 +16,8 @@
     "stechy1/html": "*",
     "phpseclib/phpseclib": "^2.0",
     "wisembly/elephant.io": "~3.0"
+  },
+  "autoload": {
+    "classmap": ["app/"]
   }
 }

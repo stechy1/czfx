@@ -45,7 +45,7 @@ class MessageFactory {
             $hash = $fHash . $uHash;
 
         $userHash = $hash;
-        $hash = substr(StringUtils::createHash($hash), 10, 74);
+        $hash = substr(StringUtils::createHash($hash, $userHash), 10, 74);
 
         return ['user_hash' => $userHash, 'hash' => $hash];
     }
@@ -120,13 +120,20 @@ class MessageFactory {
         return new Message(-1, $user, $room, $content);
     }
 
+    /**
+     * Vrátí z každé konverzace jednu zprávu
+     *
+     * @return array|null
+     * @throws MyException
+     */
     public function getAllMessages () {
         $user = $this->userfactory->getUserFromSession();
         $userHash = $user->getHash();
 
-        $fromDb = $this->database->queryAll("
-            SELECT
-              DISTINCT conversation_room_hash,
+        $fromDb = $this->database->queryAll(
+            "SELECT
+              conversation_room_id,
+              conversation_room_hash,
               messages.message_id,
               messages.message_content,
               messages.message_time,
@@ -137,8 +144,11 @@ class MessageFactory {
             FROM conversation_rooms
               LEFT JOIN (messages
                 LEFT JOIN users ON users.user_id = messages.message_from) ON messages.message_room_id = conversation_room_id
-            WHERE conversation_room_user_hash LIKE ?
-            GROUP BY conversation_room_hash
+            WHERE conversation_room_user_hash LIKE ? AND messages.message_id IN (SELECT MAX(message_id)
+                                                                                 FROM messages
+                                                                                 WHERE message_room_id =
+                                                                                       conversation_room_id)
+            GROUP BY conversation_room_id
             ORDER BY message_time DESC", ["%$userHash%"]);
 
         if (!$fromDb)
@@ -167,5 +177,9 @@ class MessageFactory {
             return null;
 
         return $fromDb;
+    }
+
+    public function getMessageFromHash ($hash) {
+
     }
 }

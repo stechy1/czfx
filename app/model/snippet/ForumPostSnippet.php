@@ -54,7 +54,7 @@ class ForumPostSnippet extends ASnippet {
                 MyParsedown::instance()->text($this->postContent)
             ))->addClass("col-xs-9 col-md-10 col-lg-11")
               ->addStyle(new StyleValue("min-height", "70px"))
-                ->setEscape(false),
+              ->setEscape(false),
             (new SpanElement(DateUtils::prettyDateTime($this->postDate)))
                 ->addClass("small right")
         ]))->setID("post-$this->postId")

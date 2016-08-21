@@ -4,6 +4,7 @@ namespace app\model\snippet;
 
 
 interface ISnippet {
+
     /**
      * Sestaví snippet
      * @return ISnippet

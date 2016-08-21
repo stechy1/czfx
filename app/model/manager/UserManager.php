@@ -35,6 +35,15 @@ class UserManager {
      */
     private $filemanager;
 
+    /**
+     * Získá sůl vybraného uživatele
+     *
+     * @param $userID int ID uživatele
+     * @return mixed|null
+     */
+    private function getSalt ($userID) {
+        return $this->database->queryItself("SELECT user_salt FROM users WHERE user_id = ?", [$userID]);
+    }
 
     /**
      * Zaregistruje nového uživatele
@@ -49,7 +58,8 @@ class UserManager {
     public function register ($data) {
         if ($data['password'] != $data['password2'])
             throw new MyException('Hesla nesouhlasí.');
-        $pass = StringUtils::createHash($data['password']);
+        $salt = StringUtils::randomString(32);
+        $pass = StringUtils::createHash($data['password'], $salt);
         $hash = StringUtils::randomString(10);
         $checkCode = str_shuffle(StringUtils::createHash($pass));
         $time = time();
@@ -84,18 +94,29 @@ class UserManager {
         $password = $data['password'];
         $rememberMe = isset($data['remember-me']);
 
+//        Získání údajů
         $fromDb = $this->database->queryOne('
-                        SELECT user_id, auth_tokens_selector AS selector
+                        SELECT user_id, user_salt AS selector
                         FROM users
                         LEFT JOIN auth_tokens ON auth_tokens_id = user_id
-                        WHERE user_mail = ? AND user_password = ? AND user_role >= ?
-                ', [$email, StringUtils::createHash($password), USER_ROLE_MEMBER]);
+                        WHERE user_mail = ? AND user_role >= ?
+                ', [$email, USER_ROLE_MEMBER]);
         if (!$fromDb)
             throw new MyException('Špatné jméno nebo heslo.');
 
-        $this->database->update('users', ['user_online' => 1, 'user_last_login' => time()], 'WHERE user_id = ?', [$fromDb['user_id']]);
+//        Ověření hesla
+        $salt = $fromDb['user_salt'];
         $userID = $fromDb['user_id'];
+        $password = StringUtils::createHash($password, $salt);
+        $fromDb = $this->database->queryOne(
+            "SELECT user_id, auth_tokens_selector
+            FROM users
+            LEFT JOIN auth_tokens ON auth_tokens_id = user_id
+            WHERE user_id = ? AND user_password = ? AND user_role >= ?
+        ", [$userID, $password, USER_ROLE_MEMBER]);
 
+//        Aktualizace stavu uživatele
+        $this->database->update('users', ['user_online' => 1, 'user_last_login' => time()], 'WHERE user_id = ?', [$userID]);
         $_SESSION['user']['id'] = $userID;
 
         if ($rememberMe === true) {
@@ -186,10 +207,15 @@ class UserManager {
         if ($newPassword != $newPassword2)
             throw new MyException("Nové heslo se neshoduje s kontrolním");
 
-        $oldHash = StringUtils::createHash($oldPassword);
-        $hash = StringUtils::createHash($newPassword);
+        $userID = $_SESSION['user']['id'];
 
-        $fromDb = $this->database->update('users', ['user_password' => $hash], 'WHERE user_id = ? AND user_password = ?', [$_SESSION['user']['id'], $oldHash]);
+        $oldSalt = $this->getSalt($userID);
+        $oldHash = StringUtils::createHash($oldPassword, $oldSalt);
+
+        $newSalt = StringUtils::randomString(32);
+        $hash = StringUtils::createHash($newPassword, $newSalt);
+
+        $fromDb = $this->database->update('users', ['user_password' => $hash, 'user_salt' => $newSalt], 'WHERE user_id = ? AND user_password = ?', [$userID, $oldHash]);
 
         if (!$fromDb)
             throw new MyException("Heslo se nepodařilo změnit");
@@ -209,14 +235,16 @@ class UserManager {
      * @throws MyException Pokud se nepovedlo údaje aktualizovat
      */
     public function updateData ($data, $keyArray, $password) {
-        $hash = StringUtils::createHash($password);
+        $userID = $_SESSION['user']['id'];
+        $salt = $this->getSalt($userID);
+        $hash = StringUtils::createHash($password, $salt);
         $arr = array();
 
         foreach ($data as $key => $value)
             if (in_array($key, $keyArray))
                 $arr['user_' . $key] = $value;
 
-        $fromDb = $this->database->update('users', $arr, 'WHERE user_id = ? AND user_password = ?', [$_SESSION['user']['id'], $hash]);
+        $fromDb = $this->database->update('users', $arr, 'WHERE user_id = ? AND user_password = ?', [$userID, $hash]);
 
         if (!$fromDb)
             throw new MyException("Údaje se nepodařilo změnit");
@@ -277,8 +305,9 @@ class UserManager {
      * @throws MyException Pokud se smazání nepodařilo
      */
     public function delete ($password) {
-        $id = $_SESSION['user']['id'];
-        $pass = StringUtils::createHash($password);
+        $userID = $_SESSION['user']['id'];
+        $salt = $this->getSalt($userID);
+        $pass = StringUtils::createHash($password, $salt);
         $emptyUser = array(
             "user_password" => "",
             "user_role" => "1",
@@ -296,7 +325,7 @@ class UserManager {
 
         );
 
-        $fromDb = $this->database->update("users", $emptyUser, "WHERE user_id = ? AND user_password = ?", [$id, $pass]);
+        $fromDb = $this->database->update("users", $emptyUser, "WHERE user_id = ? AND user_password = ?", [$userID, $pass]);
 
         if (!$fromDb)
             throw new MyException("Špatné heslo");

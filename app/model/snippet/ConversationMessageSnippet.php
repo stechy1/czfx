@@ -53,7 +53,7 @@ class ConversationMessageSnippet extends ASnippet {
                 ->setEscape(false),
             (new SpanElement($this->date))
                 ->addClass("small right")
-        ]))->addClass("row list-item");
+        ]))->addClass("col-xs-12 list-item");
 
         $this->html = $row->render();
     }

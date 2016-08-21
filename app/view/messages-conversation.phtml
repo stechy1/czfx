@@ -3,14 +3,16 @@
         <h1 class="page-header">Konverzace</h1>
     </div>
     <div class="panel-body">
-        <? if($messages) : ?>
-            <ul class="media-list messages">
-                <? foreach($messages as $message) : ?>
-                    <?= (new \app\model\snippet\ConversationMessageSnippet($message)) ?>
-                <? endforeach ?>
-            </ul>
+        <? if ($messages) : ?>
+            <div class="row">
+                <div class=" col-md-12 messages">
+                    <? foreach ($messages as $message) : ?>
+                        <?= (new \app\model\snippet\ConversationMessageSnippet($message)) ?>
+                    <? endforeach ?>
+                </div>
+            </div>
         <? endif ?>
-        <div id="mainEditorContainer" class="voffset2"></div>
+            <div id="mainEditorContainer"></div>
     </div>
     <div class="panel-footer">
         <span id="send-message" class="btn btn-xs btn-primary">Odeslat</span>

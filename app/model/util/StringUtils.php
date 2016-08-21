@@ -213,10 +213,11 @@ class StringUtils {
      * Vygeneruje otisk řetězce
      *
      * @param $text string
+     * @param $salt string
      * @return string
      */
-    public static function createHash ($text) {
-        return hash('sha512', $text . SALT);
+    public static function createHash ($text, $salt) {
+        return hash('sha512', $text . $salt);
     }
 
     /**
